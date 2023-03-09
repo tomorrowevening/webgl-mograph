@@ -1,8 +1,11 @@
-import { WebGLRenderer } from 'three'
+import { WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetOptions } from 'three'
+import { debugSettings } from '../utils/debug'
+import { IS_DEV } from './constants'
 import { settings } from './settings'
 
 class WebGLSingleton {
   renderer!: WebGLRenderer
+  renderTargets: Map<string, WebGLRenderTarget> = new Map<string, WebGLRenderTarget>()
 
   init = (canvas: HTMLCanvasElement) => {
     this.renderer = new WebGLRenderer({
@@ -15,10 +18,27 @@ class WebGLSingleton {
     this.renderer.autoClear = false
     this.renderer.info.autoReset = false // debug performance
     this.renderer.setPixelRatio(settings.quality === 'low' ? 1 : devicePixelRatio)
+
+    this.addRT('previousScene', { depthBuffer: false })
+    this.addRT('currentScene', { depthBuffer: false })
+
+    // Settings / debug
+    settings.checkGPU(this.renderer)
+    if (IS_DEV) debugSettings()
   }
 
   resize = (width: number, height: number) => {
+    const dpr = this.dpr
+    this.renderTargets.forEach((renderTarget: WebGLRenderTarget) => {
+      renderTarget.setSize(width * dpr, height * dpr)
+    })
     this.renderer.setSize(width, height)
+  }
+
+  addRT = (name: string, params?: WebGLRenderTargetOptions) => {
+    const rt = new WebGLRenderTarget(32, 32, params)
+    rt.texture.name = name
+    this.renderTargets.set(name, rt)
   }
 
   set dpr(value: number) {

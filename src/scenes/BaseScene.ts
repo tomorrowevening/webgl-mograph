@@ -1,12 +1,19 @@
-import { Scene } from 'three'
+// Libs
+import { OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
+// Models
+import webgl from '../models/webgl'
 
 export default class BaseScene extends Scene {
-  async init(): Promise<any> {
-    return Promise.all([
-      this.initMesh(),
-      this.initPost(),
-      this.initAnimation(),
-    ])
+  camera!: PerspectiveCamera | OrthographicCamera
+
+  init(): Promise<void> {
+    return new Promise((resolve) => {
+      this.initMesh().then(() => {
+        this.initPost().then(() => {
+          this.initAnimation().then(resolve)
+        })
+      })
+    })
   }
 
   protected initMesh(): Promise<void> {
@@ -27,6 +34,10 @@ export default class BaseScene extends Scene {
     })
   }
 
+  dispose(): void {
+    //
+  }
+
   enable(): void {
     //
   }
@@ -36,22 +47,25 @@ export default class BaseScene extends Scene {
   }
 
   show(): void {
-    //
+    this.enable()
   }
 
   hide(): void {
-    //
+    this.disable()
   }
 
   update(): void {
     //
   }
 
-  draw(): void {
-    //
+  draw(renderTarget: WebGLRenderTarget | null): void {
+    // Backup drawing to renderer (if no post-processing)
+    webgl.renderer.setRenderTarget(renderTarget)
+    webgl.renderer.clear()
+    webgl.renderer.render(this, this.camera)
   }
 
   resize(width: number, height: number): void {
-    //
+    // update camera
   }
 }

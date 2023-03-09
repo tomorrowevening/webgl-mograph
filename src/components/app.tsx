@@ -19,9 +19,19 @@ if (IS_DEV) {
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Header />
-    <Main />
-    <Footer />
-  </React.StrictMode>,
+  <>
+    {IS_DEV ? (
+      <>
+        <Header />
+        <Main />
+        <Footer />
+      </>
+    ) : (
+      <React.StrictMode>
+        <Header />
+        <Main />
+        <Footer />
+      </React.StrictMode>
+    )}
+  </>
 )

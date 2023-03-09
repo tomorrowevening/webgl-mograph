@@ -1,11 +1,21 @@
+// Models
+import animation from '../models/animation'
 import webgl from '../models/webgl'
+// Controllers
+// Utils
+import { startDebug, endDebug } from '../utils/debug'
 
 export default class App {
 
   private playing = false
   private afRef = -1
 
-  constructor() {
+  constructor(canvas: HTMLCanvasElement) {
+    // Singletons
+    webgl.init(canvas)
+    animation.init()
+
+    // Listeners
     window.addEventListener('resize', this.resize, false)
     document.addEventListener('visibilitychange', this.visibilityChange, false)
     this.resize()
@@ -24,8 +34,10 @@ export default class App {
   }
 
   protected rafUpdate = () => {
+    startDebug()
     this.update()
     this.draw()
+    endDebug()
     this.afRef = window.requestAnimationFrame(this.rafUpdate)
   }
 

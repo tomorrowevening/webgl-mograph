@@ -908,6 +908,11 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
+tomorrow_web@^0.0.994:
+  version "0.0.994"
+  resolved "https://registry.yarnpkg.com/tomorrow_web/-/tomorrow_web-0.0.994.tgz#27e131bd73777671b42f90067ba155be8f237e39"
+  integrity sha512-d8L3hnlpY8GixxxKmZudxBvTwsWdOgzJyVz2rrF/71w/nXqBeiRKvFeUNWzYko2Eaxz+0LZpvE1c61ZstaCbCw==
+
 tone@^14.7.77:
   version "14.7.77"
   resolved "https://registry.yarnpkg.com/tone/-/tone-14.7.77.tgz#12a2a9f033952ccdb552275a6384ca5d36d4b5ed"

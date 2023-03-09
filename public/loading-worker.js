@@ -9,13 +9,13 @@ const assets = {
 //////////////////////////////////////////////////
 // Load Functions
 
-async function loadImage(path, objType) {
+async function loadImage(path, name, objType) {
   const response = await fetch(path)
   const content = await response.blob()
-  assets[objType].set(path, content)
+  assets[objType].set(name, content)
 }
 
-async function loadFile(path, objType, responseType) {
+async function loadFile(path, name, objType, responseType) {
   await fetch(path)
     .then(response => {
       if (response.status === 200 || response.status === 0) {
@@ -81,7 +81,7 @@ async function loadFile(path, objType, responseType) {
       }
     })
     .then(data => {
-      assets[objType].set(path, data)
+      assets[objType].set(name, data)
     })
     .catch(err => {
       console.log('err:', err)
@@ -109,36 +109,37 @@ function loadAssets(files) {
 
     const loadNext = () => {
       const item = files[index]
+      const name = item.name
       const file = item.file
       const type = item.type
       switch (type) {
         // Audio
         case 'audio':
-          loadFile(file, 'audio', 'arraybuffer')
+          loadFile(file, name, 'audio', 'arraybuffer')
             .then(loadComplete)
             .catch(reject)
           break
         // Images
         case 'image':
-          loadImage(file, 'images')
+          loadImage(file, name, 'images')
             .then(loadComplete)
             .catch(reject)
           break
         // Textures
         case 'texture':
-          loadImage(file, 'textures')
+          loadImage(file, name, 'textures')
             .then(loadComplete)
             .catch(reject)
           break
         // JSON
         case 'json':
-          loadFile(file, 'json', 'json')
+          loadFile(file, name, 'json', 'json')
             .then(loadComplete)
             .catch(reject)
           break
         // Models
         case 'gltf':
-          loadFile(file, 'models', 'arraybuffer')
+          loadFile(file, name, 'models', 'arraybuffer')
             .then(loadComplete)
             .catch(reject)
           break

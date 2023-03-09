@@ -1,33 +1,50 @@
 // Libs
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 // Models
 import { settings } from '../../models/settings'
-import webgl from '../../models/webgl'
 // Controllers
 import AppRunner from '../../controllers/AppRunner'
+import { preloadAssets } from '../../utils/preloader'
+// Components
+import '../../scss/main.scss'
 
 export default function Main() {
+  // References
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // States
+  const [percent, setPercent] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const onLoad = () => {
-      const canvas = canvasRef.current as HTMLCanvasElement
-      settings.detect().then(() => {
-        webgl.init(canvas)
+    const preload = () => {
+      preloadAssets((progess: number) => setPercent(progess), startApp)
+    }
 
-        const app = new AppRunner()
-        app.init()
-        app.play()
+    const startApp = () => {
+      setLoaded(true)
+      const canvas = canvasRef.current as HTMLCanvasElement
+      const app = new AppRunner(canvas)
+      app.init()
+      app.play()
+    }
+
+    const onLoad = () => {
+      window.removeEventListener('load', onLoad)
+      settings.detect().then(() => {
+        preload()
       })
     }
     window.addEventListener('load', onLoad, false)
-    return () => {
-      window.removeEventListener('load', onLoad)
-    }
   }, [])
+
   return (
     <main>
       <canvas ref={canvasRef} />
+      {!loaded && (
+        <div className='absoluteCenter'>
+          <p>Loading assets {Math.round(percent * 100)}%</p>
+        </div>
+      )}
     </main>
   )
 }

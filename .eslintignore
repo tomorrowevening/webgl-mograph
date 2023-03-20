@@ -1,0 +1,6 @@
+.github
+.vscode
+dist
+public
+node_modules
+vite.config.ts

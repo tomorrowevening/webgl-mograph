@@ -12,7 +12,7 @@ export default class Transition extends ShaderMaterial {
           progress: {
             value: 0,
           },
-        }
+        },
       },
       // @ts-ignore
       type: `transition/${name}`,

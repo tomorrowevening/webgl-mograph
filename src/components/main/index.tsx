@@ -41,7 +41,7 @@ export default function Main() {
     <main>
       <canvas ref={canvasRef} />
       {!loaded && (
-        <div className='absoluteCenter'>
+        <div className="absoluteCenter">
           <p>Loading assets {Math.round(percent * 100)}%</p>
         </div>
       )}

@@ -6,11 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import assetList from '../models/assetList'
 import assets from '../models/assets'
 
-type FileType = 'json'
-  | 'cubeTexture'
-  | 'texture'
-  | 'gltf'
-  | 'draco'
+type FileType = 'json' | 'cubeTexture' | 'texture' | 'gltf' | 'draco'
 
 export type File = {
   name: string
@@ -26,23 +22,23 @@ async function createAssets(loaded: any) {
     const promises = []
 
     // JSON
-    for (let [key, value] of loaded.json) {
+    for (const [key, value] of loaded.json) {
       assets.json.set(key, value)
     }
 
     // Models
-    for (let [key, value] of loaded.models) {
+    for (const [key, value] of loaded.models) {
       const model = new GLTFLoader()
       model.setDRACOLoader(draco)
       promises.push(
         model.parseAsync(value, '').then((gltf) => {
           assets.models.set(key, gltf)
-        })
+        }),
       )
     }
 
     // Textures
-    for (let [key, value] of loaded.textures) {
+    for (const [key, value] of loaded.textures) {
       const texture = new Texture(value)
       assets.textures.set(key, texture)
     }

@@ -29,7 +29,6 @@ export default class CompositeScene extends Scene {
     this.material.setResolution(width, height)
   }
 
-
   get transitioning(): boolean {
     return this.material.transitioning
   }

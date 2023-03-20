@@ -101,5 +101,5 @@ export const settings = {
     this.gpu.FLOAT_FBO = testFBO(renderer, FloatType)
     this.gpu.HALF_FLOAT_FBO = testFBO(renderer, HalfFloatType)
     this.gpu.shaderTextureLOD = isWebGL2 || !!gl.getExtension('EXT_shader_texture_lod')
-  }
+  },
 }

@@ -1,4 +1,20 @@
-import { BufferGeometry, Camera, Float32BufferAttribute, Material, Matrix4, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, PlaneGeometry, PositionalAudio, Texture, WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetOptions } from 'three'
+import {
+  BufferGeometry,
+  Camera,
+  Float32BufferAttribute,
+  Material,
+  Matrix4,
+  Mesh,
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera,
+  PlaneGeometry,
+  PositionalAudio,
+  Texture,
+  WebGLRenderer,
+  WebGLRenderTarget,
+  WebGLRenderTargetOptions,
+} from 'three'
 import webgl from '../models/webgl'
 
 //////////////////////////////////////////////////
@@ -111,12 +127,7 @@ anchorGeometryTL(planeTL)
  * @param y Y-offset
  * @param z Z-offset
  */
-export function anchorGeometry(
-  geometry: BufferGeometry,
-  x: number,
-  y: number,
-  z: number
-) {
+export function anchorGeometry(geometry: BufferGeometry, x: number, y: number, z: number) {
   geometry.applyMatrix4(new Matrix4().makeTranslation(x, -y, -z))
 }
 
@@ -138,11 +149,7 @@ export function anchorGeometryTL(geometry: BufferGeometry) {
 /**
  * Renders your scene into a RenderTarget
  */
-export const renderToTexture = (
-  scene: Object3D,
-  camera: Camera,
-  target: WebGLRenderTarget,
-) => {
+export const renderToTexture = (scene: Object3D, camera: Camera, target: WebGLRenderTarget) => {
   webgl.renderer.setRenderTarget(target)
   // webgl.renderer.setClearAlpha(0)
   webgl.renderer.clear()

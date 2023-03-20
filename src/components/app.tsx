@@ -1,7 +1,7 @@
 // Libs
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { } from '@theatre/core'
+import {} from '@theatre/core'
 import studio from '@theatre/studio'
 // Models
 import { IS_DEV } from '../models/constants'
@@ -35,5 +35,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Footer />
       </React.StrictMode>
     )}
-  </>
+  </>,
 )

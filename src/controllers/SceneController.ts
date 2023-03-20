@@ -194,7 +194,6 @@ class SceneController {
     return this.transition !== undefined ? this.transition.progress : 0
   }
 
-
   set transitionProgress(value: number) {
     if (this.transition !== undefined) this.transition.progress = value
   }

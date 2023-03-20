@@ -30,11 +30,7 @@ export function initDebug() {
   // @ts-ignore
   const container = gui.addFolder({ title: 'GUI', expanded: false })
   tabs = container.addTab({
-    pages: [
-      { title: 'App', },
-      { title: 'Scenes', },
-      { title: 'System', },
-    ],
+    pages: [{ title: 'App' }, { title: 'Scenes' }, { title: 'System' }],
   })
 
   // Tabs
@@ -277,7 +273,12 @@ export const debugOptions = (
   return added
 }
 
-export const debugToggle = (parentFolder: any, label: string, defaultValue: boolean, onChange: (value: any) => void): any => {
+export const debugToggle = (
+  parentFolder: any,
+  label: string,
+  defaultValue: boolean,
+  onChange: (value: any) => void,
+): any => {
   const pane = parentFolder !== undefined ? parentFolder : appTab
   const params = { value: defaultValue }
   const added = pane.addInput(params, 'value', { label })

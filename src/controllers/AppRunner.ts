@@ -8,7 +8,6 @@ import { startDebug, endDebug } from '../utils/debug'
 import scenes from './SceneController'
 
 export default class App {
-
   private playing = false
   private afRef = -1
 

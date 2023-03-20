@@ -8,16 +8,7 @@ export type Transitions = 'wipe'
 
 // UI
 
-export type UIAlign =
-  | 'TL'
-  | 'TC'
-  | 'TR'
-  | 'CL'
-  | 'CC'
-  | 'CR'
-  | 'BL'
-  | 'BC'
-  | 'BR'
+export type UIAlign = 'TL' | 'TC' | 'TR' | 'CL' | 'CC' | 'CR' | 'BL' | 'BC' | 'BR'
 
 export interface BaseUI {
   align: UIAlign

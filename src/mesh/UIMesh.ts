@@ -2,7 +2,7 @@
 import { Material, Mesh, Texture, Vector2 } from 'three'
 // Views
 import UIMaterial from '../materials/ui/UIMaterial'
-import { BaseUI, UIAlign } from '../types/ui'
+import { BaseUI, UIAlign } from '../types'
 // Utils
 import { planeTL } from '../utils/three'
 

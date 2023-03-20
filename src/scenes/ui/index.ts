@@ -5,7 +5,7 @@ import webgl from '../../models/webgl'
 // Views
 import UIMesh from '../../mesh/UIMesh'
 import TextMesh from '../../mesh/TextMesh'
-import { UIAlign } from '../../types/ui'
+import { UIAlign } from '../../types'
 // Utils
 import { dispose, updateCameraOrtho } from '../../utils/three'
 

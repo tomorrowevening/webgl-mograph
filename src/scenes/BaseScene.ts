@@ -1,7 +1,10 @@
 // Libs
 import { OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
+import { Events, threeDispatcher } from '../models/constants'
 // Models
 import webgl from '../models/webgl'
+// Controllers
+import scenes from '../controllers/SceneController'
 
 export default class BaseScene extends Scene {
   camera!: PerspectiveCamera | OrthographicCamera
@@ -52,6 +55,11 @@ export default class BaseScene extends Scene {
 
   hide(): void {
     this.disable()
+    this.onHidden()
+  }
+
+  protected onHidden(): void {
+    threeDispatcher.dispatchEvent({ type: Events.SCENE_HIDDEN })
   }
 
   update(): void {
@@ -67,5 +75,13 @@ export default class BaseScene extends Scene {
 
   resize(width: number, height: number): void {
     // update camera
+  }
+
+  get transitionProgress(): number {
+    return scenes.transitionProgress
+  }
+
+  set transitionProgress(value: number) {
+    scenes.transitionProgress = value
   }
 }

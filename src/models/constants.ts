@@ -9,5 +9,3 @@ export const Events = {
 }
 
 export const threeDispatcher = new EventDispatcher()
-
-export type Scenes = 'intro' | 'credits'

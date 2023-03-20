@@ -1,0 +1,69 @@
+$maxInput: 160px;
+
+body {
+
+  .tp-dfwv,
+  .tp-dfwv button,
+  .tp-dfwv input {
+    text-transform: none;
+  }
+}
+
+.tp-ckbv {
+  float: right;
+}
+
+.tp-dfwv {
+  .tp-lblv {
+    position: relative;
+  }
+
+  .tp-lblv_v {
+    display: inline-block;
+    width: fit-content;
+    max-width: $maxInput;
+
+    .tp-ckbv {
+      width: 20px;
+    }
+
+    .tp-txtv,
+    .tp-sldtxtv {
+      max-width: $maxInput;
+    }
+
+    .tp-lstv {
+      width: $maxInput;
+    }
+
+    .tp-fpsv {
+      width: 280px;
+    }
+  }
+
+  .tp-lblv-nol {
+    .tp-btnv {
+      width: 280px;
+    }
+  }
+
+  .tp-btnv_b {
+    padding: 0 5px;
+  }
+
+  .tp-btngridv {
+    max-height: 100px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .tp-tabv {
+    max-height: 90vh;
+    overflow: hidden auto;
+  }
+}
+
+.tp-dfwv {
+  font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
+  font-size: 10px;
+}

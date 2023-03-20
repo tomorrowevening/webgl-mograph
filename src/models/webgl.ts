@@ -21,6 +21,8 @@ class WebGLSingleton {
 
     this.addRT('previousScene', { depthBuffer: false })
     this.addRT('currentScene', { depthBuffer: false })
+    this.addRT('transition', { depthBuffer: false })
+    this.addRT('ui', { depthBuffer: false })
 
     // Settings / debug
     settings.checkGPU(this.renderer)

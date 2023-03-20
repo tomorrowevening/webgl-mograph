@@ -1,9 +1,11 @@
 // Models
 import animation from '../models/animation'
+import { IS_DEV } from '../models/constants'
 import webgl from '../models/webgl'
 // Controllers
 // Utils
 import { startDebug, endDebug } from '../utils/debug'
+import scenes from './SceneController'
 
 export default class App {
 
@@ -22,29 +24,39 @@ export default class App {
   }
 
   init() {
-    //
+    scenes.init()
+    scenes.showScene('intro')
   }
 
   update() {
-    //
+    scenes.update()
   }
 
   draw() {
-    //
+    scenes.draw()
   }
 
-  protected rafUpdate = () => {
-    startDebug()
+  private cycle = () => {
     this.update()
     this.draw()
+  }
+
+  private debugRAFUpdate = () => {
+    startDebug()
+    this.cycle()
     endDebug()
+    this.afRef = window.requestAnimationFrame(this.debugRAFUpdate)
+  }
+
+  private rafUpdate = () => {
+    this.cycle()
     this.afRef = window.requestAnimationFrame(this.rafUpdate)
   }
 
   play() {
     if (this.playing) return
     this.playing = true
-    this.rafUpdate()
+    IS_DEV ? this.debugRAFUpdate() : this.rafUpdate()
   }
 
   pause() {

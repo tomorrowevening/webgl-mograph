@@ -7,6 +7,7 @@ import studio from '@theatre/studio'
 import { IS_DEV } from '../models/constants'
 // Components
 import '../scss/index.scss'
+import Debug from './debug'
 import Footer from './footer'
 import Header from './header'
 import Main from './main'
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <>
     {IS_DEV ? (
       <>
+        <Debug />
         <Header />
         <Main />
         <Footer />

@@ -13,10 +13,30 @@ const assetList: Array<File> = [
     file: 'json/animation.json',
     type: 'json',
   },
+  {
+    name: 'kroe0665',
+    file: 'json/fonts/kroe0665.json',
+    type: 'json',
+  },
+  {
+    name: 'moon_bold',
+    file: 'json/fonts/moon_bold.json',
+    type: 'json',
+  },
   //////////////////////////////////////////////////
   // Models
   //////////////////////////////////////////////////
   // Textures
+  {
+    name: 'kroe0665',
+    file: 'textures/fonts/kroe0665.png',
+    type: 'texture',
+  },
+  {
+    name: 'moon_bold',
+    file: 'textures/fonts/moon_bold.png',
+    type: 'texture',
+  },
 ]
 
 export default assetList

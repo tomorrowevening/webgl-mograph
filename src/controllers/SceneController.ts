@@ -1,7 +1,7 @@
 // Models
 import { Events, IS_DEV, threeDispatcher } from '../models/constants'
 import webgl from '../models/webgl'
-import { Scenes, Transitions } from '../types'
+import { Scenes, Transitions, UIAlign } from '../types'
 // Scenes
 import BaseScene from '../scenes/BaseScene'
 import CompositeScene from '../scenes/composite'
@@ -14,7 +14,9 @@ import WipeTransition from '../materials/transitions/WipeTransition'
 // Utils
 import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
-import { Mesh } from 'three'
+import { Material, Mesh, Texture, Vector2 } from 'three'
+import UIMesh from '../mesh/UIMesh'
+import TextMesh from '../mesh/TextMesh'
 
 class SceneController {
   // Scenes
@@ -106,6 +108,7 @@ class SceneController {
 
     this.ui.draw()
     this.composite.draw()
+    this.currentScene?.postDraw()
   }
 
   resize(width: number, height: number) {
@@ -120,6 +123,25 @@ class SceneController {
   }
 
   //////////////////////////////////////////////////
+  // UI
+
+  addMesh(
+    name: string,
+    width: number,
+    height: number,
+    texture: Texture | null,
+    align: UIAlign = 'TL',
+    anchor = new Vector2(),
+    material?: Material,
+  ): UIMesh {
+    return this.ui.addMesh(name, width, height, texture, align, anchor, material)
+  }
+
+  addText(name: string, options: any): TextMesh {
+    return this.ui.addText(name, options)
+  }
+
+  //////////////////////////////////////////////////
   // Events
 
   /**
@@ -127,7 +149,6 @@ class SceneController {
    * If a `currentScene` exists, move to `previousScene` and prepare for hiding.
    */
   private onSceneShow = (evt: any) => {
-    console.log('SceneController::onSceneShow', evt)
     const sceneName = evt.scene as Scenes
     let newScene: BaseScene | undefined = undefined
     switch (sceneName) {

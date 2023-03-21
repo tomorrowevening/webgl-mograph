@@ -2,7 +2,7 @@ import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
-import { RepeatWrapping, Texture } from 'three'
+import { Camera, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three'
 //
 import { clamp } from './math'
 import { settings } from '../models/settings'
@@ -13,6 +13,8 @@ let stats: any // performance
 export let appTab: any
 export let scenesTab: any
 export let systemTab: any
+export let toolsTab: any
+const timers: Array<any> = []
 
 //////////////////////////////////////////////////
 //
@@ -30,13 +32,14 @@ export function initDebug() {
   // @ts-ignore
   const container = gui.addFolder({ title: 'GUI', expanded: false })
   tabs = container.addTab({
-    pages: [{ title: 'App' }, { title: 'Scenes' }, { title: 'System' }],
+    pages: [{ title: 'App' }, { title: 'Scenes' }, { title: 'System' }, { title: 'Tools' }],
   })
 
   // Tabs
   appTab = tabs.pages[0]
   scenesTab = tabs.pages[1]
   systemTab = tabs.pages[2]
+  toolsTab = tabs.pages[3]
 
   stats = systemTab.addBlade({
     view: 'fpsgraph',
@@ -110,6 +113,22 @@ export const debugFile = (parentFolder: any, label: string, onLoad: (result: any
   })
 }
 
+export const debugBlade = (parentFolder: any, params: any): any => {
+  const pane = parentFolder !== undefined ? parentFolder : appTab
+  const added = pane.addBlade(params)
+  if (params.onChange !== undefined) {
+    // @ts-ignore
+    added.on('click', (evt: any) => {
+      params.onChange({
+        name: evt.cell.title,
+        column: evt.index[0],
+        row: evt.index[1],
+      })
+    })
+  }
+  return added
+}
+
 export const debugButton = (parentFolder: any, label: string, callback: () => void, props?: any): any => {
   const pane = parentFolder !== undefined ? parentFolder : appTab
   const btn = pane.addButton({
@@ -118,6 +137,166 @@ export const debugButton = (parentFolder: any, label: string, callback: () => vo
   })
   btn.on('click', callback)
   return btn
+}
+
+export const debugCamera = (parentFolder: any, cam: Camera, helper?: any): any => {
+  const folderName = cam.name.length > 0 ? cam.name : 'Camera'
+  const cameraFolder = debugFolder(folderName, parentFolder)
+  debugInput(cameraFolder, cam, 'type')
+  if (cam instanceof PerspectiveCamera) {
+    const camera = cam as PerspectiveCamera
+    debugInput(cameraFolder, camera, 'near', {
+      min: 0,
+      max: 100,
+      step: 0.001,
+      onChange: (value: number) => {
+        camera.near = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'far', {
+      min: 0,
+      max: 10000,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.far = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'filmOffset', {
+      min: -100,
+      max: 100,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.filmOffset = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'focus', {
+      min: 0,
+      max: 100,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.focus = value
+        camera.updateProjectionMatrix()
+      },
+    })
+    debugInput(cameraFolder, camera, 'fov', {
+      min: 0,
+      max: 120,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.fov = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'zoom', {
+      min: 0,
+      max: 2000,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.zoom = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+  } else if (cam instanceof OrthographicCamera) {
+    const camera = cam as OrthographicCamera
+    debugInput(cameraFolder, camera, 'near', {
+      min: 0,
+      max: 10000,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.near = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'far', {
+      min: 0,
+      max: 10000,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.far = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'zoom', {
+      min: 0,
+      max: 2000,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.zoom = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'left', {
+      min: -window.innerWidth,
+      max: 0,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.left = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'right', {
+      min: 0,
+      max: window.innerWidth,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.right = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'top', {
+      min: 0,
+      max: window.innerHeight,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.top = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+    debugInput(cameraFolder, camera, 'bottom', {
+      min: -window.innerHeight,
+      max: 0,
+      step: 0.01,
+      onChange: (value: number) => {
+        camera.bottom = value
+        camera.updateProjectionMatrix()
+        helper?.update()
+      },
+    })
+  }
+  const posInput = debugInput(cameraFolder, cam, 'position')
+  const rotInput = debugInput(cameraFolder, cam, 'rotation')
+  const timer = setInterval(() => {
+    if (posInput !== undefined) {
+      // @ts-ignore
+      posInput.refresh()
+      // @ts-ignore
+      rotInput.refresh()
+    } else {
+      // Remove from list
+      for (let i = 0; i < timers.length; i++) {
+        if (timers[i] === timer) {
+          timers.splice(i, 1)
+          break
+        }
+      }
+      clearInterval(timer)
+    }
+  }, 250)
+  timers.push(timer)
 }
 
 export const debugColor = (parentFolder: any, obj: any, value: string, props?: any): any => {

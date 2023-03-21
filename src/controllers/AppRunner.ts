@@ -3,9 +3,9 @@ import animation from '../models/animation'
 import { IS_DEV } from '../models/constants'
 import webgl from '../models/webgl'
 // Controllers
+import scenes from './SceneController'
 // Utils
 import { startDebug, endDebug } from '../utils/debug'
-import scenes from './SceneController'
 
 export default class App {
   private playing = false

@@ -2,10 +2,10 @@
 import { Material, Object3D, OrthographicCamera, Scene, Texture, Vector2 } from 'three'
 // Models
 import webgl from '../../models/webgl'
+import { UIAlign } from '../../types'
 // Views
 import UIMesh from '../../mesh/UIMesh'
 import TextMesh from '../../mesh/TextMesh'
-import { UIAlign } from '../../types'
 // Utils
 import { dispose, updateCameraOrtho } from '../../utils/three'
 
@@ -21,10 +21,10 @@ export default class UIScene extends Scene {
     this.resize(window.innerWidth, window.innerHeight)
   }
 
-  draw(): void {
+  draw(redraw = false): void {
     const total = this.children.length
     // Only render when updated
-    if (total > 0 || this.childrenCount !== total) {
+    if ((total > 0 && this.childrenCount !== total) || redraw) {
       const renderTarget = webgl.renderTargets.get('ui')
       if (renderTarget) webgl.renderer.setRenderTarget(renderTarget)
       webgl.renderer.setClearAlpha(0)
@@ -40,6 +40,7 @@ export default class UIScene extends Scene {
       const mesh = child as UIMesh
       mesh.reposition(width, height)
     })
+    this.draw(true)
   }
 
   clearUI(): void {
@@ -70,6 +71,7 @@ export default class UIScene extends Scene {
     const resolution = new Vector2()
     webgl.renderer.getSize(resolution)
     mesh.reposition(resolution.x, resolution.y)
+    console.log(mesh)
     return mesh
   }
 }

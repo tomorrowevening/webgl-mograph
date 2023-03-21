@@ -36,7 +36,7 @@ void main() {
 
 #ifdef DEBUG_GRID
   vec2 pos = fragCoord.xy + vec2(gridSize.y);
-  color.rgb += debugGrid(pos, resolution, gridOffset, gridSize.x, gridSize.y);
+  color += vec4(debugGrid(pos, resolution, gridOffset, gridSize.x, gridSize.y), 1.0);
 #endif
 
   gl_FragColor = color;

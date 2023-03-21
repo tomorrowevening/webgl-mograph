@@ -8,7 +8,7 @@ import BaseScene from '../BaseScene'
 
 export default class CreditsScene extends BaseScene {
   constructor() {
-    super()
+    super('credits')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1500)
     this.camera.position.z = 150
   }

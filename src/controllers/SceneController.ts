@@ -108,6 +108,7 @@ class SceneController {
 
     this.ui.draw()
     this.composite.draw()
+    this.currentScene?.postDraw()
   }
 
   resize(width: number, height: number) {

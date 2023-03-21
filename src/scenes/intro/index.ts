@@ -11,7 +11,7 @@ import scenes from '../../controllers/SceneController'
 
 export default class IntroScene extends BaseScene {
   constructor() {
-    super()
+    super('intro')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
     this.camera.position.z = 150
   }

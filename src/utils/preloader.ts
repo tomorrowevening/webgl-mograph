@@ -18,8 +18,37 @@ const draco = new DRACOLoader()
 draco.setDecoderPath('/libs/draco/')
 
 async function createAssets(loaded: any) {
-  return new Promise((resolve) => {
+  function makeImage(name: string, blob: Blob): Promise<void> {
+    return new Promise((resolveImg) => {
+      const img = new Image()
+      img.onload = () => {
+        assets.textures.set(name, img)
+        resolveImg()
+      }
+      img.src = URL.createObjectURL(blob)
+    })
+  }
+
+  function makeTexture(name: string, blob: Blob): Promise<void> {
+    return new Promise((resolveImg) => {
+      const img = new Image()
+      img.onload = () => {
+        const texture = new Texture(img)
+        texture.needsUpdate = true
+        assets.textures.set(name, texture)
+        resolveImg()
+      }
+      img.src = URL.createObjectURL(blob)
+    })
+  }
+
+  return new Promise((resolveAll) => {
     const promises = []
+
+    // Images
+    for (const [key, value] of loaded.images) {
+      promises.push(makeImage(key, value))
+    }
 
     // JSON
     for (const [key, value] of loaded.json) {
@@ -39,12 +68,11 @@ async function createAssets(loaded: any) {
 
     // Textures
     for (const [key, value] of loaded.textures) {
-      const texture = new Texture(value)
-      assets.textures.set(key, texture)
+      promises.push(makeTexture(key, value))
     }
 
     Promise.all(promises).then(() => {
-      resolve(assets)
+      resolveAll(assets)
     })
   })
 }

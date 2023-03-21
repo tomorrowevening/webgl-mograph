@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import { settings } from '../../models/settings'
 // Controllers
 import AppRunner from '../../controllers/AppRunner'
-import { preloadAssets } from '../../utils/preloader'
 // Components
 import '../../scss/main.scss'
+// Utils
+import { preloadAssets } from '../../utils/preloader'
 
 export default function Main() {
   // References

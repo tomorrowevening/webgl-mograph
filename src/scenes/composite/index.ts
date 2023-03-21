@@ -16,10 +16,6 @@ export default class CompositeScene extends Scene {
     this.add(new Mesh(triangle, this.material))
   }
 
-  initDebug(): void {
-    this.material.initDebug()
-  }
-
   draw(): void {
     webgl.renderer.setRenderTarget(null)
     webgl.renderer.render(this, orthoCamera)

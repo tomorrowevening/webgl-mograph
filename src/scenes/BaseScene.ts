@@ -1,7 +1,7 @@
 // Libs
 import { OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
-import { Events, threeDispatcher } from '../models/constants'
 // Models
+import { Events, threeDispatcher } from '../models/constants'
 import webgl from '../models/webgl'
 // Controllers
 import scenes from '../controllers/SceneController'

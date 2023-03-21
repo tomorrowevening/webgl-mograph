@@ -48,10 +48,6 @@ export default class CompositeMaterial extends ShaderMaterial {
     super(defaultParams)
   }
 
-  initDebug() {
-    //
-  }
-
   setResolution(width: number, height: number): void {
     const dpr = webgl.dpr
     this.uniforms.resolution.value.set(width * dpr, height * dpr)

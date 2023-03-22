@@ -28,25 +28,25 @@ import {
   debugToggle,
   toolsTab,
 } from '../utils/debug'
+import BaseScene from '../scenes/BaseScene'
 
 export type WindowParams = {
   index: number
   name: string
-  camera?: Camera
+  camera?: PerspectiveCamera | OrthographicCamera
   pos: Vector2
   size: number
 }
 
-export default class MultiCams {
-  onChange?: (camera: Camera) => void
+export default class MultiCams extends Object3D {
+  onChange?: (camera: PerspectiveCamera | OrthographicCamera) => void
   orbits: Map<string, OrbitControls> = new Map()
-  cameras: Map<string, Camera> = new Map()
+  cameras: Map<string, PerspectiveCamera | OrthographicCamera> = new Map()
   helpers: Map<string, CameraHelper> = new Map()
   debugFolder!: FolderApi
   windowColor = new Color(0x242529)
 
-  private _activeCamera?: Camera
-  private container: Object3D
+  private _activeCamera?: PerspectiveCamera | OrthographicCamera
   private multiCamContainer: Object3D
   private camerasContainer: Object3D
   private helperContainer: Object3D
@@ -56,8 +56,11 @@ export default class MultiCams {
   private currentOrbit?: OrbitControls
   private debugIndex: number
   private windows: Array<WindowParams> = []
+  private addedCameras: Array<string> = []
 
-  constructor(container: Object3D, onChange?: (camera: Camera) => void, useOrtho = true, zoom = 1, index = 1) {
+  constructor(onChange?: (camera: PerspectiveCamera | OrthographicCamera) => void, index = 1) {
+    super()
+
     const w = window.innerWidth
     const h = window.innerHeight
     const left = w / -2
@@ -66,12 +69,11 @@ export default class MultiCams {
     const bottom = h / -2
     const near = 0
     const far = 3000
-    this.container = container
     this.debugIndex = index
 
     this.multiCamContainer = new Object3D()
     this.multiCamContainer.name = 'multiCams'
-    this.container.add(this.multiCamContainer)
+    this.add(this.multiCamContainer)
 
     this.camerasContainer = new Object3D()
     this.camerasContainer.name = 'cameras'
@@ -89,97 +91,49 @@ export default class MultiCams {
     debugCamera.name = 'debug'
     debugCamera.position.set(scale, scale, scale).divideScalar(4)
     debugCamera.lookAt(0, 0, 0)
-    this.addCamera(debugCamera, true, false)
+    this.addCamera(debugCamera, true, false, false)
 
     // Ortho
     const orthoCamera = new OrthographicCamera(left, right, top, bottom, near, far)
     orthoCamera.name = 'ortho'
     orthoCamera.position.set(scale, scale, scale)
     orthoCamera.lookAt(0, 0, 0)
-    orthoCamera.zoom = zoom
-    this.addCamera(orthoCamera, true, false)
+    this.addCamera(orthoCamera, true, false, false)
 
-    if (useOrtho) {
-      // Left
-      const leftCamera = new OrthographicCamera(left, right, top, bottom, near, far)
-      leftCamera.name = 'left'
-      leftCamera.position.set(-scale, 0, 0)
-      leftCamera.lookAt(0, 0, 0)
-      leftCamera.zoom = zoom
-      this.addCamera(leftCamera, false, false)
+    // Left
+    const leftCamera = new OrthographicCamera(left, right, top, bottom, near, far)
+    leftCamera.name = 'left'
+    leftCamera.position.set(-scale, 0, 0)
+    leftCamera.lookAt(0, 0, 0)
+    this.addCamera(leftCamera, false, false, false)
 
-      // Right
-      const rightCamera = new OrthographicCamera(left, right, top, bottom, near, far)
-      rightCamera.name = 'right'
-      rightCamera.position.set(scale, 0, 0)
-      rightCamera.lookAt(0, 0, 0)
-      rightCamera.zoom = zoom
-      this.addCamera(rightCamera, false, false)
+    // Right
+    const rightCamera = new OrthographicCamera(left, right, top, bottom, near, far)
+    rightCamera.name = 'right'
+    rightCamera.position.set(scale, 0, 0)
+    rightCamera.lookAt(0, 0, 0)
+    this.addCamera(rightCamera, false, false, false)
 
-      // Top
-      const topCamera = new OrthographicCamera(left, right, top, bottom, near, far)
-      topCamera.name = 'top'
-      topCamera.position.set(0, scale, 0)
-      topCamera.lookAt(0, 0, 0)
-      topCamera.zoom = zoom
-      this.addCamera(topCamera, false, false)
+    // Top
+    const topCamera = new OrthographicCamera(left, right, top, bottom, near, far)
+    topCamera.name = 'top'
+    topCamera.position.set(0, scale, 0)
+    topCamera.lookAt(0, 0, 0)
+    this.addCamera(topCamera, false, false, false)
 
-      // Front
-      const frontCamera = new OrthographicCamera(left, right, top, bottom, near, far)
-      frontCamera.name = 'front'
-      frontCamera.position.set(0, 0, scale)
-      frontCamera.lookAt(0, 0, 0)
-      frontCamera.zoom = zoom
-      this.addCamera(frontCamera, false, false)
+    // Front
+    const frontCamera = new OrthographicCamera(left, right, top, bottom, near, far)
+    frontCamera.name = 'front'
+    frontCamera.position.set(0, 0, scale)
+    frontCamera.lookAt(0, 0, 0)
+    this.addCamera(frontCamera, false, false, false)
 
-      // Back
-      const backCamera = new OrthographicCamera(left, right, top, bottom, near, far)
-      backCamera.name = 'back'
-      backCamera.position.set(0, 0, -scale)
-      backCamera.lookAt(0, 0, 0)
-      backCamera.zoom = zoom
-      this.addCamera(backCamera, false, false)
-    } else {
-      // Left
-      const leftCamera = new PerspectiveCamera(60, w / h, 0.01, 2000)
-      leftCamera.name = 'left'
-      leftCamera.position.set(-scale, 0, 0)
-      leftCamera.lookAt(0, 0, 0)
-      leftCamera.zoom = zoom
-      this.addCamera(leftCamera, false, false)
-
-      // Right
-      const rightCamera = new PerspectiveCamera(60, w / h, 0.01, 2000)
-      rightCamera.name = 'right'
-      rightCamera.position.set(scale, 0, 0)
-      rightCamera.lookAt(0, 0, 0)
-      rightCamera.zoom = zoom
-      this.addCamera(rightCamera, false, false)
-
-      // Top
-      const topCamera = new PerspectiveCamera(60, w / h, 0.01, 2000)
-      topCamera.name = 'top'
-      topCamera.position.set(0, scale, 0)
-      topCamera.lookAt(0, 0, 0)
-      topCamera.zoom = zoom
-      this.addCamera(topCamera, false, false)
-
-      // Front
-      const frontCamera = new PerspectiveCamera(60, w / h, 0.01, 2000)
-      frontCamera.name = 'front'
-      frontCamera.position.set(0, 0, scale)
-      frontCamera.lookAt(0, 0, 0)
-      frontCamera.zoom = zoom
-      this.addCamera(frontCamera, false, false)
-
-      // Back
-      const backCamera = new PerspectiveCamera(60, w / h, 0.01, 2000)
-      backCamera.name = 'back'
-      backCamera.position.set(0, 0, -scale)
-      backCamera.lookAt(0, 0, 0)
-      backCamera.zoom = zoom
-      this.addCamera(backCamera, false, false)
-    }
+    // Back
+    const backCamera = new OrthographicCamera(left, right, top, bottom, near, far)
+    backCamera.name = 'back'
+    backCamera.position.set(0, 0, -scale)
+    backCamera.lookAt(0, 0, 0)
+    this.addCamera(backCamera, false, false, false)
 
     // TransformControls
     Transformer.addEventListener(TransformController.DRAG_START, this.onTransformDrag)
@@ -192,6 +146,16 @@ export default class MultiCams {
     Transformer.removeEventListener(TransformController.DRAG_START, this.onTransformDrag)
     Transformer.removeEventListener(TransformController.DRAG_END, this.onTransformEnd)
     this.debugFolder.dispose()
+  }
+
+  changeScene(scene: BaseScene) {
+    this.clearCameras()
+    scene.utils.add(this.multiCamContainer)
+    scene.cameras.children.forEach((obj: Object3D) => {
+      if (obj instanceof PerspectiveCamera || obj instanceof OrthographicCamera) {
+        this.addCamera(obj)
+      }
+    })
   }
 
   reload(): void {
@@ -207,12 +171,19 @@ export default class MultiCams {
     }
   }
 
-  addCamera(camera: Camera, enableRotate = true, reloadDebug = true): OrbitControls {
+  addCamera(
+    camera: PerspectiveCamera | OrthographicCamera,
+    enableRotate = true,
+    reloadDebug = true,
+    sceneCamera = true,
+  ): OrbitControls {
     this.cameras.set(camera.name, camera)
 
     if (camera.parent === null) {
       this.camerasContainer.add(camera)
     }
+
+    if (sceneCamera) this.addedCameras.push(camera.name)
 
     // Helper
     const addHelper = enableRotate || reloadDebug
@@ -232,6 +203,23 @@ export default class MultiCams {
     this.orbits.set(camera.name, orbit)
     if (reloadDebug) this.reload()
     return orbit
+  }
+
+  removeCamera(name: string) {
+    const camera = this.camerasContainer.getObjectByName(name)
+    if (camera !== undefined) this.camerasContainer.remove(camera)
+    this.helpers.get(name)?.dispose()
+    this.helpers.delete(name)
+    this.orbits.get(name)?.dispose()
+    this.orbits.delete(name)
+  }
+
+  clearCameras() {
+    this.addedCameras.forEach((name: string) => {
+      this.removeCamera(name)
+    })
+    this.addedCameras = []
+    this.activeCamera = undefined
   }
 
   update(): void {
@@ -401,14 +389,14 @@ export default class MultiCams {
           controlsEnabled = this.currentOrbit.enabled
           this.currentOrbit.enabled = false
         }
-        const cam = this.cameras.get(name) as Camera
+        const cam = this.cameras.get(name)
         this.activeCamera = cam
 
         if (this.currentOrbit !== undefined) {
           this.currentOrbit.enabled = controlsEnabled
           this.currentOrbit.screenSpacePanning = this.orbitScreenSpace
         }
-        if (this.onChange !== undefined) this.onChange(this.activeCamera)
+        if (this.onChange !== undefined) this.onChange(this.activeCamera!)
       },
     })
     debugInput(this.debugFolder, this, 'enabled', {
@@ -476,11 +464,11 @@ export default class MultiCams {
     return this.orbitScreenSpace
   }
 
-  get activeCamera(): Camera | undefined {
+  get activeCamera(): PerspectiveCamera | OrthographicCamera | undefined {
     return this._activeCamera
   }
 
-  set activeCamera(value: Camera | undefined) {
+  set activeCamera(value: PerspectiveCamera | OrthographicCamera | undefined) {
     this._activeCamera = value
     if (value !== undefined) {
       Transformer.updateCamera(value)

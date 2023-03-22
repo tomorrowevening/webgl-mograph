@@ -1,22 +1,27 @@
+// Libs
+import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2 } from 'three'
 // Models
 import { Events, IS_DEV, threeDispatcher } from '../models/constants'
 import webgl from '../models/webgl'
 import { Scenes, Transitions, UIAlign } from '../types'
-// Scenes
+// Views
 import BaseScene from '../scenes/BaseScene'
 import CompositeScene from '../scenes/composite'
 import IntroScene from '../scenes/intro'
 import CreditsScene from '../scenes/credits'
 import UIScene from '../scenes/ui'
+import UIMesh from '../mesh/UIMesh'
+import TextMesh from '../mesh/TextMesh'
 // Transitions
 import Transition from '../materials/transitions/Transition'
 import WipeTransition from '../materials/transitions/WipeTransition'
+// Tools
+import MultiCams from '../tools/MultiCams'
+import SplineEditor from '../tools/SplineEditor'
 // Utils
-import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
-import { Material, Mesh, Texture, Vector2 } from 'three'
-import UIMesh from '../mesh/UIMesh'
-import TextMesh from '../mesh/TextMesh'
+import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
+import Transformer from '../tools/Transformer'
 
 class SceneController {
   // Scenes
@@ -28,6 +33,10 @@ class SceneController {
   // Transitioning
   transition?: Transition | undefined
   transitionMesh?: Mesh | undefined
+
+  // Tools
+  multiCams?: MultiCams
+  splineEditor?: SplineEditor
 
   init() {
     if (IS_DEV) this.initDebug()
@@ -85,11 +94,29 @@ class SceneController {
     debugLerp(scenesTab, 'Progress', (progress: number) => {
       this.transitionProgress = progress
     })
+
+    this.multiCams = new MultiCams((camera: PerspectiveCamera | OrthographicCamera) => {
+      this.splineEditor!.camera = camera
+      Transformer.updateCamera(camera)
+      this.currentScene!.updateCamera(camera)
+    })
+    this.splineEditor = new SplineEditor()
+  }
+
+  dispose() {
+    if (this.currentScene !== undefined) dispose(this.currentScene)
+    if (this.previousScene !== undefined) dispose(this.previousScene)
+    if (this.composite !== undefined) dispose(this.composite)
+    if (this.ui !== undefined) dispose(this.ui)
+    if (IS_DEV) {
+      this.splineEditor?.dispose()
+    }
   }
 
   update() {
     this.previousScene?.update()
     this.currentScene?.update()
+    if (IS_DEV) this.multiCams?.update()
   }
 
   draw() {
@@ -116,6 +143,9 @@ class SceneController {
     this.currentScene?.resize(width, height)
     this.ui.resize(width, height)
     this.composite.resize(width, height)
+    if (IS_DEV) {
+      this.multiCams?.resize(width, height)
+    }
   }
 
   showScene(name: Scenes, transition?: Transitions): void {
@@ -179,6 +209,20 @@ class SceneController {
 
       this.currentScene = newScene
       this.currentScene.init().then(() => {
+        if (IS_DEV) {
+          Transformer.clear()
+
+          // Multi-Cameras
+          this.multiCams?.clearCameras()
+          this.currentScene!.utils.add(this.multiCams!)
+          this.multiCams?.addCamera(this.currentScene!.camera)
+
+          // Splines
+          this.splineEditor!.dispose()
+          this.currentScene!.utils.add(this.splineEditor!)
+          this.splineEditor!.camera = this.currentScene!.camera
+          this.splineEditor!.initDebug()
+        }
         threeDispatcher.dispatchEvent({ type: Events.SCENE_HIDE })
         this.currentScene!.show()
       })

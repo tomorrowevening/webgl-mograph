@@ -13,6 +13,7 @@ export default class IntroScene extends BaseScene {
   constructor() {
     super('intro')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
+    this.camera.name = 'introMainCam'
     this.camera.position.z = 150
   }
 

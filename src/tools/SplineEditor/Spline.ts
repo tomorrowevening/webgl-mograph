@@ -58,7 +58,7 @@ export default class Spline extends Object3D {
   private draggedMat = new MeshBasicMaterial()
 
   constructor(name: string, camera: Camera) {
-    const color = new Color(lerp(0.5, 1, Math.random()), lerp(0.5, 1, Math.random()), lerp(0.5, 1, Math.random()))
+    const color = new Color(0xff00ff)
     super()
     this.name = name
 
@@ -359,6 +359,7 @@ export default class Spline extends Object3D {
     debugButton(this.debugFolder, 'Delete Spline', () => {
       dispose(this)
     })
+    debugButton(this.debugFolder, 'Update Spline', this.updateSpline)
 
     this._transform = Transformer.add(`${this.name} controls`, this.debugFolder)
     this._transform.camera = this._camera

@@ -10,6 +10,7 @@ export default class CreditsScene extends BaseScene {
   constructor() {
     super('credits')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1500)
+    this.camera.name = 'creditsMainCam'
     this.camera.position.z = 150
   }
 

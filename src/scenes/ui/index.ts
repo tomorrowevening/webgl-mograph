@@ -71,7 +71,6 @@ export default class UIScene extends Scene {
     const resolution = new Vector2()
     webgl.renderer.getSize(resolution)
     mesh.reposition(resolution.x, resolution.y)
-    console.log(mesh)
     return mesh
   }
 }

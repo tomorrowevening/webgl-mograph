@@ -119,6 +119,10 @@ export default class BaseScene extends Scene {
     // update camera
   }
 
+  updateCamera(camera: PerspectiveCamera | OrthographicCamera) {
+    this.camera = camera
+  }
+
   get transitionProgress(): number {
     return scenes.transitionProgress
   }

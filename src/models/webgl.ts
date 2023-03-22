@@ -13,7 +13,7 @@ class WebGLSingleton {
       powerPreference: 'high-performance',
       antialias: false,
       stencil: false,
-      depth: false,
+      // depth: false,
     })
     this.renderer.autoClear = false
     this.renderer.info.autoReset = false // debug performance

@@ -1,11 +1,11 @@
-import { Camera, CatmullRomCurve3, Object3D, Vector3 } from 'three'
+import { Camera, CatmullRomCurve3, Object3D, PerspectiveCamera, Vector3 } from 'three'
 import { FolderApi } from 'tweakpane'
 // Models
 import { IS_DEV } from '../../models/constants'
+import Spline from './Spline'
 // Utils
 import { debugButton, debugFolder, debugInput, toolsTab } from '../../utils/debug'
 import { dispose } from '../../utils/three'
-import Spline from './Spline'
 
 let splinesCreated = 0
 
@@ -21,17 +21,21 @@ export type SplineJSON = {
 export default class SplineEditor extends Object3D {
   public defaultScale = 1
   private _debugFolder?: FolderApi
-  private _camera: Camera
+  private _camera: Camera = new PerspectiveCamera(60, 1, 1, 1000)
 
-  constructor(camera: Camera) {
+  constructor() {
     super()
     this.name = 'SplineEditor'
-    this._camera = camera
     this.visible = false
   }
 
   dispose() {
     this._debugFolder?.dispose()
+    const total = this.children.length - 1
+    for (let i = total; i > -1; i--) {
+      const spline = this.children[i] as Spline
+      dispose(spline)
+    }
   }
 
   createSpline = (defaultPoints: Array<Vector3> = []): Spline => {

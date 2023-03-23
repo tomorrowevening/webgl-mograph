@@ -18,10 +18,10 @@ import WipeTransition from '../materials/transitions/WipeTransition'
 // Tools
 import MultiCams from '../tools/MultiCams'
 import SplineEditor from '../tools/SplineEditor'
+import Transformer from '../tools/Transformer'
 // Utils
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
 import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
-import Transformer from '../tools/Transformer'
 
 class SceneController {
   // Scenes

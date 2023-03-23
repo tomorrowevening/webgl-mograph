@@ -14,6 +14,11 @@ const assetList: Array<File> = [
     type: 'json',
   },
   {
+    name: 'anurati',
+    file: 'json/fonts/anurati.json',
+    type: 'json',
+  },
+  {
     name: 'kroe0665',
     file: 'json/fonts/kroe0665.json',
     type: 'json',
@@ -27,6 +32,11 @@ const assetList: Array<File> = [
   // Models
   //////////////////////////////////////////////////
   // Textures
+  {
+    name: 'anurati',
+    file: 'textures/fonts/anurati.png',
+    type: 'texture',
+  },
   {
     name: 'kroe0665',
     file: 'textures/fonts/kroe0665.png',

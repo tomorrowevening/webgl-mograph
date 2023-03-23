@@ -25,7 +25,7 @@ export default class UIMesh extends Mesh implements BaseUI {
     material?: Material,
   ) {
     const mat = material !== undefined ? material : new UIMaterial({ map: texture })
-    super(planeTL, mat)
+    super(planeTL.clone(), mat)
     this.name = name
     // Visual
     this.align = align

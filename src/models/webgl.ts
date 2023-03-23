@@ -13,14 +13,13 @@ class WebGLSingleton {
       powerPreference: 'high-performance',
       antialias: false,
       stencil: false,
-      // depth: false,
     })
     this.renderer.autoClear = false
-    this.renderer.info.autoReset = false // debug performance
+    this.renderer.info.autoReset = !IS_DEV // debug performance
     this.renderer.setPixelRatio(settings.quality === 'low' ? 1 : devicePixelRatio)
 
-    this.addRT('previousScene', { depthBuffer: false })
-    this.addRT('currentScene', { depthBuffer: false })
+    this.addRT('previousScene')
+    this.addRT('currentScene')
     this.addRT('transition', { depthBuffer: false })
     this.addRT('ui', { depthBuffer: false })
 

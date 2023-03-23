@@ -5,7 +5,7 @@ import webgl from '../models/webgl'
 // Controllers
 import scenes from './SceneController'
 // Utils
-import { startDebug, endDebug } from '../utils/debug'
+import { startDebug, endDebug, debugWebGL } from '../utils/debug'
 
 export default class App {
   private playing = false
@@ -20,6 +20,8 @@ export default class App {
     window.addEventListener('resize', this.resize, false)
     document.addEventListener('visibilitychange', this.visibilityChange, false)
     this.resize()
+
+    if (IS_DEV) debugWebGL()
   }
 
   init() {
@@ -41,6 +43,7 @@ export default class App {
   }
 
   private debugRAFUpdate = () => {
+    webgl.renderer.info.reset()
     startDebug()
     this.cycle()
     endDebug()

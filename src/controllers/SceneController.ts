@@ -29,6 +29,7 @@ class SceneController {
   previousScene?: BaseScene | undefined
   composite!: CompositeScene
   ui!: UIScene
+  autoUpdateUI = true // true if there's gonna be animation or UI change
 
   // Transitioning
   transition?: Transition | undefined
@@ -39,7 +40,6 @@ class SceneController {
   splineEditor?: SplineEditor
 
   init() {
-    if (IS_DEV) this.initDebug()
     this.ui = new UIScene()
     this.composite = new CompositeScene()
 
@@ -47,6 +47,8 @@ class SceneController {
     threeDispatcher.addEventListener(Events.SCENE_SHOW, this.onSceneShow)
     threeDispatcher.addEventListener(Events.SCENE_HIDE, this.onSceneHide)
     threeDispatcher.addEventListener(Events.SCENE_HIDDEN, this.onSceneHidden)
+
+    if (IS_DEV) this.initDebug()
   }
 
   initDebug() {
@@ -95,12 +97,18 @@ class SceneController {
       this.transitionProgress = progress
     })
 
+    // Tools
     this.multiCams = new MultiCams((camera: PerspectiveCamera | OrthographicCamera) => {
       this.splineEditor!.camera = camera
       Transformer.updateCamera(camera)
       this.currentScene!.updateCamera(camera)
     })
     this.splineEditor = new SplineEditor()
+
+    // const rtSize = 128
+    // this.addMesh('current', rtSize, rtSize, webgl.renderTargets.get('currentScene')!.texture, 'TL', new Vector2())
+    // this.addMesh('prev', rtSize, rtSize, webgl.renderTargets.get('previousScene')!.texture, 'TL', new Vector2(rtSize))
+    // this.addMesh('transition', rtSize, rtSize, webgl.renderTargets.get('transition')!.texture, 'TL', new Vector2(rtSize*2))
   }
 
   dispose() {
@@ -133,9 +141,11 @@ class SceneController {
       renderToTexture(this.transitionMesh!, orthoCamera, transitionRT)
     }
 
-    this.ui.draw()
+    this.ui.draw(this.autoUpdateUI)
     this.composite.draw()
-    this.currentScene?.postDraw()
+    if (IS_DEV) {
+      this.multiCams?.postRender(this.currentScene!)
+    }
   }
 
   resize(width: number, height: number) {

@@ -365,7 +365,7 @@ export default class MultiCams extends Object3D {
       this.debugFolder.dispose()
     }
 
-    this.debugFolder = debugFolder('Camera Helper', toolsTab, { index: this.debugIndex })
+    this.debugFolder = debugFolder('Cameras', toolsTab, { index: this.debugIndex })
     const cameraOptions: Array<string> = []
     let longName = false
     for (const camera of this.cameras.values()) {

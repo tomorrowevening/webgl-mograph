@@ -22,14 +22,14 @@ export default class IntroScene extends BaseScene {
       const mesh = new Mesh(new BoxGeometry(100, 100, 100), new MeshNormalMaterial())
       this.add(mesh)
 
-      const font = 'moon_bold'
+      const font = 'anurati'
       const fontData = assets.json.get(font)
       const fontTex = assets.textures.get(font).clone()
       const txt = scenes.addText('Header', {
         font: fontData,
-        fontSize: 16,
+        fontSize: 24,
         map: fontTex,
-        text: 'TOMORROW EVENING',
+        text: 'TOMORROW\nEVENING',
       })
       txt.position.set(20, -20, 0)
 

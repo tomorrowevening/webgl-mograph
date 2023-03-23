@@ -1,6 +1,7 @@
 import { EventDispatcher } from 'three'
 
-export const IS_DEV = import.meta.env.DEV
+// export const IS_DEV = import.meta.env.DEV
+export const IS_DEV = true
 
 export const Events = {
   SCENE_SHOW: 'sceneShow',

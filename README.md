@@ -5,6 +5,17 @@ Real-time Motion Graphics on the web using [Three.js](https://threejs.org/) and 
 - [Fonts](fonts.md)
 - [Inspiration](inspiration.md)
 
+### Start
+
+Install
+`yarn install`
+
+Install Lygia
+`git clone https://github.com/patriciogonzalezvivo/lygia.git src/glsl`
+
+Development
+`yarn dev`
+
 ### Helpers
 
 - Add `#debugGrid` to URL to show an overlay grid to help compositing

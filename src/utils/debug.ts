@@ -1,3 +1,4 @@
+import { ACESFilmicToneMapping, CineonToneMapping, LinearToneMapping, NoToneMapping, ReinhardToneMapping } from 'three'
 import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
@@ -6,6 +7,7 @@ import { Camera, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture 
 //
 import { clamp } from './math'
 import { settings } from '../models/settings'
+import webgl from '../models/webgl'
 
 let gui: Pane
 let tabs: any
@@ -43,6 +45,78 @@ export function initDebug() {
 
   stats = systemTab.addBlade({
     view: 'fpsgraph',
+  })
+}
+
+export function debugWebGL() {
+  // Performance
+  const performanceFolder = debugFolder('Performance', systemTab)
+  const speed = 250
+  debugMonitor(performanceFolder, webgl.renderer.info.render, 'calls', {
+    interval: speed,
+    label: 'DrawCalls',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.render, 'lines', {
+    interval: speed,
+    label: 'Lines',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.render, 'points', {
+    interval: speed,
+    label: 'Points',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.render, 'triangles', {
+    interval: speed,
+    label: 'Tris',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.memory, 'geometries', {
+    interval: speed,
+    label: 'Geom',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.memory, 'textures', {
+    interval: speed,
+    label: 'Textures',
+  })
+  debugMonitor(performanceFolder, webgl.renderer.info.programs, 'length', {
+    interval: speed,
+    label: 'Programs',
+  })
+
+  // Renderer
+  const folder = debugFolder('Renderer', systemTab)
+  debugInput(folder, webgl.renderer, 'physicallyCorrectLights', { label: 'Physical Lights' })
+  const toneOptions = [NoToneMapping, LinearToneMapping, ReinhardToneMapping, CineonToneMapping, ACESFilmicToneMapping]
+  debugOptions(
+    folder,
+    'Tone Mapping',
+    [
+      {
+        text: 'None',
+        value: 0,
+      },
+      {
+        text: 'Linear',
+        value: 1,
+      },
+      {
+        text: 'Reinhard',
+        value: 2,
+      },
+      {
+        text: 'Cineon',
+        value: 3,
+      },
+      {
+        text: 'ACES Filmic',
+        value: 4,
+      },
+    ],
+    (result: number) => {
+      webgl.renderer.toneMapping = toneOptions[result]
+    },
+  )
+  debugInput(folder, webgl.renderer, 'toneMappingExposure', {
+    min: 0,
+    max: 10,
   })
 }
 
@@ -428,6 +502,11 @@ export const debugLerp = (parentFolder: any, label: string, callback: (progress:
     },
     ...props,
   })
+}
+
+export const debugMonitor = (parentFolder: any, obj: any, value: string, props?: any): any => {
+  const pane = parentFolder !== undefined ? parentFolder : appTab
+  return pane.addMonitor(obj, value, props)
 }
 
 export const debugOptions = (

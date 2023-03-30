@@ -10,9 +10,6 @@ Real-time Motion Graphics on the web using [Three.js](https://threejs.org/) and 
 Install
 `yarn install`
 
-Install Lygia
-`git clone https://github.com/patriciogonzalezvivo/lygia.git src/glsl`
-
 Development
 `yarn dev`
 

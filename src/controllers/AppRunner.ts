@@ -72,6 +72,7 @@ export default class App {
     const width = window.innerWidth
     const height = window.innerHeight
     webgl.resize(width, height)
+    scenes.resize(width, height)
   }
 
   protected visibilityChange = () => {

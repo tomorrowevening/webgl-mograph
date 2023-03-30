@@ -60,6 +60,7 @@ export default class MultiCams extends Object3D {
 
   constructor(onChange?: (camera: PerspectiveCamera | OrthographicCamera) => void, index = 1) {
     super()
+    this.name = 'MultiCams'
 
     const w = window.innerWidth
     const h = window.innerHeight
@@ -72,7 +73,7 @@ export default class MultiCams extends Object3D {
     this.debugIndex = index
 
     this.multiCamContainer = new Object3D()
-    this.multiCamContainer.name = 'multiCams'
+    this.multiCamContainer.name = 'container'
     this.add(this.multiCamContainer)
 
     this.camerasContainer = new Object3D()

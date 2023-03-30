@@ -1,0 +1,91 @@
+$barHeight: 20px;
+$maxHeight: calc($barHeight * 10);
+
+#SceneHierarchy {
+  background-color: #0d0d0d;
+  border-radius: 2px;
+  bottom: 0;
+  right: 0;
+  min-height: $barHeight;
+  overflow: hidden;
+  position: absolute;
+  width: 250px;
+  z-index: 100;
+
+  .childObject {
+    background-color: #222;
+    min-height: $barHeight;
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0d0d0d;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #666;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
+
+    button {
+      background-color: #333;
+      border: none;
+      border-bottom: 1px solid #111;
+      color: #FFF;
+      display: block;
+      height: $barHeight;
+      line-height: calc($barHeight - 1px);
+      padding: 0;
+      outline: none;
+      position: relative;
+      text-align: left;
+      width: 100%;
+
+      &:hover {
+        background-color: #444;
+      }
+
+      .status {
+        display: inline-block;
+        height: calc($barHeight - 1px);
+        width: calc($barHeight - 1px);
+        position: absolute;
+        background-image: url("images/debug/icon_folder.png");
+        background-position-x: 2px;
+        background-position-y: 2px;
+        background-size: 32px 16px;
+        transform: scale(0.8);
+        top: 0px
+      }
+
+      .name {
+        position: absolute;
+        left: 5px;
+        top: 0px
+      }
+
+      .children {
+        position: absolute;
+        right: 5px;
+        top: 0px
+      }
+    }
+
+    .container {
+      padding-left: 5px;
+      height: auto;
+      overflow: auto;
+      max-height: $maxHeight;
+
+      &.closed {
+        height: 0;
+        overflow: hidden;
+      }
+    }
+  }
+}

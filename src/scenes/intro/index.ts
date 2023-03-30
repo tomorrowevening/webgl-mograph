@@ -15,12 +15,14 @@ export default class IntroScene extends BaseScene {
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
     this.camera.name = 'introMainCam'
     this.camera.position.z = 150
+    this.cameras.add(this.camera)
   }
 
   protected override initMesh(): Promise<void> {
     return new Promise((resolve) => {
       const mesh = new Mesh(new BoxGeometry(100, 100, 100), new MeshNormalMaterial())
-      this.add(mesh)
+      mesh.name = 'boxMesh'
+      this.world.add(mesh)
 
       const font = 'anurati'
       const fontData = assets.json.get(font)
@@ -31,6 +33,7 @@ export default class IntroScene extends BaseScene {
         map: fontTex,
         text: 'TOMORROW\nEVENING',
       })
+      txt.name = 'header'
       txt.position.set(20, -20, 0)
 
       resolve()

@@ -27,8 +27,8 @@ class SceneController {
   // Scenes
   currentScene?: BaseScene | undefined
   previousScene?: BaseScene | undefined
-  composite!: CompositeScene
-  ui!: UIScene
+  composite?: CompositeScene
+  ui?: UIScene
   autoUpdateUI = true // true if there's gonna be animation or UI change
 
   // Transitioning
@@ -78,16 +78,16 @@ class SceneController {
     ]
     const transitionTo = {
       scene: '',
-      transition: '',
+      transition: undefined,
     }
     debugOptions(scenesTab, 'Scene', sceneOptions, (value: any) => {
       transitionTo.scene = value
     })
     debugOptions(scenesTab, 'Transition', transitionOptions, (value: any) => {
-      transitionTo.transition = value
+      transitionTo.transition = value.length > 0 ? value : undefined
     })
     debugButton(scenesTab, 'Transition', () => {
-      if (transitionTo.scene.length > 0 && transitionTo.transition.length > 0) {
+      if (transitionTo.scene.length > 0) {
         console.log(`transition to: ${transitionTo.scene} with: ${transitionTo.transition}`)
         // @ts-ignore
         this.showScene(transitionTo.scene, transitionTo.transition)
@@ -141,8 +141,8 @@ class SceneController {
       renderToTexture(this.transitionMesh!, orthoCamera, transitionRT)
     }
 
-    this.ui.draw(this.autoUpdateUI)
-    this.composite.draw()
+    this.ui?.draw(this.autoUpdateUI)
+    this.composite?.draw()
     if (IS_DEV) {
       this.multiCams?.postRender(this.currentScene!)
     }
@@ -151,8 +151,8 @@ class SceneController {
   resize(width: number, height: number) {
     this.previousScene?.resize(width, height)
     this.currentScene?.resize(width, height)
-    this.ui.resize(width, height)
-    this.composite.resize(width, height)
+    this.ui?.resize(width, height)
+    this.composite?.resize(width, height)
     if (IS_DEV) {
       this.multiCams?.resize(width, height)
     }
@@ -174,11 +174,11 @@ class SceneController {
     anchor = new Vector2(),
     material?: Material,
   ): UIMesh {
-    return this.ui.addMesh(name, width, height, texture, align, anchor, material)
+    return this.ui!.addMesh(name, width, height, texture, align, anchor, material)
   }
 
   addText(name: string, options: any): TextMesh {
-    return this.ui.addText(name, options)
+    return this.ui!.addText(name, options)
   }
 
   //////////////////////////////////////////////////
@@ -209,7 +209,7 @@ class SceneController {
       }
 
       this.transitionMesh = new Mesh(triangle.clone(), this.transition)
-      this.composite.transitioning = true
+      if (this.composite !== undefined) this.composite.transitioning = true
     }
     // Ensure there's a scene to be shown
     if (newScene !== undefined) {
@@ -219,6 +219,7 @@ class SceneController {
 
       this.currentScene = newScene
       this.currentScene.init().then(() => {
+        threeDispatcher.dispatchEvent({ type: Events.SCENE_READY })
         if (IS_DEV) {
           Transformer.clear()
 
@@ -257,7 +258,7 @@ class SceneController {
       dispose(this.transitionMesh!)
       this.transition = undefined
       this.transitionMesh = undefined
-      this.composite.transitioning = false
+      if (this.composite !== undefined) this.composite.transitioning = false
     }
     this.previousScene = undefined
   }

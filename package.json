@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "clean": "rm -R node_modules && rm -R node_modules src/glsl/lygia",
+    "install": "git clone https://github.com/patriciogonzalezvivo/lygia.git src/glsl/lygia && yarn",
+    "dev": "vite --open",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint --fix -c .eslintrc --ignore-path .eslintignore src"

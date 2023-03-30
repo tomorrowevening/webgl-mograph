@@ -14,9 +14,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FolderApi } from 'tweakpane'
 // Models
 import webgl from '../models/webgl'
-// Tools
+// Views
+import BaseScene from '../scenes/BaseScene'
+// Tools / Utils
 import Transformer, { TransformController } from './Transformer'
-// Utils
 import {
   debugBlade,
   debugButton,
@@ -28,7 +29,7 @@ import {
   debugToggle,
   toolsTab,
 } from '../utils/debug'
-import BaseScene from '../scenes/BaseScene'
+import { dispose } from '../utils/three'
 
 export type WindowParams = {
   index: number
@@ -151,16 +152,15 @@ export default class MultiCams extends Object3D {
 
   changeScene(scene: BaseScene) {
     this.clearCameras()
+    this.debugFolder.dispose()
+
+    this.initDebug()
     scene.utils.add(this.multiCamContainer)
     scene.cameras.children.forEach((obj: Object3D) => {
       if (obj instanceof PerspectiveCamera || obj instanceof OrthographicCamera) {
         this.addCamera(obj)
       }
     })
-  }
-
-  reload(): void {
-    this.initDebug()
   }
 
   resize(width: number, height: number): void {
@@ -202,17 +202,23 @@ export default class MultiCams extends Object3D {
     orbit.enableDamping = true
     orbit.enableRotate = enableRotate
     this.orbits.set(camera.name, orbit)
-    if (reloadDebug) this.reload()
+    if (reloadDebug) this.initDebug()
     return orbit
   }
 
   removeCamera(name: string) {
     const camera = this.camerasContainer.getObjectByName(name)
     if (camera !== undefined) this.camerasContainer.remove(camera)
+    const helper = this.helperContainer.getObjectByName(`${name}Helper`)
+    if (helper !== undefined) {
+      this.helperContainer.remove(helper)
+      dispose(helper)
+    }
     this.helpers.get(name)?.dispose()
     this.helpers.delete(name)
     this.orbits.get(name)?.dispose()
     this.orbits.delete(name)
+    this.cameras.delete(name)
   }
 
   clearCameras() {

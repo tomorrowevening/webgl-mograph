@@ -8,6 +8,9 @@ export const Events = {
   SCENE_SHOW: 'sceneShow',
   SCENE_HIDE: 'sceneHide',
   SCENE_HIDDEN: 'sceneHidden',
+  // Tools
+  UPDATE_HIERARCHY: 'updateHierarchy',
 }
 
 export const threeDispatcher = new EventDispatcher()
+export const debugDispatcher = new EventDispatcher()

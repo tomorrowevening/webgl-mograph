@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react'
 import { Object3D } from 'three'
 // Models
-import { Events, threeDispatcher } from '../../../models/constants'
+import { debugDispatcher, Events, threeDispatcher } from '../../../models/constants'
 // Controllers
 import scenes from '../../../controllers/SceneController'
+import Inspector from '../../../tools/Inspector'
 
 function determineIcon(obj: Object3D): string {
   if (obj.name === 'cameras') {
@@ -67,7 +68,7 @@ function ChildObject(props: ChildObjectProps) {
             left: hasChildren ? '20px' : '5px',
           }}
           onClick={() => {
-            // TODO: Highlight this item in an inspector to view transform/visibility/material props
+            debugDispatcher.dispatchEvent({ type: Inspector.SELECT, value: props.child })
           }}
         >
           {props.child.name.length > 0

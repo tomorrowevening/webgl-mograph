@@ -22,6 +22,7 @@ import Transformer from '../tools/Transformer'
 // Utils
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
 import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
+import Inspector from '../tools/Inspector'
 
 class SceneController {
   // Scenes
@@ -36,6 +37,7 @@ class SceneController {
   transitionMesh?: Mesh | undefined
 
   // Tools
+  inspector?: Inspector
   multiCams?: MultiCams
   splineEditor?: SplineEditor
 
@@ -88,7 +90,6 @@ class SceneController {
     })
     debugButton(scenesTab, 'Transition', () => {
       if (transitionTo.scene.length > 0) {
-        console.log(`transition to: ${transitionTo.scene} with: ${transitionTo.transition}`)
         // @ts-ignore
         this.showScene(transitionTo.scene, transitionTo.transition)
       }
@@ -98,17 +99,14 @@ class SceneController {
     })
 
     // Tools
+    this.inspector = new Inspector()
+
     this.multiCams = new MultiCams((camera: PerspectiveCamera | OrthographicCamera) => {
       this.splineEditor!.camera = camera
       Transformer.updateCamera(camera)
       this.currentScene!.updateCamera(camera)
     })
     this.splineEditor = new SplineEditor()
-
-    // const rtSize = 128
-    // this.addMesh('current', rtSize, rtSize, webgl.renderTargets.get('currentScene')!.texture, 'TL', new Vector2())
-    // this.addMesh('prev', rtSize, rtSize, webgl.renderTargets.get('previousScene')!.texture, 'TL', new Vector2(rtSize))
-    // this.addMesh('transition', rtSize, rtSize, webgl.renderTargets.get('transition')!.texture, 'TL', new Vector2(rtSize*2))
   }
 
   dispose() {
@@ -117,6 +115,8 @@ class SceneController {
     if (this.composite !== undefined) dispose(this.composite)
     if (this.ui !== undefined) dispose(this.ui)
     if (IS_DEV) {
+      this.inspector?.dispose()
+      this.multiCams?.dispose()
       this.splineEditor?.dispose()
     }
   }
@@ -223,10 +223,11 @@ class SceneController {
         if (IS_DEV) {
           Transformer.clear()
 
+          // Inspector
+          this.inspector?.changeScene(this.currentScene!)
+
           // Multi-Cameras
-          this.multiCams?.clearCameras()
-          this.currentScene!.utils.add(this.multiCams!)
-          this.multiCams?.addCamera(this.currentScene!.camera)
+          this.multiCams?.changeScene(this.currentScene!)
 
           // Splines
           this.splineEditor!.dispose()

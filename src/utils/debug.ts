@@ -1,17 +1,68 @@
-import { ACESFilmicToneMapping, CineonToneMapping, LinearToneMapping, NoToneMapping, ReinhardToneMapping } from 'three'
+// Libs
+import {
+  ACESFilmicToneMapping,
+  AddEquation,
+  BackSide,
+  Camera,
+  CineonToneMapping,
+  ClampToEdgeWrapping,
+  Color,
+  CustomBlending,
+  DirectionalLight,
+  DirectionalLightHelper,
+  DoubleSide,
+  DstColorFactor,
+  FrontSide,
+  HemisphereLight,
+  Light,
+  Line,
+  LinearToneMapping,
+  Material,
+  Mesh,
+  MirroredRepeatWrapping,
+  NormalBlending,
+  NoToneMapping,
+  OneFactor,
+  OneMinusDstColorFactor,
+  OneMinusSrcAlphaFactor,
+  OrthographicCamera,
+  PerspectiveCamera,
+  PointLight,
+  PointLightHelper,
+  RawShaderMaterial,
+  RectAreaLight,
+  ReinhardToneMapping,
+  RepeatWrapping,
+  ShaderMaterial,
+  SpotLight,
+  SpotLightHelper,
+  SrcAlphaFactor,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three'
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
-import { Camera, OrthographicCamera, PerspectiveCamera, RepeatWrapping, Texture } from 'three'
-//
-import { clamp } from './math'
+// Models
+import { Events, threeDispatcher } from '../models/constants'
 import { settings } from '../models/settings'
 import webgl from '../models/webgl'
+// Views
+import DebugMaterial from '../materials/utils/DebugMaterial'
+// Utils
+import { clamp } from './math'
+import Transformer from '../tools/Transformer'
 
 let gui: Pane
 let tabs: any
 let stats: any // performance
+let canvas: HTMLCanvasElement
+let context: CanvasRenderingContext2D
 export let appTab: any
 export let scenesTab: any
 export let systemTab: any
@@ -46,6 +97,10 @@ export function initDebug() {
   stats = systemTab.addBlade({
     view: 'fpsgraph',
   })
+
+  // Required to draw images (ImageBitmap, etc)
+  canvas = document.createElement('canvas')
+  context = canvas.getContext('2d')!
 }
 
 export function debugWebGL() {
@@ -546,8 +601,493 @@ export const debugToggle = (
   return added
 }
 
+export const debugLight = (parentFolder: any, light: Light, props?: any): any => {
+  const pane = parentFolder !== undefined ? parentFolder : scenesTab
+  const lightFolder = debugFolder(light.name, pane)
+  const container = props?.container !== undefined ? props?.container : light.parent
+  debugInput(lightFolder, light, 'name', {
+    onChange: (value: string) => {
+      lightFolder.title = value
+      threeDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })
+    },
+  })
+  debugInput(lightFolder, light, 'type')
+  debugColor(lightFolder, light, 'color')
+  debugInput(lightFolder, light, 'intensity', {
+    min: 0,
+    max: 2,
+  })
+  const lightPos = debugInput(lightFolder, light, 'position')
+  if (!(light instanceof DirectionalLight)) {
+    debugInput(lightFolder, light, 'rotation')
+  }
+  debugInput(lightFolder, light, 'visible')
+  let helper: any
+  let transform: TransformControls | undefined = undefined
+  if (light instanceof DirectionalLight) {
+    const directionalLight = light as DirectionalLight
+    debugInput(lightFolder, directionalLight, 'castShadow')
+
+    helper = new DirectionalLightHelper(directionalLight, 100)
+    helper.name = `${light.name}:helper`
+    helper.onBeforeRender = () => {
+      helper.update()
+      helper.lookAt(0, 0, 0)
+    }
+    helper.visible = false
+    container.add(helper)
+    debugInput(lightFolder, helper, 'visible', {
+      label: 'Show Helper',
+      onChange: (value: boolean) => {
+        value ? light.parent?.add(helper) : light.parent?.remove(helper)
+      },
+    })
+  } else if (light instanceof HemisphereLight) {
+    const hemisphereLight = light as HemisphereLight
+    debugColor(lightFolder, hemisphereLight, 'groundColor')
+    // helper = new HemisphereLightHelper(hemisphereLight, 1)
+    // helper.name = `${light.name}:helper`
+    // helper.onBeforeRender = helper.update
+    // helper.visible = false
+    // debugInput(lightFolder, helper, 'visible', {
+    //   label: 'Show Helper',
+    //   onChange: (value: boolean) => {
+    //     value ? light.parent?.add(helper) : light.parent?.remove(helper)
+    //   },
+    // })
+  } else if (light instanceof PointLight) {
+    const pointLight = light as PointLight
+    debugInput(lightFolder, pointLight, 'decay', {
+      min: 0,
+      max: 5,
+    })
+    debugInput(lightFolder, pointLight, 'distance', {
+      min: 0,
+      max: 1000,
+    })
+    helper = new PointLightHelper(pointLight)
+    helper.name = `${light.name}:helper`
+    helper.onBeforeRender = () => {
+      if (pointLight.distance > 0) {
+        helper.material.color = pointLight.color
+        helper.scale.setScalar(pointLight.distance)
+        helper.position.copy(pointLight.position)
+        helper.updateMatrix()
+        helper.updateWorldMatrix()
+      }
+    }
+    helper.visible = false
+    container.add(helper)
+    debugInput(lightFolder, helper, 'visible', {
+      label: 'Show Helper',
+      onChange: (value: boolean) => {
+        value ? light.parent?.add(helper) : light.parent?.remove(helper)
+      },
+    })
+  } else if (light instanceof RectAreaLight) {
+    const rectAreaLight = light as RectAreaLight
+    debugInput(lightFolder, rectAreaLight, 'width', {
+      min: 0,
+      max: 1000,
+    })
+    debugInput(lightFolder, rectAreaLight, 'height', {
+      min: 0,
+      max: 1000,
+    })
+    RectAreaLightUniformsLib.init()
+    helper = new RectAreaLightHelper(rectAreaLight)
+    helper.name = `${light.name}:helper`
+    helper.visible = false
+    container.add(helper)
+    debugInput(lightFolder, helper, 'visible', {
+      label: 'Show Helper',
+      onChange: (value: boolean) => {
+        value ? light.parent?.add(helper) : light.parent?.remove(helper)
+      },
+    })
+  } else if (light instanceof SpotLight) {
+    const spotLight = light as SpotLight
+    debugInput(lightFolder, spotLight, 'angle', {
+      min: 0,
+      max: Math.PI / 2,
+    })
+    debugInput(lightFolder, spotLight, 'decay', {
+      min: 0,
+      max: 5,
+    })
+    debugInput(lightFolder, spotLight, 'distance', {
+      min: 0,
+      max: 1000,
+    })
+    debugInput(lightFolder, spotLight, 'penumbra', {
+      min: 0,
+      max: 1,
+    })
+    helper = new SpotLightHelper(spotLight)
+    helper.name = `${light.name}:helper`
+    helper.onBeforeRender = helper.update
+    helper.visible = false
+    light.parent?.add(helper)
+    transform = Transformer.add(helper.name, lightFolder)
+    transform.attach(light)
+    transform.addEventListener('change', () => {
+      // @ts-ignore
+      lightPos.refresh()
+    })
+    debugInput(lightFolder, helper, 'visible', {
+      label: 'Show Helper',
+      onChange: (value: boolean) => {
+        if (value) {
+          // @ts-ignore
+          light.parent?.add(helper)
+          light.parent?.add(transform!)
+        } else {
+          // @ts-ignore
+          light.parent?.remove(helper)
+          light.parent?.remove(transform!)
+        }
+      },
+    })
+  }
+  debugButton(lightFolder, 'Delete', () => {
+    light.parent?.remove(light)
+    lightFolder.dispose()
+    // @ts-ignore
+    if (helper !== undefined) Transform.remove(helper.name)
+  })
+}
+
+export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any): any => {
+  const pane = parentFolder !== undefined ? parentFolder : scenesTab
+  const folder = debugFolder('Material', pane)
+  const material = mesh.material as Material
+
+  debugOptions(
+    folder,
+    'Blend Mode',
+    [
+      {
+        text: 'Normal',
+        value: 0,
+      },
+      {
+        text: 'Add',
+        value: 1,
+      },
+      {
+        text: 'Screen',
+        value: 2,
+      },
+      {
+        text: 'Multiply',
+        value: 3,
+      },
+    ],
+    (value: number) => {
+      switch (value) {
+        case 0:
+          material.blending = NormalBlending
+          material.blendEquation = AddEquation
+          material.blendSrc = SrcAlphaFactor
+          material.blendDst = OneMinusSrcAlphaFactor
+          material.needsUpdate = true
+          break
+        case 1:
+          material.blending = CustomBlending
+          material.blendEquation = AddEquation
+          material.blendSrc = SrcAlphaFactor
+          material.blendDst = OneFactor
+          material.needsUpdate = true
+          break
+        case 2:
+          material.blending = CustomBlending
+          material.blendEquation = AddEquation
+          material.blendSrc = OneMinusDstColorFactor
+          material.blendDst = OneFactor
+          material.needsUpdate = true
+          break
+        case 3:
+          material.blending = CustomBlending
+          material.blendEquation = AddEquation
+          material.blendSrc = DstColorFactor
+          material.blendDst = OneMinusSrcAlphaFactor
+          material.needsUpdate = true
+          break
+      }
+    },
+  )
+  debugOptions(
+    folder,
+    'Side',
+    [
+      {
+        text: 'Front',
+        value: FrontSide,
+      },
+      {
+        text: 'Back',
+        value: BackSide,
+      },
+      {
+        text: 'Double',
+        value: DoubleSide,
+      },
+    ],
+    (value: number) => {
+      material.side = value
+      material.needsUpdate = true
+    },
+  )
+
+  const propsFolder = debugFolder('Props', folder)
+  for (const i in material) {
+    // @ts-ignore
+    const value = material[i]
+    if (i.substring(0, 1) !== '_') {
+      if (acceptedMaterialTypes(value) && acceptedMaterialNames(i)) {
+        if (
+          typeof value === 'boolean' ||
+          typeof value === 'number' ||
+          value instanceof Vector2 ||
+          value instanceof Vector3
+        ) {
+          const params = { label: i }
+          if (typeof value === 'boolean') {
+            // @ts-ignore
+            params['onChange'] = () => {
+              material.needsUpdate = true
+            }
+          }
+          debugInput(propsFolder, material, i, params)
+        } else if (value instanceof Color) {
+          debugColor(propsFolder, material, i, { label: i })
+        } else if (value instanceof Texture || value === null) {
+          const textureParams = {
+            offset: new Vector2(0, 0),
+            repeat: new Vector2(1, 1),
+            wrapS: ClampToEdgeWrapping,
+            wrapT: ClampToEdgeWrapping,
+            flipY: true,
+          }
+          const imgProps = {
+            texture: true,
+            onChange: (value: Texture) => {
+              value.offset.copy(textureParams.offset)
+              value.repeat.copy(textureParams.repeat)
+              value.wrapS = textureParams.wrapS
+              value.wrapT = textureParams.wrapT
+              value.flipY = textureParams.flipY
+              value.needsUpdate = true
+              // @ts-ignore
+              material[i] = value
+              // @ts-ignore
+              material.needsUpdate = true
+            },
+          }
+          const wrapOptions = [
+            {
+              text: 'ClampToEdgeWrapping',
+              value: ClampToEdgeWrapping,
+            },
+            {
+              text: 'RepeatWrapping',
+              value: RepeatWrapping,
+            },
+            {
+              text: 'MirroredRepeatWrapping',
+              value: MirroredRepeatWrapping,
+            },
+          ]
+          let defaultWrapS = wrapOptions[0].value
+          let defaultWrapT = wrapOptions[0].value
+          if (value !== null) {
+            defaultWrapS = value.wrapS
+            defaultWrapT = value.wrapT
+            textureParams.offset.copy(value.offset)
+            textureParams.repeat.copy(value.repeat)
+            textureParams.wrapS = value.wrapS
+            textureParams.wrapT = value.wrapT
+            textureParams.flipY = value.flipY
+            if (value.source.data !== undefined) {
+              // @ts-ignore
+              imgProps['url'] = value.source.data.currentSrc
+            }
+            if (value.source.data instanceof ImageBitmap) {
+              const bitmap = value.source.data as ImageBitmap
+              canvas.width = bitmap.width
+              canvas.height = bitmap.height
+              context.drawImage(bitmap, 0, 0)
+              const dataURL = canvas.toDataURL()
+              // @ts-ignore
+              imgProps['url'] = dataURL
+            }
+          }
+          const imgPane = debugImage(propsFolder, i, imgProps)
+          debugOptions(
+            propsFolder,
+            'wrapS',
+            wrapOptions,
+            (value: number) => {
+              textureParams.wrapS = value
+              // @ts-ignore
+              const texture = material[i] as Texture
+              if (texture !== null) {
+                texture.wrapS = value
+                texture.needsUpdate = true
+              }
+            },
+            defaultWrapS,
+          )
+          debugOptions(
+            propsFolder,
+            'wrapT',
+            wrapOptions,
+            (value: number) => {
+              textureParams.wrapT = value
+              // @ts-ignore
+              const texture = material[i] as Texture
+              if (texture !== null) {
+                texture.wrapT = value
+                texture.needsUpdate = true
+              }
+            },
+            defaultWrapT,
+          )
+          const repeatParams = {
+            x: {
+              min: -100,
+              max: 100,
+            },
+            y: {
+              min: -100,
+              max: 100,
+            },
+          }
+          debugInput(propsFolder, textureParams, 'offset', {
+            ...repeatParams,
+            onChange: (value: Vector2) => {
+              // @ts-ignore
+              if (material[i] !== null) {
+                // @ts-ignore
+                material[i].offset.copy(value)
+              }
+            },
+          })
+          debugInput(propsFolder, textureParams, 'repeat', {
+            ...repeatParams,
+            onChange: (value: Vector2) => {
+              // @ts-ignore
+              if (material[i] !== null) {
+                // @ts-ignore
+                material[i].repeat.copy(value)
+              }
+            },
+          })
+          debugInput(propsFolder, textureParams, 'flipY', {
+            onChange: (value: boolean) => {
+              // @ts-ignore
+              if (material[i] !== null) {
+                // @ts-ignore
+                material[i].flipY = value
+                // @ts-ignore
+                material[i].needsUpdate = true
+              }
+            },
+          })
+          debugButton(
+            propsFolder,
+            'clear',
+            () => {
+              // @ts-ignore
+              imgPane.controller_.valueController.updateImage(emptyImg)
+              // @ts-ignore
+              material[i] = null
+              // @ts-ignore
+              material.needsUpdate = true
+            },
+            { label: i },
+          )
+        }
+      }
+    }
+  }
+
+  if (material instanceof RawShaderMaterial || material instanceof ShaderMaterial) {
+    const uniformsFolder = debugFolder('Uniforms', folder)
+    const shader = material as ShaderMaterial
+    for (const i in shader.uniforms) {
+      const uniform = shader.uniforms[i].value
+      if (typeof uniform === 'number') {
+        debugInput(uniformsFolder, shader.uniforms[i], 'value', { label: i })
+      } else if (uniform === null || uniform instanceof Texture) {
+        debugImage(uniformsFolder, i, {
+          texture: true,
+          onChange: (value: Texture) => {
+            // @ts-ignore
+            shader.uniforms[i]['value'] = value
+          },
+        })
+      }
+    }
+  }
+
+  debugButton(folder, 'Update Material', () => {
+    // @ts-ignore
+    material.needsUpdate = true
+  })
+  const debugMaterialFolder: any = debugFolder('Debug Material', folder)
+  const debugMaterial = new DebugMaterial(material.defines)
+  debugMaterial.initDebug(debugMaterialFolder)
+  debugToggle(debugMaterialFolder, 'Debug Material', false, (value: any) => {
+    if (value) {
+      mesh.material = debugMaterial
+    } else {
+      mesh.material = material
+    }
+  })
+  return folder
+}
+
 // Utils
 
 function clampColor(value: number): number {
   return clamp(Math.round(value), 0, 255)
+}
+
+export function acceptedMaterialTypes(value: any): boolean {
+  return (
+    typeof value === 'boolean' ||
+    typeof value === 'number' ||
+    value instanceof Color ||
+    value instanceof Vector2 ||
+    value instanceof Vector3 ||
+    value instanceof Texture ||
+    value === null
+  )
+}
+
+export function acceptedMaterialNames(name: string): boolean {
+  return !(
+    name === 'side' ||
+    name === 'vertexColors' ||
+    name === 'depthFunc' ||
+    name === 'colorWrite' ||
+    name === 'alphaToCoverage' ||
+    name === 'linewidth' ||
+    name === 'glslVersion' ||
+    name === 'normalMapType' ||
+    name === 'premultipliedAlpha' ||
+    name === 'shadowSide' ||
+    name === 'toneMapped' ||
+    name === 'version' ||
+    name === 'wireframeLinewidth' ||
+    name === 'uniformsNeedUpdate' ||
+    name === 'combine' ||
+    name === 'precision' ||
+    name.slice(0, 5) === 'blend' ||
+    name.slice(0, 4) === 'clip' ||
+    name.slice(0, 7) === 'polygon' ||
+    name.slice(0, 7) === 'stencil' ||
+    name.slice(0, 2) === 'is'
+  )
 }

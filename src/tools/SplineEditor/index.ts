@@ -31,6 +31,7 @@ export default class SplineEditor extends Object3D {
 
   dispose() {
     this._debugFolder?.dispose()
+    this._debugFolder = undefined
     const total = this.children.length - 1
     for (let i = total; i > -1; i--) {
       const spline = this.children[i] as Spline

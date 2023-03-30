@@ -97,14 +97,21 @@ $maxHeight: calc($barHeight * 10);
       border-bottom: 1px solid #111;
       height: $barHeight;
       position: relative;
+
+      &:hover {
+        background-color: #333;
+      }
     }
 
     .name {
+      background-color: transparent;
+      max-lines: 1;
       position: absolute;
       left: 5px;
       right: 0;
       top: 50%;
       transform: translateY(-50%);
+      white-space: nowrap;
     }
 
     .container {

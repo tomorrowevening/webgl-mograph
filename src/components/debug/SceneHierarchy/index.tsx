@@ -49,31 +49,33 @@ function ChildObject(props: ChildObjectProps) {
 
   return (
     <div className="childObject" key={Math.random()}>
-      <button
-        onClick={() => {
-          setOpen(!open)
-        }}
-      >
+      <div className="child">
         {hasChildren ? (
-          <span
+          <button
             className="status"
             style={{
               backgroundPositionX: open ? '-14px' : '2px',
             }}
-          ></span>
+            onClick={() => {
+              setOpen(!open)
+            }}
+          ></button>
         ) : null}
-        <span
+        <button
           className="name"
           style={{
             left: hasChildren ? '20px' : '5px',
+          }}
+          onClick={() => {
+            // TODO: Highlight this item in an inspector to view transform/visibility/material props
           }}
         >
           {props.child.name.length > 0
             ? `${props.child.name} (${props.child.type})`
             : `${props.child.type}::${props.child.uuid}`}
-        </span>
+        </button>
         <div className={`icon ${determineIcon(props.child)}`}></div>
-      </button>
+      </div>
       {container}
     </div>
   )
@@ -89,6 +91,7 @@ function ContainerObject(props: ChildObjectProps) {
 }
 
 export default function SceneHierarchy() {
+  const [open, setOpen] = useState(false)
   const [scene, setScene] = useState<Object3D | null>(null)
 
   useEffect(() => {
@@ -104,6 +107,15 @@ export default function SceneHierarchy() {
   return (
     <div id="SceneHierarchy">
       <div className="header">
+        <button
+          className="status"
+          style={{
+            backgroundPositionX: open ? '-14px' : '2px',
+          }}
+          onClick={() => {
+            setOpen(!open)
+          }}
+        ></button>
         <span>Hierarchy: {scene?.name}</span>
         <button
           className="refresh hideText"
@@ -115,7 +127,7 @@ export default function SceneHierarchy() {
           Refresh
         </button>
       </div>
-      {scene !== null ? <ContainerObject child={scene} /> : null}
+      {scene !== null && open ? <ContainerObject child={scene} /> : null}
     </div>
   )
 }

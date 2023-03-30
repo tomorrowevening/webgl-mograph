@@ -12,6 +12,16 @@ $maxHeight: calc($barHeight * 10);
   width: 250px;
   z-index: 100;
 
+  button {
+    background-color: transparent;
+    border: none;
+    color: #FFF;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+  }
+
   .header {
     height: $barHeight;
     position: relative;
@@ -20,14 +30,11 @@ $maxHeight: calc($barHeight * 10);
       display: inline-block;
       font-size: 12px;
       line-height: $barHeight;
-      padding-left: 5px;
+      padding-left: 20px;
       pointer-events: none;
     }
 
     button {
-      border: none;
-      margin: 0;
-      padding: 0;
       position: absolute;
       right: 5px;
       top: 50%;
@@ -46,11 +53,27 @@ $maxHeight: calc($barHeight * 10);
         opacity: 1;
       }
     }
+
+    .status {
+      left: 0;
+      transform: translateY(-50%) scale(0.8);
+    }
+  }
+
+  .status {
+    background-image: url("/images/debug/icon_folder.png");
+    background-position-x: 2px;
+    background-position-y: 2px;
+    background-size: 32px 16px;
+    transform: scale(0.8);
+    width: $barHeight;
+    height: $barHeight;
   }
 
   .childObject {
-    background-color: #222;
+    background-color: #111;
     min-height: $barHeight;
+    overflow: hidden;
 
     ::-webkit-scrollbar {
       width: 10px;
@@ -68,59 +91,27 @@ $maxHeight: calc($barHeight * 10);
       background: #999;
     }
 
-    button {
-      background-color: #333;
+    .child {
+      background-color: #222;
       border: none;
       border-bottom: 1px solid #111;
-      color: #FFF;
-      display: block;
       height: $barHeight;
-      line-height: calc($barHeight - 1px);
-      padding: 0;
-      outline: none;
       position: relative;
-      text-align: left;
-      width: 100%;
+    }
 
-      &:hover {
-        background-color: #444;
-      }
-
-      span {
-        pointer-events: none;
-      }
-
-      .status {
-        display: inline-block;
-        height: calc($barHeight - 1px);
-        width: calc($barHeight - 1px);
-        position: absolute;
-        background-image: url("/images/debug/icon_folder.png");
-        background-position-x: 2px;
-        background-position-y: 2px;
-        background-size: 32px 16px;
-        transform: scale(0.8);
-        top: 0px
-      }
-
-      .name {
-        font-size: 12px;
-        position: absolute;
-        left: 5px;
-        top: 0px
-      }
-
-      .children {
-        position: absolute;
-        right: 10px;
-        top: 0px
-      }
+    .name {
+      position: absolute;
+      left: 5px;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .container {
       padding-left: 5px;
       height: auto;
-      overflow: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
       max-height: $maxHeight;
 
       &.closed {

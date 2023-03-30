@@ -6,6 +6,30 @@ import { Events, threeDispatcher } from '../../../models/constants'
 // Controllers
 import scenes from '../../../controllers/SceneController'
 
+function determineIcon(obj: Object3D): string {
+  if (obj.name === 'cameras') {
+    return 'camera'
+  } else if (obj.name === 'interactive') {
+    return 'interactive'
+  } else if (obj.name === 'lights') {
+    return 'light'
+  } else if (obj.name === 'ui') {
+    return 'ui'
+  } else if (obj.name === 'utils') {
+    return 'utils'
+  }
+
+  const type = obj.type
+  if (type.search('Helper') > -1) {
+    return 'icon_utils'
+  } else if (type.search('Camera') > -1) {
+    return 'camera'
+  } else if (type.search('Light') > -1) {
+    return 'light'
+  }
+  return 'obj3D'
+}
+
 type ChildObjectProps = {
   child: Object3D
 }
@@ -44,13 +68,24 @@ function ChildObject(props: ChildObjectProps) {
             left: hasChildren ? '20px' : '5px',
           }}
         >
-          {props.child.name.length > 0 ? props.child.name : `${props.child.type}::${props.child.uuid}`}
+          {props.child.name.length > 0
+            ? `${props.child.name} (${props.child.type})`
+            : `${props.child.type}::${props.child.uuid}`}
         </span>
-        {hasChildren ? <span className="children">{props.child.children.length}</span> : null}
+        <div className={`icon ${determineIcon(props.child)}`}></div>
       </button>
       {container}
     </div>
   )
+}
+
+function ContainerObject(props: ChildObjectProps) {
+  const children: Array<any> = []
+  props.child.children.map((child: Object3D) => {
+    children.push(<ChildObject child={child} key={Math.random()} />)
+  })
+
+  return <div className="scene">{children}</div>
 }
 
 export default function SceneHierarchy() {
@@ -58,7 +93,6 @@ export default function SceneHierarchy() {
 
   useEffect(() => {
     const onSceneReady = () => {
-      console.log('Scene ready:', scenes.currentScene?.name)
       setScene(scenes.currentScene!)
     }
     threeDispatcher.addEventListener(Events.SCENE_READY, onSceneReady)
@@ -67,5 +101,21 @@ export default function SceneHierarchy() {
     }
   }, [])
 
-  return <div id="SceneHierarchy">{scene !== null ? <ChildObject child={scene} /> : null}</div>
+  return (
+    <div id="SceneHierarchy">
+      <div className="header">
+        <span>Hierarchy: {scene?.name}</span>
+        <button
+          className="refresh hideText"
+          onClick={() => {
+            setScene(null)
+            setScene(scenes.currentScene!)
+          }}
+        >
+          Refresh
+        </button>
+      </div>
+      {scene !== null ? <ContainerObject child={scene} /> : null}
+    </div>
+  )
 }

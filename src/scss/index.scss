@@ -48,3 +48,8 @@ button {
   display: none;
   visibility: hidden;
 }
+
+.hideText {
+  text-indent: -9999px;
+  white-space: nowrap;
+}

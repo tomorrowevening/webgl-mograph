@@ -12,6 +12,42 @@ $maxHeight: calc($barHeight * 10);
   width: 250px;
   z-index: 100;
 
+  .header {
+    height: $barHeight;
+    position: relative;
+
+    span {
+      display: inline-block;
+      font-size: 12px;
+      line-height: $barHeight;
+      padding-left: 5px;
+      pointer-events: none;
+    }
+
+    button {
+      border: none;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      width: $barHeight;
+      height: $barHeight;
+    }
+
+    .refresh {
+      background-color: transparent;
+      background-image: url("../../public/images/debug/icon_refresh.png");
+      background-size: 20px 20px;
+      opacity: 0.7;
+      transform: translateY(-50%) scale(0.8);
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
   .childObject {
     background-color: #222;
     min-height: $barHeight;
@@ -50,12 +86,16 @@ $maxHeight: calc($barHeight * 10);
         background-color: #444;
       }
 
+      span {
+        pointer-events: none;
+      }
+
       .status {
         display: inline-block;
         height: calc($barHeight - 1px);
         width: calc($barHeight - 1px);
         position: absolute;
-        background-image: url("images/debug/icon_folder.png");
+        background-image: url("../../public/images/debug/icon_folder.png");
         background-position-x: 2px;
         background-position-y: 2px;
         background-size: 32px 16px;
@@ -64,6 +104,7 @@ $maxHeight: calc($barHeight * 10);
       }
 
       .name {
+        font-size: 12px;
         position: absolute;
         left: 5px;
         top: 0px
@@ -71,7 +112,7 @@ $maxHeight: calc($barHeight * 10);
 
       .children {
         position: absolute;
-        right: 5px;
+        right: 10px;
         top: 0px
       }
     }
@@ -86,6 +127,42 @@ $maxHeight: calc($barHeight * 10);
         height: 0;
         overflow: hidden;
       }
+    }
+
+    .icon {
+      background-color: transparent;
+      background-image: url("../../public/images/debug/icon_world.png");
+      background-size: 20px 20px;
+      display: inline-block;
+      position: absolute;
+      right: 5px;
+      top: 0;
+      width: $barHeight;
+      height: $barHeight;
+    }
+
+    .obj3D {
+      background-image: url("../../public/images/debug/icon_world.png");
+    }
+
+    .camera {
+      background-image: url("../../public/images/debug/icon_camera.png");
+    }
+
+    .interactive {
+      background-image: url("../../public/images/debug/icon_interactive.png");
+    }
+
+    .light {
+      background-image: url("../../public/images/debug/icon_lights.png");
+    }
+
+    .ui {
+      background-image: url("../../public/images/debug/icon_ui.png");
+    }
+
+    .utils {
+      background-image: url("../../public/images/debug/icon_utils.png");
     }
   }
 }

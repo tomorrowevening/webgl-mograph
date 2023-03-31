@@ -1,28 +1,31 @@
 // Libs
-import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2 } from 'three'
+import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2, Clock } from 'three'
 // Models
+import assets from '../models/assets'
 import { Events, IS_DEV, threeDispatcher } from '../models/constants'
 import webgl from '../models/webgl'
 import { Scenes, Transitions, UIAlign } from '../types'
 // Views
+import LogoMaterial from '../materials/ui/LogoMaterial'
+import UIMesh from '../mesh/UIMesh'
+import TextMesh from '../mesh/TextMesh'
 import BaseScene from '../scenes/BaseScene'
 import CompositeScene from '../scenes/composite'
 import IntroScene from '../scenes/intro'
 import CreditsScene from '../scenes/credits'
 import UIScene from '../scenes/ui'
-import UIMesh from '../mesh/UIMesh'
-import TextMesh from '../mesh/TextMesh'
 // Transitions
 import Transition from '../materials/transitions/Transition'
 import WipeTransition from '../materials/transitions/WipeTransition'
-// Tools
+// Tools / Utils
+import Inspector from '../tools/Inspector'
 import MultiCams from '../tools/MultiCams'
 import SplineEditor from '../tools/SplineEditor'
 import Transformer from '../tools/Transformer'
-// Utils
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
-import { dispose, orthoCamera, renderToTexture, triangle } from '../utils/three'
-import Inspector from '../tools/Inspector'
+import { sin } from '../utils/math'
+import { dispose, orthoCamera, renderToTexture, saveCanvasToPNG, triangle } from '../utils/three'
+import gsap from 'gsap'
 
 class SceneController {
   // Scenes
@@ -31,19 +34,50 @@ class SceneController {
   composite?: CompositeScene
   ui?: UIScene
   autoUpdateUI = true // true if there's gonna be animation or UI change
+  private clock!: Clock
+  private logo!: TextMesh
 
   // Transitioning
   transition?: Transition | undefined
   transitionMesh?: Mesh | undefined
 
   // Tools
-  inspector?: Inspector
-  multiCams?: MultiCams
-  splineEditor?: SplineEditor
+  private inspector?: Inspector
+  private multiCams?: MultiCams
+  private splineEditor?: SplineEditor
+  private saveScreenshot = false
 
   init() {
     this.ui = new UIScene()
     this.composite = new CompositeScene()
+
+    this.clock = new Clock()
+    this.clock.start()
+
+    // Header
+    const font = 'anurati'
+    const fontData = assets.json.get(font)
+    const fontTex = assets.textures.get(font).clone()
+    const logoMat = new LogoMaterial({
+      map: fontTex,
+    })
+    this.logo = scenes.addText('Header', {
+      font: fontData,
+      fontSize: 24,
+      text: 'TOMORROW\nEVENING',
+      material: logoMat,
+    })
+    this.logo.name = 'header'
+    this.logo.position.set(20, -20, 0)
+    logoMat.resolution = new Vector2(1 / this.logo.width, 1 / this.logo.height)
+    logoMat.resolution.multiplyScalar(10)
+
+    logoMat.alpha = 0
+    gsap.to(logoMat, {
+      duration: 3,
+      delay: 1,
+      alpha: 1,
+    })
 
     // Events
     threeDispatcher.addEventListener(Events.SCENE_SHOW, this.onSceneShow)
@@ -82,6 +116,9 @@ class SceneController {
       scene: '',
       transition: undefined,
     }
+    debugButton(scenesTab, 'Save Screenshot', () => {
+      this.saveScreenshot = true
+    })
     debugOptions(scenesTab, 'Scene', sceneOptions, (value: any) => {
       transitionTo.scene = value
     })
@@ -122,6 +159,9 @@ class SceneController {
   }
 
   update() {
+    const logoMat = this.logo.material as LogoMaterial
+    logoMat.time = this.clock.getElapsedTime()
+    logoMat.intensity = sin(1, 4, logoMat.time)
     this.previousScene?.update()
     this.currentScene?.update()
     if (IS_DEV) this.multiCams?.update()
@@ -144,6 +184,10 @@ class SceneController {
     this.ui?.draw(this.autoUpdateUI)
     this.composite?.draw()
     if (IS_DEV) {
+      if (this.saveScreenshot) {
+        saveCanvasToPNG()
+        this.saveScreenshot = false
+      }
       this.multiCams?.postRender(this.currentScene!)
     }
   }

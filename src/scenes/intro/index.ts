@@ -2,12 +2,9 @@
 import { BoxGeometry, Mesh, MeshNormalMaterial, PerspectiveCamera, Vector2 } from 'three'
 import gsap from 'gsap'
 // Models
-import assets from '../../models/assets'
 import webgl from '../../models/webgl'
 // Views
 import BaseScene from '../BaseScene'
-// Controllers
-import scenes from '../../controllers/SceneController'
 
 export default class IntroScene extends BaseScene {
   constructor() {
@@ -23,18 +20,6 @@ export default class IntroScene extends BaseScene {
       const mesh = new Mesh(new BoxGeometry(100, 100, 100), new MeshNormalMaterial())
       mesh.name = 'boxMesh'
       this.world.add(mesh)
-
-      const font = 'anurati'
-      const fontData = assets.json.get(font)
-      const fontTex = assets.textures.get(font).clone()
-      const txt = scenes.addText('Header', {
-        font: fontData,
-        fontSize: 24,
-        map: fontTex,
-        text: 'TOMORROW\nEVENING',
-      })
-      txt.name = 'header'
-      txt.position.set(20, -20, 0)
 
       resolve()
     })

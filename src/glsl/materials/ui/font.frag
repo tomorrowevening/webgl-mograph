@@ -4,7 +4,8 @@
 uniform float opacity;
 uniform vec3 color;
 uniform sampler2D map;
-in vec2 vUv;
+varying vec2 vUv;
+
 #define alphaTest 1.0 / 255.0
 float median(float r, float g, float b) {
   return max(min(r, g), min(max(r, g), b));

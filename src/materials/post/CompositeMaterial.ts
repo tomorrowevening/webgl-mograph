@@ -10,16 +10,12 @@ import fragment from '../../glsl/post/composite.frag'
 export default class CompositeMaterial extends ShaderMaterial {
   constructor(params?: any) {
     const currentRT = webgl.renderTargets.get('currentScene') as WebGLRenderTarget
-    const prevRT = webgl.renderTargets.get('previousScene') as WebGLRenderTarget
     const transitionRT = webgl.renderTargets.get('transition') as WebGLRenderTarget
     const uiRT = webgl.renderTargets.get('ui') as WebGLRenderTarget
     const defaultParams = {
       uniforms: {
         currentSceneTex: {
           value: currentRT.texture,
-        },
-        prevSceneTex: {
-          value: prevRT.texture,
         },
         transitionTex: {
           value: transitionRT.texture,

@@ -1,5 +1,4 @@
 uniform sampler2D currentSceneTex;
-uniform sampler2D prevSceneTex;
 uniform sampler2D transitionTex;
 uniform sampler2D uiTex;
 uniform vec2 resolution;
@@ -25,9 +24,7 @@ void main() {
 
   // Transition
   if (transitioning) {
-    vec4 previousScene = fxaa(prevSceneTex, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
-    vec4 transition = texture2D(transitionTex, vUv);
-    color = mix(color, previousScene, transition.a);
+    color = fxaa(transitionTex, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
   }
 
   // Overlay UI

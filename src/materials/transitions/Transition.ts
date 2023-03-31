@@ -1,5 +1,6 @@
-import { ShaderMaterial } from 'three'
+import { ShaderMaterial, Texture } from 'three'
 import vertex from '../../glsl/default.vert'
+import webgl from '../../models/webgl'
 
 export default class Transition extends ShaderMaterial {
   constructor(name: string, fragment: string, uniforms?: any) {
@@ -11,6 +12,12 @@ export default class Transition extends ShaderMaterial {
         ...{
           progress: {
             value: 0,
+          },
+          prevScene: {
+            value: webgl.renderTargets.get('previousScene')!.texture,
+          },
+          currentScene: {
+            value: webgl.renderTargets.get('currentScene')!.texture,
           },
         },
       },
@@ -25,5 +32,21 @@ export default class Transition extends ShaderMaterial {
 
   set progress(value: number) {
     this.uniforms.progress.value = value
+  }
+
+  get prevScene(): Texture | null {
+    return this.uniforms.prevScene.value
+  }
+
+  set prevScene(value: Texture | null) {
+    this.uniforms.prevScene.value = value
+  }
+
+  get currentScene(): Texture | null {
+    return this.uniforms.currentScene.value
+  }
+
+  set currentScene(value: Texture | null) {
+    this.uniforms.currentScene.value = value
   }
 }

@@ -92,6 +92,8 @@ export default class Inspector extends Object3D {
     for (let i = total; i > -1; --i) {
       this.debugFolder.remove(this.debugFolder.children[i])
     }
+
+    this.debugInitial()
   }
 
   setCurrentObject(obj: Object3D) {
@@ -134,6 +136,12 @@ export default class Inspector extends Object3D {
     this.camera = scene.camera
     scene.utils.add(this)
     Transformer.updateCamera(this.camera)
+  }
+
+  private debugInitial(): void {
+    debugButton(this.debugFolder, 'Click To Inspect', () => {
+      this.onSingleClick()
+    })
   }
 
   private debugBasic(): void {

@@ -148,6 +148,7 @@ export default class ClickToInspect {
   // Events
 
   private onClick = (event: MouseEvent) => {
+    if (!this._enabled) return
     this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1
     this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
     this.checkCollision()

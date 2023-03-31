@@ -1,16 +1,15 @@
 // Libs
 import { useEffect, useRef, useState } from 'react'
-// @ts-ignore
-import Spritesheet from 'react-responsive-spritesheet'
-// Style
-import './audio.scss'
 // Models
 import { Events, threeDispatcher } from '../../../models/constants'
+// Components
+import './audio.scss'
+import Spritesheet, { SpritesheetRef } from '../../animation/Spritesheet'
 
 let playing = false
 export default function AudioBtn() {
   const btnRef = useRef<HTMLButtonElement>(null)
-  const spritesheetRef = useRef<Spritesheet>(null)
+  const spritesheetRef = useRef<SpritesheetRef>(null)
   const [selected, setSelected] = useState(playing)
 
   const onToggle = () => {
@@ -22,7 +21,7 @@ export default function AudioBtn() {
   const onAudioEvent = (evt: any) => {
     if (evt.playing) {
       playing = true
-      spritesheetRef.current.goToAndPlay(1)
+      spritesheetRef.current?.play()
     } else {
       playing = false
     }
@@ -40,15 +39,12 @@ export default function AudioBtn() {
     <button className={'audio hideText'} ref={btnRef} onClick={onToggle}>
       <Spritesheet
         image={'/images/audio.png'}
-        widthFrame={40}
-        heightFrame={40}
+        width={20}
+        height={20}
         steps={30}
         fps={30}
-        autoplay={false}
-        loop={true}
-        onEachFrame={(spritesheet: any) => {
-          const frame = spritesheet.getInfo('frame')
-          if (!playing && frame === 30) spritesheet.pause()
+        onUpdate={(frame: number) => {
+          if (!playing && frame === 0) spritesheetRef.current?.pause()
         }}
         ref={spritesheetRef}
       />

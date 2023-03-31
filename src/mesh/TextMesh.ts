@@ -1,4 +1,4 @@
-import { Color, Object3D, Mesh, Texture, Vector2 } from 'three'
+import { Color, Object3D, Mesh, Texture, Vector2, Material } from 'three'
 import TextGeometry from '../geometry/TextGeometry'
 import TextMaterial from '../materials/ui/TextMaterial'
 import { BaseUI, UIAlign } from '../types'
@@ -14,7 +14,7 @@ export default class TextMesh extends Object3D implements BaseUI {
 
   geometry: TextGeometry
 
-  material: TextMaterial
+  material: TextMaterial | Material
 
   mesh: Mesh
 
@@ -30,7 +30,13 @@ export default class TextMesh extends Object3D implements BaseUI {
 
   private yOffset = 0
 
-  constructor(name: string, texture: Texture | null = null, align: UIAlign = 'TL', anchor = new Vector2()) {
+  constructor(
+    name: string,
+    texture: Texture | null = null,
+    align: UIAlign = 'TL',
+    anchor = new Vector2(),
+    customMaterial?: Material,
+  ) {
     super()
     this.name = name
     this.align = align
@@ -40,7 +46,7 @@ export default class TextMesh extends Object3D implements BaseUI {
     this.add(this.container)
 
     this.geometry = new TextGeometry()
-    this.material = new TextMaterial({ map: texture })
+    this.material = customMaterial !== undefined ? customMaterial : new TextMaterial({ map: texture })
     this.mesh = new Mesh(this.geometry, this.material)
     this.mesh.name = 'txtSprite'
     this.mesh.position.y = 5
@@ -149,65 +155,61 @@ export default class TextMesh extends Object3D implements BaseUI {
     }
   }
 
-  // @ts-ignore
   get color(): Color {
+    // @ts-ignore
     return this.material.color
   }
 
-  // @ts-ignore
   get fontSize(): number {
+    // @ts-ignore
     return this.options.fontSize
   }
 
-  // @ts-ignore
   get map(): Texture | null {
+    // @ts-ignore
     return this.material.map
   }
 
-  // @ts-ignore
   get opacity(): number {
+    // @ts-ignore
     return this.material.alpha
   }
 
-  // @ts-ignore
   get letterSpacing(): number {
+    // @ts-ignore
     return this.options.letterSpacing
   }
 
-  // @ts-ignore
   get text(): string {
+    // @ts-ignore
     return this.options.text
   }
 
-  // @ts-ignore
   set color(value: Color) {
+    // @ts-ignore
     this.material.color = value
   }
 
-  // @ts-ignore
   set fontSize(value: number) {
+    // @ts-ignore
     this.options.fontSize = value
-    // const scale = normalize(0, 42, value)
-    // this.container.scale.setScalar(scale)
   }
 
-  // @ts-ignore
   set map(value: Texture | null) {
+    // @ts-ignore
     this.material.map = value
   }
 
-  // @ts-ignore
   set opacity(value: number) {
+    // @ts-ignore
     this.material.alpha = value
   }
 
-  // @ts-ignore
   set letterSpacing(value: number) {
     this.options.letterSpacing = value
     this.checkToUpdate()
   }
 
-  // @ts-ignore
   set text(value: string) {
     this.options.text = value
     this.checkToUpdate()

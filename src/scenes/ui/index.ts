@@ -65,7 +65,7 @@ export default class UIScene extends Scene {
   }
 
   addText(name: string, options: any): TextMesh {
-    const mesh = new TextMesh(name, options.map, options.align, options.anchor)
+    const mesh = new TextMesh(name, options.map, options.align, options.anchor, options.material)
     mesh.update(options)
     this.add(mesh)
     const resolution = new Vector2()

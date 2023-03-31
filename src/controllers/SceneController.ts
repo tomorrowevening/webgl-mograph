@@ -1,5 +1,6 @@
 // Libs
 import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2, Clock } from 'three'
+import gsap from 'gsap'
 // Models
 import assets from '../models/assets'
 import { Events, IS_DEV, threeDispatcher } from '../models/constants'
@@ -11,6 +12,7 @@ import UIMesh from '../mesh/UIMesh'
 import TextMesh from '../mesh/TextMesh'
 import BaseScene from '../scenes/BaseScene'
 import CompositeScene from '../scenes/composite'
+import LobbyScene from '../scenes/lobby'
 import IntroScene from '../scenes/intro'
 import CreditsScene from '../scenes/credits'
 import UIScene from '../scenes/ui'
@@ -25,7 +27,6 @@ import Transformer from '../tools/Transformer'
 import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
 import { sin } from '../utils/math'
 import { dispose, orthoCamera, renderToTexture, saveCanvasToPNG, triangle } from '../utils/three'
-import gsap from 'gsap'
 
 class SceneController {
   // Scenes
@@ -92,6 +93,10 @@ class SceneController {
       {
         text: '',
         value: '',
+      },
+      {
+        text: 'Lobby',
+        value: 'lobby',
       },
       {
         text: 'Intro',
@@ -236,11 +241,14 @@ class SceneController {
     const sceneName = evt.scene as Scenes
     let newScene: BaseScene | undefined = undefined
     switch (sceneName) {
-      case 'credits':
-        newScene = new CreditsScene()
+      case 'lobby':
+        newScene = new LobbyScene()
         break
       case 'intro':
         newScene = new IntroScene()
+        break
+      case 'credits':
+        newScene = new CreditsScene()
         break
     }
 

@@ -1,6 +1,6 @@
 import { Vector2 } from 'three'
 
-export type Scenes = 'intro' | 'credits'
+export type Scenes = 'lobby' | 'intro' | 'credits'
 
 // Transitions
 

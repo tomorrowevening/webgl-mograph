@@ -26,7 +26,7 @@ export default class App {
 
   init() {
     scenes.init()
-    scenes.showScene('intro')
+    scenes.showScene('lobby')
   }
 
   update() {

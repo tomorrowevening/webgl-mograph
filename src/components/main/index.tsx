@@ -8,6 +8,7 @@ import AppRunner from '../../controllers/AppRunner'
 import './main.scss'
 import Loader from './loader'
 import Welcome from './welcome'
+import scenes from '../../controllers/SceneController'
 
 export default function Main() {
   // References
@@ -19,17 +20,17 @@ export default function Main() {
   useEffect(() => {
     const onLoad = () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad)
+      const canvas = canvasRef.current as HTMLCanvasElement
+      const app = new AppRunner(canvas)
+      app.init()
+      app.play()
       setLoaded(true)
     }
 
     const startApp = () => {
       threeDispatcher.removeEventListener(Events.START_APP, startApp)
+      scenes.showScene('intro', 'wipe')
       setShowWelcome(false)
-
-      const canvas = canvasRef.current as HTMLCanvasElement
-      const app = new AppRunner(canvas)
-      app.init()
-      app.play()
     }
 
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad)

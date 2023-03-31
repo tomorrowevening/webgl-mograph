@@ -8,6 +8,8 @@ export const Events = {
   SCENE_SHOW: 'sceneShow',
   SCENE_HIDE: 'sceneHide',
   SCENE_HIDDEN: 'sceneHidden',
+  //
+  TOGGLE_MUTE: 'toggleMute',
   // Tools
   UPDATE_HIERARCHY: 'updateHierarchy',
 }

@@ -1,51 +1,49 @@
 // Libs
 import { useEffect, useRef, useState } from 'react'
 // Models
-import { settings } from '../../models/settings'
+import { Events, threeDispatcher } from '../../models/constants'
 // Controllers
 import AppRunner from '../../controllers/AppRunner'
 // Components
-import '../../scss/main.scss'
-// Utils
-import { preloadAssets } from '../../utils/preloader'
+import './main.scss'
+import Loader from './loader'
+import Welcome from './welcome'
 
 export default function Main() {
   // References
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // States
-  const [percent, setPercent] = useState(0)
   const [loaded, setLoaded] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(true)
 
   useEffect(() => {
-    const preload = () => {
-      preloadAssets((progess: number) => setPercent(progess), startApp)
+    const onLoad = () => {
+      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad)
+      setLoaded(true)
     }
 
     const startApp = () => {
-      setLoaded(true)
+      threeDispatcher.removeEventListener(Events.START_APP, startApp)
+      setShowWelcome(false)
+
       const canvas = canvasRef.current as HTMLCanvasElement
       const app = new AppRunner(canvas)
       app.init()
       app.play()
     }
 
-    const onLoad = () => {
-      window.removeEventListener('load', onLoad)
-      settings.detect().then(() => {
-        preload()
-      })
+    threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad)
+    threeDispatcher.addEventListener(Events.START_APP, startApp)
+    return () => {
+      threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad)
+      threeDispatcher.removeEventListener(Events.START_APP, startApp)
     }
-    window.addEventListener('load', onLoad, false)
   }, [])
 
   return (
     <main>
       <canvas ref={canvasRef} />
-      {!loaded && (
-        <div className="absoluteCenter">
-          <p>Loading assets {Math.round(percent * 100)}%</p>
-        </div>
-      )}
+      {loaded ? showWelcome ? <Welcome /> : null : <Loader />}
     </main>
   )
 }

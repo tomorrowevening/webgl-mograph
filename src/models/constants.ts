@@ -8,7 +8,10 @@ export const Events = {
   SCENE_SHOW: 'sceneShow',
   SCENE_HIDE: 'sceneHide',
   SCENE_HIDDEN: 'sceneHidden',
-  //
+  // App
+  LOAD_START: 'loadStart',
+  LOAD_COMPLETE: 'loadComplete',
+  START_APP: 'startApp',
   TOGGLE_MUTE: 'toggleMute',
   // Tools
   UPDATE_HIERARCHY: 'updateHierarchy',

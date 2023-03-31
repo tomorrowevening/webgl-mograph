@@ -1,4 +1,5 @@
-import '../../scss/debug.scss'
+// Components
+import './debug.scss'
 import SceneHierarchy from './SceneHierarchy'
 
 export default function Debug() {

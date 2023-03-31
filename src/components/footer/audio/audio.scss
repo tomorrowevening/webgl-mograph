@@ -1,0 +1,12 @@
+$btnSize: 20px;
+
+.audio {
+  background-color: #111;
+  border: none;
+  padding: 0;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: $btnSize;
+  height: $btnSize;
+}

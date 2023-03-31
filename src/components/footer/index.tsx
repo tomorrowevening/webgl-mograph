@@ -1,3 +1,10 @@
+// Components
+import AudioBtn from './audio'
+
 export default function Footer() {
-  return <footer></footer>
+  return (
+    <footer>
+      <AudioBtn />
+    </footer>
+  )
 }

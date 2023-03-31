@@ -138,7 +138,7 @@ export function debugWebGL() {
 
   // Renderer
   const folder = debugFolder('Renderer', systemTab)
-  debugInput(folder, webgl.renderer, 'physicallyCorrectLights', { label: 'Physical Lights' })
+  debugInput(folder, webgl.renderer, 'useLegacyLights', { label: 'Physical Lights' })
   const toneOptions = [NoToneMapping, LinearToneMapping, ReinhardToneMapping, CineonToneMapping, ACESFilmicToneMapping]
   debugOptions(
     folder,

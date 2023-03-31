@@ -219,3 +219,39 @@ export class DoubleFBO extends FBO {
     this.flip = !this.flip
   }
 }
+
+let outputCanvas: HTMLCanvasElement | null = null
+let outputLink: HTMLAnchorElement | null = null
+
+export function saveTarget(target: WebGLRenderTarget, filename: string) {
+  const { width, height } = target
+  if (outputCanvas === null) outputCanvas = document.createElement('canvas')
+  outputCanvas.width = width
+  outputCanvas.height = height
+
+  const ctx = outputCanvas.getContext('2d')!
+  const img = ctx.getImageData(0, 0, width, height)
+  webgl.renderer.readRenderTargetPixels(target, 0, 0, width, height, img.data)
+  ctx.putImageData(img, 0, 0)
+
+  outputCanvas.toBlob((blob: Blob | null) => {
+    if (blob !== null) {
+      const url = URL.createObjectURL(blob)
+      if (outputLink === null) outputLink = document.createElement('a')
+      outputLink.href = url
+      outputLink.download = `${filename}.png`
+      outputLink.click()
+      URL.revokeObjectURL(url)
+    }
+  })
+}
+
+export function saveCanvasToPNG() {
+  const canvas = webgl.renderer.domElement
+  if (canvas !== null) {
+    if (outputLink === null) outputLink = document.createElement('a')
+    outputLink.setAttribute('download', `screenshot_${Date.now()}.png`)
+    outputLink.setAttribute('href', canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream'))
+    outputLink.click()
+  }
+}

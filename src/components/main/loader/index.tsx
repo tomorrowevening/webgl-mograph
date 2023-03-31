@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 // Models
 import { Events, threeDispatcher } from '../../../models/constants'
 import { settings } from '../../../models/settings'
+// Components
+import './loader.scss'
 // Utils
 import { preloadAssets } from '../../../utils/preloader'
 
@@ -24,7 +26,7 @@ export default function Loader() {
   }, [])
 
   return (
-    <div className="absoluteCenter">
+    <div className="loader absoluteCenter">
       <p>Loading assets {Math.round(percent * 100)}%</p>
     </div>
   )

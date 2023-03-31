@@ -47,4 +47,10 @@ export default class IntroScene extends BaseScene {
       onComplete: () => this.onHidden(),
     })
   }
+
+  override resize(width: number, height: number): void {
+    const cam = this.camera as PerspectiveCamera
+    cam.aspect = width / height
+    cam.updateProjectionMatrix()
+  }
 }

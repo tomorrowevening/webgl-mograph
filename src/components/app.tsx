@@ -1,7 +1,7 @@
 // Libs
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import {} from '@theatre/core'
+import { } from '@theatre/core'
 import studio from '@theatre/studio'
 // Models
 import { IS_DEV } from '../models/constants'
@@ -13,8 +13,11 @@ import Header from './header'
 import Main from './main'
 // Utils
 import { initDebug } from '../utils/debug'
+import { InspectorExtension } from '../tools/theatre'
 
 if (IS_DEV) {
+  // @ts-ignore
+  studio.extend(InspectorExtension)
   studio.initialize()
   initDebug()
 }

@@ -1,5 +1,15 @@
 // Libs
-import { Color, ShaderMaterial, ShaderMaterialParameters, Texture, Vector2 } from 'three'
+import {
+  AddEquation,
+  Color,
+  CustomBlending,
+  OneFactor,
+  OneMinusDstColorFactor,
+  ShaderMaterial,
+  ShaderMaterialParameters,
+  Texture,
+  Vector2,
+} from 'three'
 // Shader
 import vertex from '../../glsl/default.vert'
 import fragment from '../../glsl/materials/ui/logo.frag'
@@ -38,6 +48,10 @@ export default class LogoMaterial extends ShaderMaterial {
       fragmentShader: fragment,
       transparent: true,
       type: 'ui/LogoMaterial',
+      blending: CustomBlending,
+      blendEquation: AddEquation,
+      blendSrc: OneMinusDstColorFactor,
+      blendDst: OneFactor,
     }
     super(props)
     if (parameters !== undefined) {

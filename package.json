@@ -17,6 +17,7 @@
     "glsl-noise": "^0.0.0",
     "gsap": "^3.11.5",
     "layout-bmfont-text": "^1.3.4",
+    "polyline-normals": "^2.0.2",
     "postprocessing": "^6.30.1",
     "quad-indices": "^2.0.1",
     "react": "^18.2.0",

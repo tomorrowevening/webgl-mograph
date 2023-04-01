@@ -59,6 +59,12 @@ export function distance(x: number, y: number): number {
   return Math.sqrt(d * d)
 }
 
+export function distance2(x1: number, y1: number, x2: number, y2: number): number {
+  const xd = (x1 - x2) * (x1 - x2)
+  const yd = (y1 - y2) * (y1 - y2)
+  return Math.sqrt(xd + yd)
+}
+
 /**
  * Referenced from: http://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
  */

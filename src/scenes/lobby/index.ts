@@ -49,7 +49,6 @@ export default class LobbyScene extends BaseScene {
     super('lobby')
     this.camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 1)
     this.camera.name = 'lobbyCam'
-    this.cameras.add(this.camera)
     this.clock = new Clock()
   }
 

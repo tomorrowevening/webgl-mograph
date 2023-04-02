@@ -1,12 +1,12 @@
 // Libs
 import { useEffect, useState } from 'react'
 // Models
-import { Events, threeDispatcher } from '../../../models/constants'
-import { settings } from '../../../models/settings'
+import { Events, threeDispatcher } from '@/models/constants'
+import { settings } from '@/models/settings'
 // Components
 import './loader.scss'
 // Utils
-import { preloadAssets } from '../../../utils/preloader'
+import { preloadAssets } from '@/utils/preloader'
 
 export default function Loader() {
   // States

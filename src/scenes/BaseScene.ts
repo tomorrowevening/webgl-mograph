@@ -1,11 +1,11 @@
 // Libs
 import { Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
 // Models
-import { Events, threeDispatcher } from '../models/constants'
-import webgl from '../models/webgl'
-import { Scenes } from '../types'
+import { Events, threeDispatcher } from '@/models/constants'
+import webgl from '@/models/webgl'
+import { Scenes } from '@/types'
 // Controllers
-import scenes from '../controllers/SceneController'
+import scenes from '@/controllers/SceneController'
 
 export default class BaseScene extends Scene {
   camera!: PerspectiveCamera | OrthographicCamera

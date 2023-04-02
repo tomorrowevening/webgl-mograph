@@ -1,11 +1,11 @@
 // Models
-import animation from '../models/animation'
-import { IS_DEV } from '../models/constants'
-import webgl from '../models/webgl'
+import animation from '@/models/animation'
+import { IS_DEV } from '@/models/constants'
+import webgl from '@/models/webgl'
 // Controllers
 import scenes from './SceneController'
 // Utils
-import { startDebug, endDebug, debugWebGL } from '../utils/debug'
+import { startDebug, endDebug, debugWebGL } from '@/utils/debug'
 
 export default class App {
   private playing = false

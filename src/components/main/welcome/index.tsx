@@ -1,5 +1,5 @@
 // Models
-import { Events, threeDispatcher } from '../../../models/constants'
+import { Events, threeDispatcher } from '@/models/constants'
 // Components
 import './welcome.scss'
 

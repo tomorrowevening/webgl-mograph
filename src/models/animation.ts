@@ -2,7 +2,6 @@
 import { getProject, IProject, ISheet } from '@theatre/core'
 // Models
 import assets from './assets'
-import type { Scenes } from '../types'
 import { threeDispatcher } from './constants'
 import { Events } from './constants'
 

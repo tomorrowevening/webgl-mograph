@@ -3,10 +3,10 @@ import { Clock, Mesh, MeshBasicMaterial, OrthographicCamera, ShaderMaterial } fr
 import { gsap } from 'gsap'
 // Views
 import BaseScene from '../BaseScene'
-import vertex from '../../glsl/default.vert'
+import vertex from '@/glsl/default.vert'
 import fragment from './lobby.frag'
 // Utils
-import { triangle } from '../../utils/three'
+import { triangle } from '@/utils/three'
 
 class LobbyMaterial extends ShaderMaterial {
   constructor() {

@@ -1,10 +1,10 @@
 // Libs
 import { useEffect, useRef, useState } from 'react'
 // Models
-import { Events, threeDispatcher } from '../../../models/constants'
+import { Events, threeDispatcher } from '@/models/constants'
 // Components
 import './audio.scss'
-import Spritesheet, { SpritesheetRef } from '../../animation/Spritesheet'
+import Spritesheet, { SpritesheetRef } from '@/components/animation/Spritesheet'
 
 let playing = false
 export default function AudioBtn() {

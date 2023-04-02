@@ -27,8 +27,8 @@ import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockCont
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 // Models
-import { debugDispatcher } from '../models/constants'
-import webgl from '../models/webgl'
+import { debugDispatcher } from '@/models/constants'
+import webgl from '@/models/webgl'
 // Utils
 import Inspector from './Inspector'
 

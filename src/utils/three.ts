@@ -11,11 +11,10 @@ import {
   PlaneGeometry,
   PositionalAudio,
   Texture,
-  WebGLRenderer,
   WebGLRenderTarget,
   WebGLRenderTargetOptions,
 } from 'three'
-import webgl from '../models/webgl'
+import webgl from '@/models/webgl'
 
 //////////////////////////////////////////////////
 // Cameras

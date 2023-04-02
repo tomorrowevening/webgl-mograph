@@ -1,11 +1,11 @@
 // Libs
 import { Mesh, Scene } from 'three'
 // Models
-import webgl from '../../models/webgl'
+import webgl from '@/models/webgl'
 // Materials
-import CompositeMaterial from '../../materials/post/CompositeMaterial'
+import CompositeMaterial from '@/materials/post/CompositeMaterial'
 // Utils
-import { orthoCamera, triangle } from '../../utils/three'
+import { orthoCamera, triangle } from '@/utils/three'
 
 export default class CompositeScene extends Scene {
   material: CompositeMaterial

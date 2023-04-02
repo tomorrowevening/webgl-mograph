@@ -13,9 +13,9 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FolderApi } from 'tweakpane'
 // Models
-import webgl from '../models/webgl'
+import webgl from '@/models/webgl'
 // Views
-import BaseScene from '../scenes/BaseScene'
+import BaseScene from '@/scenes/BaseScene'
 // Tools / Utils
 import Transformer, { TransformController } from './Transformer'
 import {
@@ -28,8 +28,8 @@ import {
   debugOptions,
   debugToggle,
   toolsTab,
-} from '../utils/debug'
-import { dispose } from '../utils/three'
+} from '@/utils/debug'
+import { dispose } from '@/utils/three'
 
 export type WindowParams = {
   index: number

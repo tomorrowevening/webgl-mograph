@@ -3,9 +3,9 @@ import { Camera, EventDispatcher } from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { FolderApi } from 'tweakpane'
 // Models
-import webgl from '../models/webgl'
+import webgl from '@/models/webgl'
 // Utils
-import { debugButton, debugFolder, debugInput, debugOptions } from '../utils/debug'
+import { debugButton, debugFolder, debugInput, debugOptions } from '@/utils/debug'
 
 export class TransformController extends EventDispatcher {
   static DRAG_START = 'Transform::dragStart'

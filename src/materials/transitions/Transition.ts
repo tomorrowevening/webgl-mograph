@@ -1,6 +1,6 @@
 import { ShaderMaterial, Texture } from 'three'
-import vertex from '../../glsl/default.vert'
-import webgl from '../../models/webgl'
+import vertex from '@/glsl/default.vert'
+import webgl from '@/models/webgl'
 
 export default class Transition extends ShaderMaterial {
   constructor(name: string, fragment: string, uniforms?: any) {

@@ -1,4 +1,4 @@
-import { File } from '../utils/preloader'
+import { File } from '@/utils/preloader'
 
 const assetList: Array<File> = [
   //////////////////////////////////////////////////

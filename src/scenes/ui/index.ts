@@ -1,13 +1,13 @@
 // Libs
 import { Material, Object3D, OrthographicCamera, Scene, Texture, Vector2 } from 'three'
 // Models
-import webgl from '../../models/webgl'
-import { UIAlign } from '../../types'
+import webgl from '@/models/webgl'
+import { UIAlign } from '@/types'
 // Views
-import UIMesh from '../../mesh/UIMesh'
-import TextMesh from '../../mesh/TextMesh'
+import UIMesh from '@/mesh/UIMesh'
+import TextMesh from '@/mesh/TextMesh'
 // Utils
-import { dispose, updateCameraOrtho } from '../../utils/three'
+import { dispose, updateCameraOrtho } from '@/utils/three'
 
 export default class UIScene extends Scene {
   camera: OrthographicCamera

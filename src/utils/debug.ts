@@ -49,14 +49,14 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
 // Models
-import { Events, threeDispatcher } from '../models/constants'
-import { settings } from '../models/settings'
-import webgl from '../models/webgl'
+import { Events, threeDispatcher } from '@/models/constants'
+import { settings } from '@/models/settings'
+import webgl from '@/models/webgl'
 // Views
-import DebugMaterial from '../materials/utils/DebugMaterial'
+import DebugMaterial from '@/materials/utils/DebugMaterial'
 // Utils
 import { clamp } from './math'
-import Transformer from '../tools/Transformer'
+import Transformer from '@/tools/Transformer'
 
 let gui: Pane
 let tabs: any

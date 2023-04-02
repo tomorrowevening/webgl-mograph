@@ -1,7 +1,7 @@
 import { Color, Object3D, Mesh, Texture, Vector2, Material } from 'three'
-import TextGeometry from '../geometry/TextGeometry'
-import TextMaterial from '../materials/ui/TextMaterial'
-import { BaseUI, UIAlign } from '../types'
+import TextGeometry from '@/geometry/TextGeometry'
+import TextMaterial from '@/materials/ui/TextMaterial'
+import { BaseUI, UIAlign } from '@/types'
 
 export default class TextMesh extends Object3D implements BaseUI {
   align: UIAlign

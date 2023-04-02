@@ -3,7 +3,7 @@ import { BufferAttribute, BufferGeometry } from 'three'
 // @ts-ignore
 import getNormals from 'polyline-normals'
 // Utils
-import { distance2 } from '../utils/math'
+import { distance2 } from '@/utils/math'
 
 const VERTS_PER_POINT = 2
 

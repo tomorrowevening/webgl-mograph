@@ -21,10 +21,10 @@ import { FolderApi, InputBindingApi } from 'tweakpane'
 // Tools
 import Transformer from '../Transformer'
 // Utils
-import { debugButton, debugColor, debugFolder, debugInput, debugOptions } from '../../utils/debug'
-import { copyToClipboard } from '../../utils/dom'
-import { roundTo } from '../../utils/math'
-import { dispose } from '../../utils/three'
+import { debugButton, debugColor, debugFolder, debugInput, debugOptions } from '@/utils/debug'
+import { copyToClipboard } from '@/utils/dom'
+import { roundTo } from '@/utils/math'
+import { dispose } from '@/utils/three'
 
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal'
 

@@ -1,10 +1,10 @@
 // Libs
 import { Material, Mesh, Texture, Vector2 } from 'three'
 // Views
-import UIMaterial from '../materials/ui/UIMaterial'
-import { BaseUI, UIAlign } from '../types'
+import UIMaterial from '@/materials/ui/UIMaterial'
+import { BaseUI, UIAlign } from '@/types'
 // Utils
-import { planeTL } from '../utils/three'
+import { planeTL } from '@/utils/three'
 
 export default class UIMesh extends Mesh implements BaseUI {
   align: UIAlign

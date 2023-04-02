@@ -3,8 +3,8 @@ import { Texture } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Models
-import assetList from '../models/assetList'
-import assets from '../models/assets'
+import assetList from '@/models/assetList'
+import assets from '@/models/assets'
 
 type FileType = 'json' | 'cubeTexture' | 'texture' | 'gltf' | 'draco'
 

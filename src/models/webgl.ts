@@ -1,7 +1,7 @@
 import { WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetOptions } from 'three'
 import { IS_DEV } from './constants'
 import { settings } from './settings'
-import { debugSettings } from '../utils/debug'
+import { debugSettings } from '@/utils/debug'
 
 class WebGLSingleton {
   renderer!: WebGLRenderer

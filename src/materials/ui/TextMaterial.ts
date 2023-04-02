@@ -1,8 +1,8 @@
 // Libs
 import { Color, ShaderMaterial, ShaderMaterialParameters, Texture } from 'three'
 // Shader
-import vertex from '../../glsl/default.vert'
-import fragment from '../../glsl/materials/ui/font.frag'
+import vertex from '@/glsl/default.vert'
+import fragment from '@/glsl/materials/ui/font.frag'
 
 export type TextMaterialProps = ShaderMaterialParameters & {
   map: Texture | null

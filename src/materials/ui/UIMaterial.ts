@@ -1,8 +1,8 @@
 // Libs
 import { Color, ShaderMaterial, Texture, Vector2 } from 'three'
 // Shader
-import vertex from '../../glsl/default.vert'
-import fragment from '../../glsl/materials/ui/basicUI.frag'
+import vertex from '@/glsl/default.vert'
+import fragment from '@/glsl/materials/ui/basicUI.frag'
 
 export default class UIMaterial extends ShaderMaterial {
   constructor(parameters?: any) {

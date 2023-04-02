@@ -2,7 +2,7 @@
 import { Mesh, MeshNormalMaterial, PerspectiveCamera, TorusKnotGeometry } from 'three'
 import gsap from 'gsap'
 // Models
-import webgl from '../../models/webgl'
+import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
 

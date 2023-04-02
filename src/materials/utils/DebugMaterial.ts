@@ -1,8 +1,8 @@
 import { ShaderLib, ShaderMaterial, UniformsUtils, Vector3 } from 'three'
 // Shader
-import vertex from '../../glsl/materials/debug.vert'
-import fragment from '../../glsl/materials/debug.frag'
-import { debugInput, debugOptions } from '../../utils/debug'
+import vertex from '@/glsl/materials/debug.vert'
+import fragment from '@/glsl/materials/debug.frag'
+import { debugInput, debugOptions } from '@/utils/debug'
 
 export default class DebugMaterial extends ShaderMaterial {
   constructor(defines: any = {}) {

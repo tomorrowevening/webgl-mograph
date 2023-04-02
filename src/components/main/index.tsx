@@ -1,14 +1,14 @@
 // Libs
 import { useEffect, useRef, useState } from 'react'
 // Models
-import { Events, threeDispatcher } from '../../models/constants'
+import { Events, threeDispatcher } from '@/models/constants'
 // Controllers
-import AppRunner from '../../controllers/AppRunner'
+import AppRunner from '@/controllers/AppRunner'
 // Components
 import './main.scss'
 import Loader from './loader'
 import Welcome from './welcome'
-import scenes from '../../controllers/SceneController'
+import scenes from '@/controllers/SceneController'
 
 export default function Main() {
   // References

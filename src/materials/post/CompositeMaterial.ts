@@ -1,11 +1,11 @@
 // Libs
 import { ShaderMaterial, Vector2, WebGLRenderTarget } from 'three'
 // Models
-import { IS_DEV } from '../../models/constants'
-import webgl from '../../models/webgl'
+import { IS_DEV } from '@/models/constants'
+import webgl from '@/models/webgl'
 // Shader
-import vertex from '../../glsl/fxaa.vert'
-import fragment from '../../glsl/post/composite.frag'
+import vertex from '@/glsl/fxaa.vert'
+import fragment from '@/glsl/post/composite.frag'
 
 export default class CompositeMaterial extends ShaderMaterial {
   constructor(params?: any) {

@@ -11,8 +11,8 @@ import {
   Vector2,
 } from 'three'
 // Shader
-import vertex from '../../glsl/default.vert'
-import fragment from '../../glsl/materials/ui/logo.frag'
+import vertex from '@/glsl/default.vert'
+import fragment from '@/glsl/materials/ui/logo.frag'
 
 export type LogoMaterialProps = ShaderMaterialParameters & {
   map: Texture | null

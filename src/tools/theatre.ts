@@ -1,4 +1,4 @@
-import { debugDispatcher } from '../models/constants'
+import { debugDispatcher } from '@/models/constants'
 import Inspector from './Inspector'
 
 const svgIcon = `

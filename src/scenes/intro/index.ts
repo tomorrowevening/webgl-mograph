@@ -2,12 +2,12 @@
 import { BoxGeometry, Mesh, MeshNormalMaterial, PerspectiveCamera, Vector2 } from 'three'
 import gsap from 'gsap'
 // Models
-import webgl from '../../models/webgl'
+import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
-import LineGeometry from '../../geometry/LineGeometry'
-import StrokeMaterial from '../../materials/StrokeMaterial'
-import { debugColor, debugFolder, debugInput } from '../../utils/debug'
+import LineGeometry from '@/geometry/LineGeometry'
+import StrokeMaterial from '@/materials/StrokeMaterial'
+import { debugColor, debugFolder, debugInput } from '@/utils/debug'
 import { degToRad } from 'three/src/math/MathUtils'
 
 export default class IntroScene extends BaseScene {

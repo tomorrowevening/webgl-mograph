@@ -1,6 +1,6 @@
 import { Color, ColorRepresentation, DoubleSide, ShaderMaterial, Side, Vector3 } from 'three'
-import vertex from '../glsl/materials/stroke.vert'
-import fragment from '../glsl/materials/stroke.frag'
+import vertex from '@/glsl/materials/stroke.vert'
+import fragment from '@/glsl/materials/stroke.frag'
 
 type StrokeProps = {
   diffuse?: ColorRepresentation

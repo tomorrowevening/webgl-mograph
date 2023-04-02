@@ -1,11 +1,11 @@
 import { Camera, CatmullRomCurve3, Object3D, PerspectiveCamera, Vector3 } from 'three'
 import { FolderApi } from 'tweakpane'
 // Models
-import { IS_DEV } from '../../models/constants'
+import { IS_DEV } from '@/models/constants'
 import Spline from './Spline'
 // Utils
-import { debugButton, debugFolder, debugInput, toolsTab } from '../../utils/debug'
-import { dispose } from '../../utils/three'
+import { debugButton, debugFolder, debugInput, toolsTab } from '@/utils/debug'
+import { dispose } from '@/utils/three'
 
 let splinesCreated = 0
 

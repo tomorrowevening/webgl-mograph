@@ -5,7 +5,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FolderApi } from 'tweakpane'
 // Models
-import { debugDispatcher, Events } from '../models/constants'
+import { debugDispatcher, Events } from '@/models/constants'
 // Tools
 import ClickToInspect from './ClickToInspect'
 import Transformer from './Transformer'
@@ -19,10 +19,10 @@ import {
   debugLight,
   debugMaterial,
   toolsTab,
-} from '../utils/debug'
-import { dispose } from '../utils/three'
-import { delay } from '../utils/dom'
-import BaseScene from '../scenes/BaseScene'
+} from '@/utils/debug'
+import { dispose } from '@/utils/three'
+import { delay } from '@/utils/dom'
+import BaseScene from '@/scenes/BaseScene'
 
 const transformControlsName = 'Transform Controls'
 

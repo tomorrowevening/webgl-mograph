@@ -10,12 +10,12 @@ varying vec2 v_rgbNE;
 varying vec2 v_rgbSW;
 varying vec2 v_rgbSE;
 varying vec2 v_rgbM;
-#include ../effects/fxaa.glsl;
+#include "../effects/fxaa.glsl";
 
 #ifdef DEBUG_GRID
-#include ../utils/debugGrid.glsl;
 uniform vec2 gridSize;
 uniform vec2 gridOffset;
+#include "../utils/debugGrid.glsl";
 #endif
 
 void main() {

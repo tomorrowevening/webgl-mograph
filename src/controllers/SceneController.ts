@@ -24,7 +24,7 @@ import Inspector from '../tools/Inspector'
 import MultiCams from '../tools/MultiCams'
 import SplineEditor from '../tools/SplineEditor'
 import Transformer from '../tools/Transformer'
-import { debugButton, debugLerp, debugOptions, scenesTab } from '../utils/debug'
+import { debugButton, debugInput, debugLerp, debugOptions, scenesTab } from '../utils/debug'
 import { sin } from '../utils/math'
 import { dispose, orthoCamera, renderToTexture, saveCanvasToPNG, triangle } from '../utils/three'
 
@@ -47,6 +47,8 @@ class SceneController {
   private multiCams?: MultiCams
   private splineEditor?: SplineEditor
   private saveScreenshot = false
+  private currentSceneName = ''
+  private currentScenePane?: any
 
   init() {
     this.ui = new UIScene()
@@ -123,6 +125,10 @@ class SceneController {
     }
     debugButton(scenesTab, 'Save Screenshot', () => {
       this.saveScreenshot = true
+    })
+    this.currentScenePane = debugInput(scenesTab, this, 'currentSceneName', {
+      label: 'Current Scene',
+      disabled: true,
     })
     debugOptions(scenesTab, 'Scene', sceneOptions, (value: any) => {
       transitionTo.scene = value
@@ -270,9 +276,11 @@ class SceneController {
       }
 
       this.currentScene = newScene
+      this.currentSceneName = newScene.name
       this.currentScene.init().then(() => {
         threeDispatcher.dispatchEvent({ type: Events.SCENE_READY })
         if (IS_DEV) {
+          this.currentScenePane?.refresh()
           Transformer.clear()
 
           // Inspector

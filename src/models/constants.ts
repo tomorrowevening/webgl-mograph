@@ -12,6 +12,8 @@ export const Events = {
   LOAD_START: 'loadStart',
   LOAD_COMPLETE: 'loadComplete',
   START_APP: 'startApp',
+  APP_EVENT: 'appEvent',
+  MARKER: 'marker',
   TOGGLE_MUTE: 'toggleMute',
   // Tools
   UPDATE_HIERARCHY: 'updateHierarchy',

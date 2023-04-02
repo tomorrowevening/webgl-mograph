@@ -8,6 +8,7 @@ import BaseScene from '../BaseScene'
 import LineGeometry from '../../geometry/LineGeometry'
 import StrokeMaterial from '../../materials/StrokeMaterial'
 import { debugColor, debugFolder, debugInput } from '../../utils/debug'
+import { degToRad } from 'three/src/math/MathUtils'
 
 export default class IntroScene extends BaseScene {
   constructor() {
@@ -25,16 +26,19 @@ export default class IntroScene extends BaseScene {
       this.world.add(mesh)
 
       const border = 120
-      const pts: Array<number[]> = [
-        [-border, -border],
-        [border, -border],
-        [border, border],
-        [-border, border],
-      ]
+      const pts: Array<number[]> = []
+      const total = 180
+      const mult = 360 / total
+      for (let i = 0; i < total; i++) {
+        const angle = degToRad(i * mult)
+        const x = Math.cos(angle) * border
+        const y = Math.sin(angle) * border
+        pts.push([x, -y])
+      }
       const lineGeom = new LineGeometry(pts, { closed: true, distances: true })
       const lineMat = new StrokeMaterial({
         diffuse: 0xffffff,
-        thickness: 4,
+        thickness: 1,
       })
       const line = new Mesh(lineGeom, lineMat)
       line.name = 'line'
@@ -48,7 +52,7 @@ export default class IntroScene extends BaseScene {
       debugColor(folder, lineMat, 'diffuse')
       debugInput(folder, lineMat, 'thickness', {
         min: 0,
-        max: 50,
+        max: 20,
       })
       debugInput(folder, lineMat, 'dash', {
         min: 0,

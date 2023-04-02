@@ -105,7 +105,6 @@ export default class LineGeometry extends BufferGeometry {
     // Determine normalized position of each vertice along path
     lastPt = undefined
     let pos = 0
-    let per = 0
     path.forEach(function (point) {
       const i = index
       // @ts-ignore
@@ -132,7 +131,6 @@ export default class LineGeometry extends BufferGeometry {
 
       if (attrDistance) {
         pos += dist
-        per += dist / pathLength
         attrDistance.setXY(dIndex++, pos, pathLength)
         attrDistance.setXY(dIndex++, pos, pathLength)
       }

@@ -4,6 +4,10 @@ uniform vec3 dash; // x = dash,  y = gap, z = offset
 uniform vec3 trim; // x = start, y = end, z = offset
 varying vec2 lineU; // x = pos, y = total length
 
+#include "../lygia/draw/aastep.glsl"
+
+#define ALPHA_TEST 2.0 / 255.0
+
 void main() {
   float opacityMod = 1.0;
   float offset = trim.z;
@@ -13,7 +17,7 @@ void main() {
     offset = (dash.z * 0.5) - (trim.z * lineU.y);
     float dashEnd = dash.x + dash.y;
     float lineUMod = mod(lineU.x + offset, dashEnd);
-    opacityMod = 1.0 - smoothstep(dash.x, dash.x + 0.01, lineUMod);
+    opacityMod = aastep(lineUMod, dash.x);
   }
   
   // Trim
@@ -37,9 +41,9 @@ void main() {
       opacityMod = 0.0;
     }
   }
-  
-  if(opacityMod == 0.0) {
-    discard;
-  }
-  gl_FragColor = vec4(diffuse, opacity * opacityMod);
+
+  opacityMod *= opacity;
+  if(opacityMod < ALPHA_TEST) discard;
+
+  gl_FragColor = vec4(diffuse, opacityMod);
 }

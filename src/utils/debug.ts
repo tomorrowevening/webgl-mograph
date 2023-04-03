@@ -78,7 +78,7 @@ export function initDebug() {
   gui.registerPlugin(TweakpaneImagePlugin)
 
   const guiElement = gui.element.parentElement as HTMLElement
-  guiElement.style.right = '130px'
+  guiElement.style.right = settings.mobile ? '12px' : '130px'
   guiElement.style.top = '12px'
   guiElement.style.width = '300px'
 

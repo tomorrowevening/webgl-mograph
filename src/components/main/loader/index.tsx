@@ -1,12 +1,13 @@
 // Libs
 import { useEffect, useState } from 'react'
 // Models
-import { Events, threeDispatcher } from '@/models/constants'
+import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import { settings } from '@/models/settings'
 // Components
 import './loader.scss'
 // Utils
 import { preloadAssets } from '@/utils/preloader'
+import { initDebug } from '@/utils/debug'
 
 export default function Loader() {
   // States
@@ -20,6 +21,7 @@ export default function Loader() {
     // Detect settings & begin load
     window.onload = () => {
       settings.detect().then(() => {
+        if (IS_DEV) initDebug()
         preloadAssets((progess: number) => setPercent(progess), startApp)
       })
     }

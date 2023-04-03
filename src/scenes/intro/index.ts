@@ -1,29 +1,81 @@
 // Libs
-import { BoxGeometry, Mesh, MeshNormalMaterial, PerspectiveCamera, Vector2 } from 'three'
+import {
+  AmbientLight,
+  BoxGeometry,
+  Mesh,
+  PerspectiveCamera,
+  PointLight,
+  SphereGeometry,
+  TorusGeometry,
+  TorusKnotGeometry,
+  Vector3,
+} from 'three'
 import gsap from 'gsap'
 // Models
+import assets from '@/models/assets'
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
 import LineGeometry from '@/geometry/LineGeometry'
 import StrokeMaterial from '@/materials/StrokeMaterial'
+import TPMeshBasicMaterial from '@/materials/textureProjection/TPMeshBasicMaterial'
+import TPMeshPhysicalMaterial from '@/materials/textureProjection/TPMeshPhysicalMaterial'
+// Utils
 import { debugColor, debugFolder, debugInput } from '@/utils/debug'
 import { degToRad } from 'three/src/math/MathUtils'
 
 export default class IntroScene extends BaseScene {
+  unlitTP!: TPMeshBasicMaterial
+  box!: Mesh
+  litTP!: TPMeshPhysicalMaterial
+  torus!: Mesh
+
   constructor() {
     super('intro')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
     this.camera.name = 'introMainCam'
     this.camera.position.z = 300
     this.cameras.add(this.camera)
+
+    const ambient = new AmbientLight(0xffffff, 0.5)
+    ambient.name = 'ambient'
+    this.lights.add(ambient)
+
+    const light = new PointLight(0xffffff)
+    light.name = 'pointLight'
+    light.position.set(300, 600, 500)
+    this.lights.add(light)
   }
 
   protected override initMesh(): Promise<void> {
     return new Promise((resolve) => {
-      const mesh = new Mesh(new BoxGeometry(100, 100, 100), new MeshNormalMaterial())
-      mesh.name = 'boxMesh'
-      this.world.add(mesh)
+      const texture = assets.textures.get('uv_grid')
+      const target = new Vector3(0, 0, 100)
+
+      this.unlitTP = new TPMeshBasicMaterial({
+        projectedMap: texture.clone(),
+        targetPos: target,
+        camWorldInverse: this.camera.matrixWorldInverse.clone(),
+        camProjection: this.camera.projectionMatrix.clone(),
+      })
+      this.box = new Mesh(new TorusKnotGeometry(100, 20, 18, 36), this.unlitTP)
+      this.box.name = 'boxMesh'
+      this.world.add(this.box)
+
+      this.camera.updateProjectionMatrix()
+      this.litTP = new TPMeshPhysicalMaterial({
+        projectedMap: texture.clone(),
+        targetPos: target,
+        camWorldInverse: this.camera.matrixWorldInverse.clone(),
+        camProjection: this.camera.projectionMatrix.clone(),
+        metalness: 0.5,
+        roughness: 0.5,
+      })
+
+      this.torus = new Mesh(new TorusGeometry(100, 20, 18, 36), this.litTP)
+      this.torus.name = 'torusMesh'
+      this.torus.position.x = -250
+      this.world.add(this.torus)
 
       const border = 120
       const pts: Array<number[]> = []
@@ -104,6 +156,27 @@ export default class IntroScene extends BaseScene {
       transitionProgress: 1,
       onComplete: () => this.onHidden(),
     })
+  }
+
+  override update(): void {
+    this.box.rotateX(0.01)
+    this.box.rotateY(0.02)
+    this.box.rotateZ(0.005)
+
+    this.torus.rotateX(-0.005)
+    this.torus.rotateY(-0.01)
+    this.torus.rotateZ(-0.02)
+
+    const mainCam = this.cameras.getObjectByName('introMainCam') as PerspectiveCamera
+    mainCam.updateProjectionMatrix()
+    mainCam.updateMatrixWorld()
+
+    this.unlitTP.camWorldInverse.copy(mainCam.matrixWorldInverse)
+    this.unlitTP.camProjection.copy(mainCam.projectionMatrix)
+
+    this.litTP.camWorldInverse.copy(mainCam.matrixWorldInverse)
+    this.litTP.camProjection.copy(mainCam.projectionMatrix)
+    this.litTP.blendAmt = Math.sin(Date.now() / 1000) * 0.5 + 0.5
   }
 
   override resize(width: number, height: number): void {

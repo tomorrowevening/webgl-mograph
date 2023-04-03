@@ -47,6 +47,8 @@ export default class StrokeMaterial extends ShaderMaterial {
       fragmentShader: fragment,
       transparent: true,
       side: params?.side !== undefined ? params?.side : DoubleSide,
+      // @ts-ignore
+      type: 'StrokeMaterial',
     })
   }
 

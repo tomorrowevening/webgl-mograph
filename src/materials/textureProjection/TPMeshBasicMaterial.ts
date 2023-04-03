@@ -11,7 +11,7 @@ import {
 import { fragmentHeader, fragmentReplacement, vertexHeader, vertexReplacement } from './shader'
 
 interface TPMeshBasicMaterialProps extends MeshBasicMaterialParameters {
-  projectedBlend?: number
+  blendAmt?: number
   projectedMap?: Texture | null
   targetPos?: Vector3
   camWorldInverse?: Matrix4
@@ -36,7 +36,7 @@ export default class TPMeshBasicMaterial extends ShaderMaterial {
       uniforms: UniformsUtils.merge([
         ShaderLib.basic.uniforms,
         {
-          tpBlend: { value: params?.projectedBlend !== undefined ? params?.projectedBlend : 0.5 },
+          tpBlend: { value: params?.blendAmt !== undefined ? params?.blendAmt : 0.5 },
           tpMap: { value: params?.projectedMap !== undefined ? params?.projectedMap : null },
           tpTargetPos: { value: params?.targetPos !== undefined ? params?.targetPos : new Vector3() },
           tpCamViewMatrix: { value: params?.camWorldInverse !== undefined ? params?.camWorldInverse : new Matrix4() },
@@ -60,11 +60,11 @@ export default class TPMeshBasicMaterial extends ShaderMaterial {
     this.uniforms.tpBlend.value = value
   }
 
-  get tpMap(): Texture | null {
+  get projectedMap(): Texture | null {
     return this.uniforms.tpMap.value
   }
 
-  set tpMap(value: Texture | null) {
+  set projectedMap(value: Texture | null) {
     this.uniforms.tpMap.value = value
   }
 

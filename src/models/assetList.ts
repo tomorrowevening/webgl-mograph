@@ -47,6 +47,11 @@ const assetList: Array<File> = [
     file: 'textures/fonts/moon_bold.png',
     type: 'texture',
   },
+  {
+    name: 'uv_grid',
+    file: 'textures/uv_grid_opengl.jpeg',
+    type: 'texture',
+  },
 ]
 
 export default assetList

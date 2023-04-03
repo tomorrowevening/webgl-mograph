@@ -13,9 +13,7 @@ export default class BaseScene extends Scene {
   // Scene setup
   cameras: Object3D
   lights: Object3D
-  interactive: Object3D // things to be seen by a raycaster
-  world: Object3D // basic stuff
-  ui: Object3D // 3D integrated non-interactive UI
+  world: Object3D
   utils: Object3D // Helpers / controls
 
   constructor(name: Scenes) {
@@ -26,17 +24,9 @@ export default class BaseScene extends Scene {
     this.cameras.name = 'cameras'
     this.add(this.cameras)
 
-    this.interactive = new Object3D()
-    this.interactive.name = 'interactive'
-    this.add(this.interactive)
-
     this.lights = new Object3D()
     this.lights.name = 'lights'
     this.add(this.lights)
-
-    this.ui = new Object3D()
-    this.ui.name = 'ui'
-    this.add(this.ui)
 
     this.utils = new Object3D()
     this.utils.name = 'utils'
@@ -54,6 +44,12 @@ export default class BaseScene extends Scene {
           this.initAnimation().then(resolve)
         })
       })
+    })
+  }
+
+  protected initLights(): Promise<void> {
+    return new Promise((resolve) => {
+      resolve()
     })
   }
 

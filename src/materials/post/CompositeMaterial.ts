@@ -4,7 +4,7 @@ import { ShaderMaterial, Vector2, WebGLRenderTarget } from 'three'
 import { IS_DEV } from '@/models/constants'
 import webgl from '@/models/webgl'
 // Shader
-import vertex from '@/glsl/fxaa.vert'
+import vertex from '@/glsl/default.vert'
 import fragment from '@/glsl/post/composite.frag'
 
 export default class CompositeMaterial extends ShaderMaterial {

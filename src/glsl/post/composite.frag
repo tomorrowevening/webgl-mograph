@@ -4,13 +4,6 @@ uniform sampler2D uiTex;
 uniform vec2 resolution;
 uniform bool transitioning;
 varying vec2 vUv;
-// FXAA
-varying vec2 v_rgbNW;
-varying vec2 v_rgbNE;
-varying vec2 v_rgbSW;
-varying vec2 v_rgbSE;
-varying vec2 v_rgbM;
-#include "../effects/fxaa.glsl";
 
 #ifdef DEBUG_GRID
 uniform vec2 gridSize;
@@ -19,12 +12,11 @@ uniform vec2 gridOffset;
 #endif
 
 void main() {
-  vec2 fragCoord = vUv * resolution;
-  vec4 color = fxaa(currentSceneTex, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+  vec4 color = texture2D(currentSceneTex, vUv);
 
   // Transition
   if (transitioning) {
-    color = fxaa(transitionTex, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+    color = texture2D(transitionTex, vUv);
   }
 
   // Overlay UI
@@ -32,7 +24,7 @@ void main() {
   color = mix(color, ui, ui.a);
 
 #ifdef DEBUG_GRID
-  vec2 pos = fragCoord.xy + vec2(gridSize.y);
+  vec2 pos = vUv * resolution + vec2(gridSize.y);
   color += vec4(debugGrid(pos, resolution, gridOffset, gridSize.x, gridSize.y), 1.0);
 #endif
 

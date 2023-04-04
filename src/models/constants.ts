@@ -9,9 +9,9 @@ export const Events = {
   SCENE_HIDE: 'sceneHide',
   SCENE_HIDDEN: 'sceneHidden',
   // App
-  LOAD_START: 'loadStart',
   LOAD_COMPLETE: 'loadComplete',
-  START_APP: 'startApp',
+  APP_READY: 'appReady',
+  APP_START: 'appStart',
   APP_EVENT: 'appEvent',
   MARKER: 'marker',
   // Audio

@@ -1,4 +1,6 @@
 import { Material, Vector2 } from 'three'
+import TextMesh from './mesh/TextMesh'
+import UIMesh from './mesh/UIMesh'
 
 export type Scenes = 'lobby' | 'intro' | 'credits'
 
@@ -20,6 +22,7 @@ export interface BaseUI {
 
 export interface MeshUX {
   name: string
+  params?: any
   width: number
   height: number
   left?: number
@@ -28,7 +31,8 @@ export interface MeshUX {
   bottom?: number
   align?: UIAlign
   material?: Material
-  onRollOver: () => void
-  onRollOut: () => void
-  onClick: () => void
+  onInit?: (mesh: TextMesh | UIMesh) => void
+  onRollOver?: () => void
+  onRollOut?: () => void
+  onClick?: () => void
 }

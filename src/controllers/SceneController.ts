@@ -1,13 +1,10 @@
 // Libs
-import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2, Clock } from 'three'
-import gsap from 'gsap'
+import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2, EventDispatcher, Clock } from 'three'
 // Models
-import assets from '@/models/assets'
 import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
 import { Scenes, Transitions, UIAlign } from '@/types'
 // Views
-import LogoMaterial from '@/materials/ui/LogoMaterial'
 import UIMesh from '@/mesh/UIMesh'
 import TextMesh from '@/mesh/TextMesh'
 import BaseScene from '@/scenes/BaseScene'
@@ -25,64 +22,35 @@ import MultiCams from '@/tools/MultiCams'
 import SplineEditor from '@/tools/SplineEditor'
 import Transformer from '@/tools/Transformer'
 import { clearAppTab, debugButton, debugInput, debugLerp, debugOptions, scenesTab } from '@/utils/debug'
-import { sin } from '@/utils/math'
 import { dispose, orthoCamera, renderToTexture, saveCanvasToPNG, triangle } from '@/utils/three'
 
-class SceneController {
+class SceneController extends EventDispatcher {
   // Scenes
   currentScene?: BaseScene | undefined
   previousScene?: BaseScene | undefined
   composite?: CompositeScene
   ui?: UIScene
-  autoUpdateUI = true // true if there's gonna be animation or UI change
-  private clock!: Clock
-  private logo!: TextMesh
+  autoUpdateUI = true // true if there's gonna be animation or UI change (interactivity)
 
   // Transitioning
   transition?: Transition | undefined
   transitionMesh?: Mesh | undefined
 
   // Tools
+  private clock: Clock = new Clock()
   private inspector?: Inspector
   private multiCams?: MultiCams
   private splineEditor?: SplineEditor
   private saveScreenshot = false
-  private currentSceneName = ''
+  private currentSceneName = '' // to monitor during debug 👍
   private currentScenePane?: any
 
   init() {
     this.ui = new UIScene()
     this.composite = new CompositeScene()
 
-    this.clock = new Clock()
     this.clock.start()
-
     threeDispatcher.dispatchEvent({ type: Events.APP_READY })
-
-    // Header
-    const font = 'anurati'
-    const fontData = assets.json.get(font)
-    const fontTex = assets.textures.get(font).clone()
-    const logoMat = new LogoMaterial({
-      map: fontTex,
-    })
-    this.logo = scenes.addText('Header', {
-      font: fontData,
-      fontSize: 24,
-      text: 'TOMORROW\nEVENING',
-      material: logoMat,
-    })
-    this.logo.name = 'header'
-    this.logo.position.set(20, -20, 0)
-    logoMat.resolution = new Vector2(1 / this.logo.width, 1 / this.logo.height)
-    logoMat.resolution.multiplyScalar(10)
-
-    logoMat.alpha = 0
-    gsap.to(logoMat, {
-      duration: 3,
-      delay: 1,
-      alpha: 1,
-    })
 
     // Events
     threeDispatcher.addEventListener(Events.SCENE_SHOW, this.onSceneShow)
@@ -172,9 +140,7 @@ class SceneController {
   }
 
   update() {
-    const logoMat = this.logo.material as LogoMaterial
-    logoMat.time = this.clock.getElapsedTime()
-    logoMat.intensity = sin(1, 4, logoMat.time)
+    this.dispatchEvent({ type: Events.UPDATE, value: this.clock.getElapsedTime() })
     this.previousScene?.update()
     this.currentScene?.update()
     if (IS_DEV) this.multiCams?.update()

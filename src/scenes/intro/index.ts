@@ -32,18 +32,19 @@ import { debugColor, debugFolder, debugInput } from '@/utils/debug'
 
 export default class IntroScene extends BaseScene {
   composer!: EffectComposer
+  private mainCamera: PerspectiveCamera
 
   unlitTP!: TPMeshBasicMaterial
-  box!: Mesh
+  torusKnot!: Mesh
   litTP!: TPMeshPhysicalMaterial
   torus!: Mesh
 
   constructor() {
     super('intro')
-    this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
-    this.camera.name = 'introMainCam'
-    this.camera.position.z = 300
-    this.cameras.add(this.camera)
+    this.mainCamera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
+    this.mainCamera.name = 'introMainCam'
+    this.mainCamera.position.z = 300
+    this.camera = this.mainCamera
 
     const ambient = new AmbientLight(0xffffff, 0.5)
     ambient.name = 'ambient'
@@ -59,6 +60,7 @@ export default class IntroScene extends BaseScene {
     return new Promise((resolve) => {
       const texture = assets.textures.get('uv_grid')
       const target = new Vector3(0, 0, 100)
+      this.camera.updateProjectionMatrix()
 
       this.unlitTP = new TPMeshBasicMaterial({
         projectedMap: texture.clone(),
@@ -66,12 +68,11 @@ export default class IntroScene extends BaseScene {
         camWorldInverse: this.camera.matrixWorldInverse.clone(),
         camProjection: this.camera.projectionMatrix.clone(),
       })
-      this.box = new Mesh(new TorusKnotGeometry(100, 20, 18, 36), this.unlitTP)
-      this.box.name = 'boxMesh'
-      this.box.position.x = 250
-      this.world.add(this.box)
+      this.torusKnot = new Mesh(new TorusKnotGeometry(100, 20, 18, 36), this.unlitTP)
+      this.torusKnot.name = 'torusKnotMesh'
+      this.torusKnot.position.x = 250
+      this.world.add(this.torusKnot)
 
-      this.camera.updateProjectionMatrix()
       this.litTP = new TPMeshPhysicalMaterial({
         projectedMap: texture.clone(),
         targetPos: target,
@@ -165,12 +166,6 @@ export default class IntroScene extends BaseScene {
     })
   }
 
-  protected override initAnimation(): Promise<void> {
-    return new Promise((resolve) => {
-      resolve()
-    })
-  }
-
   override dispose(): void {
     this.composer.dispose()
   }
@@ -189,15 +184,15 @@ export default class IntroScene extends BaseScene {
   override update(): void {
     const time = this.clock.getElapsedTime()
 
-    this.box.rotateX(0.01)
-    this.box.rotateY(0.02)
-    this.box.rotateZ(0.005)
+    this.torusKnot.rotateX(0.01)
+    this.torusKnot.rotateY(0.02)
+    this.torusKnot.rotateZ(0.005)
 
     this.torus.rotateX(-0.005)
     this.torus.rotateY(-0.01)
     this.torus.rotateZ(-0.02)
 
-    const mainCam = this.cameras.getObjectByName('introMainCam') as PerspectiveCamera
+    const mainCam = this.mainCamera
     mainCam.updateProjectionMatrix()
     mainCam.updateMatrixWorld()
 

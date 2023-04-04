@@ -1,5 +1,5 @@
 // Libs
-import { Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
+import { Clock, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
 // Models
 import { Events, threeDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
@@ -9,6 +9,7 @@ import scenes from '@/controllers/SceneController'
 
 export default class BaseScene extends Scene {
   camera!: PerspectiveCamera | OrthographicCamera
+  clock: Clock
 
   // Scene setup
   cameras: Object3D
@@ -19,6 +20,8 @@ export default class BaseScene extends Scene {
   constructor(name: Scenes) {
     super()
     this.name = name
+
+    this.clock = new Clock()
 
     this.cameras = new Object3D()
     this.cameras.name = 'cameras'
@@ -85,6 +88,7 @@ export default class BaseScene extends Scene {
 
   show(): void {
     this.enable()
+    this.clock.start()
   }
 
   hide(): void {

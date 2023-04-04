@@ -43,13 +43,11 @@ class LobbyMaterial extends ShaderMaterial {
 
 export default class LobbyScene extends BaseScene {
   private mat!: LobbyMaterial
-  private clock: Clock
 
   constructor() {
     super('lobby')
     this.camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 1)
     this.camera.name = 'lobbyCam'
-    this.clock = new Clock()
   }
 
   protected override initMesh(): Promise<void> {
@@ -63,7 +61,6 @@ export default class LobbyScene extends BaseScene {
 
   override show(): void {
     super.show()
-    this.clock.start()
     this.mat.brightness = 0
     gsap.to(this.mat, {
       brightness: 1,

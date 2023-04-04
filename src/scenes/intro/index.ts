@@ -38,16 +38,12 @@ export default class IntroScene extends BaseScene {
   litTP!: TPMeshPhysicalMaterial
   torus!: Mesh
 
-  private clock: Clock
-
   constructor() {
     super('intro')
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
     this.camera.name = 'introMainCam'
     this.camera.position.z = 300
     this.cameras.add(this.camera)
-
-    this.clock = new Clock()
 
     const ambient = new AmbientLight(0xffffff, 0.5)
     ambient.name = 'ambient'
@@ -160,10 +156,10 @@ export default class IntroScene extends BaseScene {
         frameBufferType: HalfFloatType,
       })
       this.composer.autoRenderToScreen = false
-
+      // Default pass
       this.composer.addPass(new RenderPass(this, this.camera))
+      // AA + Vignette
       this.composer.addPass(new EffectPass(this.camera, new FXAAEffect(), new VignetteEffect()))
-      console.log(this.composer)
 
       resolve()
     })
@@ -175,9 +171,8 @@ export default class IntroScene extends BaseScene {
     })
   }
 
-  override show(): void {
-    super.show()
-    this.clock.start()
+  override dispose(): void {
+    this.composer.dispose()
   }
 
   override hide(): void {
@@ -211,7 +206,7 @@ export default class IntroScene extends BaseScene {
 
     this.litTP.camWorldInverse.copy(mainCam.matrixWorldInverse)
     this.litTP.camProjection.copy(mainCam.projectionMatrix)
-    this.litTP.blendAmt = Math.sin(time / 1000) * 0.5 + 0.5
+    this.litTP.blendAmt = Math.sin(time) * 0.5 + 0.5
   }
 
   override draw(renderTarget: WebGLRenderTarget | null): void {

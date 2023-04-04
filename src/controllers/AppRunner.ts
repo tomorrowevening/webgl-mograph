@@ -3,6 +3,7 @@ import animation from '@/models/animation'
 import { IS_DEV } from '@/models/constants'
 import webgl from '@/models/webgl'
 // Controllers
+import audio from './AudioController'
 import scenes from './SceneController'
 // Utils
 import { startDebug, endDebug, debugWebGL } from '@/utils/debug'
@@ -27,6 +28,12 @@ export default class App {
   init() {
     scenes.init()
     scenes.showScene('lobby')
+  }
+
+  dispose() {
+    audio.dispose()
+    scenes.dispose()
+    this.pause()
   }
 
   update() {

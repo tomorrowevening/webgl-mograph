@@ -57,6 +57,7 @@ import DebugMaterial from '@/materials/utils/DebugMaterial'
 // Utils
 import { clamp } from './math'
 import Transformer from '@/tools/Transformer'
+import { fileName } from './dom'
 
 let gui: Pane
 let tabs: any
@@ -489,10 +490,10 @@ export const debugImage = (parentFolder: any, label: string, props: any): any =>
       if (changed) {
         if (isTexture) {
           texture = new Texture(evt.value)
+          if (props.url !== undefined) texture.name = fileName(props.url)
           texture.wrapS = RepeatWrapping
           texture.wrapT = RepeatWrapping
           texture.needsUpdate = true
-          // TODO: Assign original filename somehow
           // @ts-ignore
           texture.userData = { url: evt.value.src }
           props.onChange(texture)

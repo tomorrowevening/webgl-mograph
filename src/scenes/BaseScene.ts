@@ -1,7 +1,7 @@
 // Libs
 import { Clock, Object3D, OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderTarget } from 'three'
 // Models
-import { Events, threeDispatcher } from '@/models/constants'
+import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
 import { Scenes } from '@/types'
 // Controllers
@@ -40,14 +40,11 @@ export default class BaseScene extends Scene {
     this.add(this.world)
   }
 
-  init(): Promise<void> {
-    return new Promise((resolve) => {
-      this.initMesh().then(() => {
-        this.initPost().then(() => {
-          this.initAnimation().then(resolve)
-        })
-      })
-    })
+  async init() {
+    await this.initMesh()
+    await this.initPost()
+    await this.initAnimation()
+    if (IS_DEV) this.initDebug()
   }
 
   protected initLights(): Promise<void> {
@@ -72,6 +69,10 @@ export default class BaseScene extends Scene {
     return new Promise((resolve) => {
       resolve()
     })
+  }
+
+  protected initDebug(): void {
+    //
   }
 
   dispose(): void {

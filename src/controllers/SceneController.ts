@@ -24,7 +24,7 @@ import Inspector from '@/tools/Inspector'
 import MultiCams from '@/tools/MultiCams'
 import SplineEditor from '@/tools/SplineEditor'
 import Transformer from '@/tools/Transformer'
-import { debugButton, debugInput, debugLerp, debugOptions, scenesTab } from '@/utils/debug'
+import { clearAppTab, debugButton, debugInput, debugLerp, debugOptions, scenesTab } from '@/utils/debug'
 import { sin } from '@/utils/math'
 import { dispose, orthoCamera, renderToTexture, saveCanvasToPNG, triangle } from '@/utils/three'
 
@@ -56,6 +56,8 @@ class SceneController {
 
     this.clock = new Clock()
     this.clock.start()
+
+    threeDispatcher.dispatchEvent({ type: Events.APP_READY })
 
     // Header
     const font = 'anurati'
@@ -274,6 +276,8 @@ class SceneController {
       if (this.currentScene !== undefined) {
         this.previousScene = this.currentScene
       }
+
+      if (IS_DEV) clearAppTab()
 
       this.currentScene = newScene
       this.currentSceneName = newScene.name

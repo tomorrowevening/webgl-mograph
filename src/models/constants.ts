@@ -14,6 +14,8 @@ export const Events = {
   START_APP: 'startApp',
   APP_EVENT: 'appEvent',
   MARKER: 'marker',
+  // Audio
+  AUDIO_START: 'audioStart',
   TOGGLE_MUTE: 'toggleMute',
   // Tools
   UPDATE_HIERARCHY: 'updateHierarchy',

@@ -12,11 +12,12 @@ import Footer from './footer'
 import Header from './header'
 import Main from './main'
 // Utils
-import { InspectorExtension } from '@/tools/theatre'
+import { AppExtension, CameraExtension } from '@/tools/theatre'
 
 if (IS_DEV) {
   // @ts-ignore
-  studio.extend(InspectorExtension)
+  studio.extend(AppExtension)
+  studio.extend(CameraExtension)
   studio.initialize()
 }
 

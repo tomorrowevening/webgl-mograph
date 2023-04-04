@@ -19,6 +19,7 @@ export const Events = {
   AUDIO_START: 'audioStart',
   TOGGLE_MUTE: 'toggleMute',
   // Tools
+  UPDATE_MULTICAMS: 'updateMultiCams',
   UPDATE_HIERARCHY: 'updateHierarchy',
 }
 

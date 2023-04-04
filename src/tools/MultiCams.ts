@@ -30,6 +30,7 @@ import {
   toolsTab,
 } from '@/utils/debug'
 import { dispose } from '@/utils/three'
+import { Events, debugDispatcher } from '@/models/constants'
 
 export type WindowParams = {
   index: number
@@ -39,6 +40,8 @@ export type WindowParams = {
   size: number
 }
 
+export type MultiCamsMode = 'default' | 'quadCam'
+
 export default class MultiCams extends Object3D {
   onChange?: (camera: PerspectiveCamera | OrthographicCamera) => void
   orbits: Map<string, OrbitControls> = new Map()
@@ -46,6 +49,7 @@ export default class MultiCams extends Object3D {
   helpers: Map<string, CameraHelper> = new Map()
   debugFolder!: FolderApi
   windowColor = new Color(0x242529)
+  mode: MultiCamsMode = 'default'
 
   private _activeCamera?: PerspectiveCamera | OrthographicCamera
   private multiCamContainer: Object3D
@@ -142,11 +146,13 @@ export default class MultiCams extends Object3D {
     Transformer.addEventListener(TransformController.DRAG_END, this.onTransformEnd)
 
     this.initDebug()
+    debugDispatcher.addEventListener(Events.UPDATE_MULTICAMS, this.onUpdate)
   }
 
   dispose(): void {
     Transformer.removeEventListener(TransformController.DRAG_START, this.onTransformDrag)
     Transformer.removeEventListener(TransformController.DRAG_END, this.onTransformEnd)
+    debugDispatcher.removeEventListener(Events.UPDATE_MULTICAMS, this.onUpdate)
     this.debugFolder.dispose()
   }
 
@@ -233,16 +239,10 @@ export default class MultiCams extends Object3D {
     this.currentOrbit?.update()
   }
 
-  private renderScene(
-    scene: Scene,
-    camera: Camera,
-    size: number,
-    x: number,
-    y: number,
-    maxWidth: number,
-    maxHeight: number,
-  ): void {
+  private renderScene(scene: Scene, camera: Camera, size: number, x: number, y: number): void {
     const renderer = webgl.renderer
+    const maxWidth = renderer.domElement.width / webgl.dpr
+    const maxHeight = renderer.domElement.height / webgl.dpr
     const aspect = maxWidth / maxHeight
     const height = Math.round((1 / aspect) * size)
     const _x = Math.round(x)
@@ -251,14 +251,39 @@ export default class MultiCams extends Object3D {
     // Other camera
     renderer.setViewport(_x, _y, size, height)
     renderer.setScissor(_x, _y, size, height)
-    renderer.clear()
     renderer.render(scene, camera)
+  }
+
+  quadCams(scene: BaseScene) {
+    // Store original
+    const scissor = new Vector4()
+    const viewport = new Vector4()
+    const scissorTest = webgl.renderer.getScissorTest()
+    const clearColor = new Color()
+    webgl.renderer.getViewport(viewport)
+    webgl.renderer.getScissor(scissor)
+    webgl.renderer.getClearColor(clearColor)
+    //
+    const w = webgl.width / 2
+    const y = webgl.height - webgl.height / 2
+    const top = this.cameras.get('top')!
+    const front = this.cameras.get('front')!
+    const right = this.cameras.get('right')!
+    this.renderScene(scene, scene.camera, w, 0, 0)
+    this.renderScene(scene, front, w, w, 0)
+    this.renderScene(scene, top, w, 0, y)
+    this.renderScene(scene, right, w, w, y)
+
+    // Reset
+    webgl.renderer.setViewport(viewport)
+    webgl.renderer.setScissor(scissor)
+    webgl.renderer.setScissorTest(scissorTest)
+    webgl.renderer.setClearColor(clearColor)
   }
 
   postRender(scene: Scene): void {
     if (this.windows.length < 0) return
-    const maxWidth = webgl.renderer.domElement.width / webgl.dpr
-    const maxHeight = webgl.renderer.domElement.height / webgl.dpr
+    if (this.mode === 'quadCam') return
 
     // Reset values
     const scissor = new Vector4()
@@ -276,7 +301,7 @@ export default class MultiCams extends Object3D {
     this.windows.forEach((_window: WindowParams) => {
       const { camera, size, pos } = _window
       if (camera !== undefined) {
-        this.renderScene(scene, camera, size, pos.x, pos.y, maxWidth, maxHeight)
+        this.renderScene(scene, camera, size, pos.x, pos.y)
       }
     })
 
@@ -296,8 +321,8 @@ export default class MultiCams extends Object3D {
       const lastWindow = this.windows[this.windows.length - 1]
       index = lastWindow.index + 1
       size = lastWindow.size
-      const nextX = lastWindow.pos.x + lastWindow.size + 10
-      const nextY = lastWindow.pos.y + lastWindow.size + 10
+      const nextX = lastWindow.pos.x + lastWindow.size
+      const nextY = lastWindow.pos.y + lastWindow.size
       if (nextX < window.innerWidth) {
         pos.set(nextX, lastWindow.pos.y)
       } else {
@@ -451,6 +476,10 @@ export default class MultiCams extends Object3D {
 
   private onTransformEnd = () => {
     this.enabled = this.orbitEnabled
+  }
+
+  private onUpdate = (evt: any) => {
+    this.mode = evt.value === 'quadView' ? 'quadCam' : 'default'
   }
 
   set enabled(value: boolean) {

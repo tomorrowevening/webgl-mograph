@@ -146,7 +146,7 @@ class SceneController extends EventDispatcher {
     if (IS_DEV) this.multiCams?.update()
   }
 
-  draw() {
+  private drawScenes() {
     if (this.previousScene !== undefined) {
       const prevRT = webgl.renderTargets.get('previousScene')!
       this.previousScene?.draw(prevRT)
@@ -162,6 +162,15 @@ class SceneController extends EventDispatcher {
 
     this.ui?.draw(this.autoUpdateUI)
     this.composite?.draw()
+  }
+
+  draw() {
+    if (IS_DEV && this.multiCams?.mode === 'quadCam') {
+      this.multiCams?.quadCams(this.currentScene!)
+    } else {
+      this.drawScenes()
+    }
+
     if (IS_DEV) {
       if (this.saveScreenshot) {
         saveCanvasToPNG()

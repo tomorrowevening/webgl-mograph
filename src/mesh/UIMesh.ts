@@ -15,6 +15,8 @@ export default class UIMesh extends Mesh implements BaseUI {
 
   height: number
 
+  private hasCustomMaterial = false
+
   constructor(
     name: string,
     width: number,
@@ -33,6 +35,7 @@ export default class UIMesh extends Mesh implements BaseUI {
     this.width = width
     this.height = height
     this.scale.set(width, height, 1)
+    this.hasCustomMaterial = material !== undefined
   }
 
   reposition(width: number, height: number): void {
@@ -83,8 +86,10 @@ export default class UIMesh extends Mesh implements BaseUI {
 
   // @ts-ignore
   override onBeforeRender() {
-    // @ts-ignore
-    this.material.uniforms.opacity.value = this.material.opacity
+    if (!this.hasCustomMaterial) {
+      // @ts-ignore
+      this.material.uniforms.opacity.value = this.material.opacity
+    }
   }
 
   get opacity(): number {

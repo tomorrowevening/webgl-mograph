@@ -1,4 +1,4 @@
-import { debugDispatcher } from '@/models/constants'
+import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
 import Inspector from './Inspector'
 
 const svgIcon = `
@@ -29,6 +29,43 @@ export const InspectorExtension = {
                 label: 'Click to Inspect',
                 onClick: () => {
                   debugDispatcher.dispatchEvent({ type: Inspector.SINGLE_CLICK })
+                },
+              },
+            ],
+          },
+          {
+            type: 'Flyout',
+            label: '🚀',
+            svgSource: svgIcon,
+            items: [
+              {
+                label: 'Lobby',
+                onClick: () => {
+                  threeDispatcher.dispatchEvent({
+                    type: Events.SCENE_SHOW,
+                    scene: 'lobby',
+                    transition: 'wipe',
+                  })
+                },
+              },
+              {
+                label: 'Intro',
+                onClick: () => {
+                  threeDispatcher.dispatchEvent({
+                    type: Events.SCENE_SHOW,
+                    scene: 'intro',
+                    transition: 'wipe',
+                  })
+                },
+              },
+              {
+                label: 'Credits',
+                onClick: () => {
+                  threeDispatcher.dispatchEvent({
+                    type: Events.SCENE_SHOW,
+                    scene: 'credits',
+                    transition: 'wipe',
+                  })
                 },
               },
             ],

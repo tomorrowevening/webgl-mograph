@@ -11,7 +11,6 @@ export default function Welcome() {
       <button
         onClick={() => {
           threeDispatcher.dispatchEvent({ type: Events.START_APP })
-          threeDispatcher.dispatchEvent({ type: Events.TOGGLE_MUTE, playing: true })
         }}
       >
         Enter

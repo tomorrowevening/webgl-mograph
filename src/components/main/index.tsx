@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Events, threeDispatcher } from '@/models/constants'
 // Controllers
 import AppRunner from '@/controllers/AppRunner'
+import audio from '@/controllers/AudioController'
+import scenes from '@/controllers/SceneController'
 // Components
 import './main.scss'
 import Loader from './loader'
 import Welcome from './welcome'
-import scenes from '@/controllers/SceneController'
 
 export default function Main() {
   // References
@@ -27,10 +28,12 @@ export default function Main() {
       setLoaded(true)
     }
 
-    const startApp = () => {
+    const startApp = async () => {
       threeDispatcher.removeEventListener(Events.START_APP, startApp)
-      scenes.showScene('intro', 'wipe')
-      setShowWelcome(false)
+      audio.init().then(() => {
+        scenes.showScene('intro', 'wipe')
+        setShowWelcome(false)
+      })
     }
 
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad)

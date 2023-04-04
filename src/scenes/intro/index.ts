@@ -1,18 +1,25 @@
 // Libs
 import {
   AmbientLight,
-  BoxGeometry,
+  Clock,
+  HalfFloatType,
   Mesh,
+  OrthographicCamera,
   PerspectiveCamera,
   PointLight,
-  SphereGeometry,
+  Shape,
   TorusGeometry,
   TorusKnotGeometry,
+  Vector2,
   Vector3,
+  WebGLRenderTarget,
 } from 'three'
+import { SVGLoader, SVGResult, SVGResultPaths } from 'three/examples/jsm/loaders/SVGLoader'
 import gsap from 'gsap'
+import { EffectComposer, EffectPass, FXAAEffect, Pass, RenderPass, VignetteEffect } from 'postprocessing'
 // Models
 import assets from '@/models/assets'
+import { IS_DEV } from '@/models/constants'
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
@@ -22,13 +29,16 @@ import TPMeshBasicMaterial from '@/materials/textureProjection/TPMeshBasicMateri
 import TPMeshPhysicalMaterial from '@/materials/textureProjection/TPMeshPhysicalMaterial'
 // Utils
 import { debugColor, debugFolder, debugInput } from '@/utils/debug'
-import { degToRad } from 'three/src/math/MathUtils'
 
 export default class IntroScene extends BaseScene {
+  composer!: EffectComposer
+
   unlitTP!: TPMeshBasicMaterial
   box!: Mesh
   litTP!: TPMeshPhysicalMaterial
   torus!: Mesh
+
+  private clock: Clock
 
   constructor() {
     super('intro')
@@ -36,6 +46,8 @@ export default class IntroScene extends BaseScene {
     this.camera.name = 'introMainCam'
     this.camera.position.z = 300
     this.cameras.add(this.camera)
+
+    this.clock = new Clock()
 
     const ambient = new AmbientLight(0xffffff, 0.5)
     ambient.name = 'ambient'
@@ -60,6 +72,7 @@ export default class IntroScene extends BaseScene {
       })
       this.box = new Mesh(new TorusKnotGeometry(100, 20, 18, 36), this.unlitTP)
       this.box.name = 'boxMesh'
+      this.box.position.x = 250
       this.world.add(this.box)
 
       this.camera.updateProjectionMatrix()
@@ -77,58 +90,64 @@ export default class IntroScene extends BaseScene {
       this.torus.position.x = -250
       this.world.add(this.torus)
 
-      const border = 120
-      const pts: Array<number[]> = []
-      const total = 180
-      const mult = 360 / total
-      for (let i = 0; i < total; i++) {
-        const angle = degToRad(i * mult)
-        const x = Math.cos(angle) * border
-        const y = Math.sin(angle) * border
-        pts.push([x, -y])
-      }
-      const lineGeom = new LineGeometry(pts, { closed: true, distances: true })
-      const lineMat = new StrokeMaterial({
-        diffuse: 0xffffff,
-        thickness: 1,
-      })
-      const line = new Mesh(lineGeom, lineMat)
-      line.name = 'line'
-      this.world.add(line)
+      const loader = new SVGLoader()
+      loader.load('svg/test.svg', (data: SVGResult) => {
+        data.paths.forEach((path: SVGResultPaths) => {
+          const shapes = SVGLoader.createShapes(path)
+          shapes.forEach((shape: Shape) => {
+            const vectors = shape.getPoints()
+            const pts: Array<number[]> = []
+            vectors.forEach((v: Vector2) => {
+              pts.push([v.x, -v.y])
+            })
+            const lineGeom = new LineGeometry(pts, { closed: false, distances: true })
+            const lineMat = new StrokeMaterial({
+              diffuse: 0xffffff,
+              thickness: 1,
+            })
+            const line = new Mesh(lineGeom, lineMat)
+            line.name = 'line'
+            line.position.set(-100, 100, 0)
+            this.world.add(line)
 
-      const folder = debugFolder('Line')
-      debugInput(folder, lineMat, 'alpha', {
-        min: 0,
-        max: 1,
-      })
-      debugColor(folder, lineMat, 'diffuse')
-      debugInput(folder, lineMat, 'thickness', {
-        min: 0,
-        max: 20,
-      })
-      debugInput(folder, lineMat, 'dash', {
-        min: 0,
-        max: 10,
-      })
-      debugInput(folder, lineMat, 'dashGap', {
-        min: 0,
-        max: 10,
-      })
-      debugInput(folder, lineMat, 'dashOffset', {
-        min: 0,
-        max: 10,
-      })
-      debugInput(folder, lineMat, 'trimStart', {
-        min: -1,
-        max: 1,
-      })
-      debugInput(folder, lineMat, 'trimEnd', {
-        min: -1,
-        max: 1,
-      })
-      debugInput(folder, lineMat, 'trimOffset', {
-        min: -1,
-        max: 1,
+            if (IS_DEV) {
+              const folder = debugFolder('Line')
+              debugInput(folder, lineMat, 'alpha', {
+                min: 0,
+                max: 1,
+              })
+              debugColor(folder, lineMat, 'diffuse')
+              debugInput(folder, lineMat, 'thickness', {
+                min: 0,
+                max: 20,
+              })
+              debugInput(folder, lineMat, 'dash', {
+                min: 0,
+                max: 10,
+              })
+              debugInput(folder, lineMat, 'dashGap', {
+                min: 0,
+                max: 10,
+              })
+              debugInput(folder, lineMat, 'dashOffset', {
+                min: 0,
+                max: 10,
+              })
+              debugInput(folder, lineMat, 'trimStart', {
+                min: -1,
+                max: 1,
+              })
+              debugInput(folder, lineMat, 'trimEnd', {
+                min: -1,
+                max: 1,
+              })
+              debugInput(folder, lineMat, 'trimOffset', {
+                min: -1,
+                max: 1,
+              })
+            }
+          })
+        })
       })
 
       resolve()
@@ -137,6 +156,15 @@ export default class IntroScene extends BaseScene {
 
   protected override initPost(): Promise<void> {
     return new Promise((resolve) => {
+      this.composer = new EffectComposer(webgl.renderer, {
+        frameBufferType: HalfFloatType,
+      })
+      this.composer.autoRenderToScreen = false
+
+      this.composer.addPass(new RenderPass(this, this.camera))
+      this.composer.addPass(new EffectPass(this.camera, new FXAAEffect(), new VignetteEffect()))
+      console.log(this.composer)
+
       resolve()
     })
   }
@@ -145,6 +173,11 @@ export default class IntroScene extends BaseScene {
     return new Promise((resolve) => {
       resolve()
     })
+  }
+
+  override show(): void {
+    super.show()
+    this.clock.start()
   }
 
   override hide(): void {
@@ -159,6 +192,8 @@ export default class IntroScene extends BaseScene {
   }
 
   override update(): void {
+    const time = this.clock.getElapsedTime()
+
     this.box.rotateX(0.01)
     this.box.rotateY(0.02)
     this.box.rotateZ(0.005)
@@ -176,12 +211,26 @@ export default class IntroScene extends BaseScene {
 
     this.litTP.camWorldInverse.copy(mainCam.matrixWorldInverse)
     this.litTP.camProjection.copy(mainCam.projectionMatrix)
-    this.litTP.blendAmt = Math.sin(Date.now() / 1000) * 0.5 + 0.5
+    this.litTP.blendAmt = Math.sin(time / 1000) * 0.5 + 0.5
+  }
+
+  override draw(renderTarget: WebGLRenderTarget | null): void {
+    const delta = this.clock.getDelta()
+    this.composer.outputBuffer = renderTarget!
+    this.composer.render(delta)
   }
 
   override resize(width: number, height: number): void {
     const cam = this.camera as PerspectiveCamera
     cam.aspect = width / height
     cam.updateProjectionMatrix()
+    this.composer.setSize(width, height)
+  }
+
+  override updateCamera(camera: PerspectiveCamera | OrthographicCamera) {
+    super.updateCamera(camera)
+    this.composer.passes.forEach((pass: Pass) => {
+      pass.mainCamera = camera
+    })
   }
 }

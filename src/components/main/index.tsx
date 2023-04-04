@@ -29,7 +29,7 @@ export default function Main() {
     }
 
     const startApp = async () => {
-      threeDispatcher.removeEventListener(Events.START_APP, startApp)
+      threeDispatcher.removeEventListener(Events.APP_START, startApp)
       audio.init().then(() => {
         scenes.showScene('intro', 'wipe')
         setShowWelcome(false)
@@ -37,10 +37,10 @@ export default function Main() {
     }
 
     threeDispatcher.addEventListener(Events.LOAD_COMPLETE, onLoad)
-    threeDispatcher.addEventListener(Events.START_APP, startApp)
+    threeDispatcher.addEventListener(Events.APP_START, startApp)
     return () => {
       threeDispatcher.removeEventListener(Events.LOAD_COMPLETE, onLoad)
-      threeDispatcher.removeEventListener(Events.START_APP, startApp)
+      threeDispatcher.removeEventListener(Events.APP_START, startApp)
     }
   }, [])
 

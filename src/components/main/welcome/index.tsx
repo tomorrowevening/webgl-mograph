@@ -10,7 +10,7 @@ export default function Welcome() {
       <p>Description</p>
       <button
         onClick={() => {
-          threeDispatcher.dispatchEvent({ type: Events.START_APP })
+          threeDispatcher.dispatchEvent({ type: Events.APP_START })
         }}
       >
         Enter

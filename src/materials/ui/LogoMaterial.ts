@@ -16,6 +16,7 @@ import fragment from '@/glsl/materials/ui/logo.frag'
 
 export type LogoMaterialProps = ShaderMaterialParameters & {
   map: Texture | null
+  resolution?: Vector2
 }
 
 export default class LogoMaterial extends ShaderMaterial {
@@ -41,7 +42,7 @@ export default class LogoMaterial extends ShaderMaterial {
           value: 0,
         },
         resolution: {
-          value: new Vector2(res, res),
+          value: parameters?.resolution !== undefined ? parameters?.resolution : new Vector2(res, res),
         },
       },
       vertexShader: vertex,

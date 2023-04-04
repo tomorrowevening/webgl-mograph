@@ -45,6 +45,7 @@ export default class IntroScene extends BaseScene {
     this.mainCamera.name = 'introMainCam'
     this.mainCamera.position.z = 300
     this.camera = this.mainCamera
+    this.cameras.add(this.mainCamera)
 
     const ambient = new AmbientLight(0xffffff, 0.5)
     ambient.name = 'ambient'

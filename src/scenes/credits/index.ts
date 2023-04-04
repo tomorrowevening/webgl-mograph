@@ -23,6 +23,7 @@ export default class CreditsScene extends BaseScene {
     this.camera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1500)
     this.camera.name = 'creditsMainCam'
     this.camera.position.z = 300
+    this.cameras.add(this.camera)
   }
 
   protected override initMesh(): Promise<void> {

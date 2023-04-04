@@ -266,11 +266,11 @@ export default class MultiCams extends Object3D {
     //
     const w = webgl.width / 2
     const y = webgl.height - webgl.height / 2
+    const debug = this.cameras.get('debug')!
     const top = this.cameras.get('top')!
-    const front = this.cameras.get('front')!
     const right = this.cameras.get('right')!
     this.renderScene(scene, scene.camera, w, 0, 0)
-    this.renderScene(scene, front, w, w, 0)
+    this.renderScene(scene, debug, w, w, 0)
     this.renderScene(scene, top, w, 0, y)
     this.renderScene(scene, right, w, w, y)
 

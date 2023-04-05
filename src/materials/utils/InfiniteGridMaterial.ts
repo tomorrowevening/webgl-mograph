@@ -31,7 +31,7 @@ export default class InfiniteGridMaterial extends ShaderMaterial {
           value: props?.color !== undefined ? props?.color : new Color(0xffffff),
         },
         uDistance: {
-          value: props?.distance !== undefined ? props?.distance : 2000,
+          value: props?.distance !== undefined ? props?.distance : 10000,
         },
         uSubgridOpacity: {
           value: props?.subgridOpacity !== undefined ? props?.subgridOpacity : 0.05,

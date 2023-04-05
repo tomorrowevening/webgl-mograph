@@ -1,6 +1,7 @@
 // Libs
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+// eslint-disable-next-line
 import { } from '@theatre/core'
 import studio from '@theatre/studio'
 // Models

@@ -31,6 +31,7 @@ import {
 } from '@/utils/debug'
 import { dispose } from '@/utils/three'
 import { Events, debugDispatcher } from '@/models/constants'
+import InfiniteGridHelper from '@/mesh/helpers/InfiniteGridHelper'
 
 export type WindowParams = {
   index: number
@@ -62,6 +63,8 @@ export default class MultiCams extends Object3D {
   private debugIndex: number
   private windows: Array<WindowParams> = []
   private addedCameras: Array<string> = []
+  private grid: InfiniteGridHelper
+  private gridPanel: any = undefined
 
   constructor(onChange?: (camera: PerspectiveCamera | OrthographicCamera) => void, index = 1) {
     super()
@@ -89,6 +92,10 @@ export default class MultiCams extends Object3D {
     this.helperContainer.name = 'helpers'
     this.multiCamContainer.add(this.helperContainer)
     this.onChange = onChange
+
+    this.grid = new InfiniteGridHelper()
+    this.grid.visible = false
+    this.add(this.grid)
 
     const scale = 1000
 
@@ -161,7 +168,7 @@ export default class MultiCams extends Object3D {
     this.debugFolder.dispose()
 
     this.initDebug()
-    scene.utils.add(this.multiCamContainer)
+    scene.utils.add(this)
     scene.cameras.children.forEach((obj: Object3D) => {
       if (obj instanceof PerspectiveCamera || obj instanceof OrthographicCamera) {
         this.addCamera(obj)
@@ -442,6 +449,7 @@ export default class MultiCams extends Object3D {
         helper.visible = value
       }
     })
+    this.gridPanel = debugInput(this.debugFolder, this.grid, 'visible', { label: 'Show Infinite Grid' })
 
     const camerasFolder = debugFolder('Cameras', this.debugFolder)
     for (const camera of this.cameras.values()) {
@@ -479,7 +487,9 @@ export default class MultiCams extends Object3D {
   }
 
   private onUpdate = (evt: any) => {
-    this.mode = evt.value === 'quadView' ? 'quadCam' : 'default'
+    this.grid.visible = evt.value === 'quadView'
+    this.mode = this.grid.visible ? 'quadCam' : 'default'
+    this.gridPanel.refresh()
   }
 
   set enabled(value: boolean) {

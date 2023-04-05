@@ -8,8 +8,8 @@ import { Events, threeDispatcher } from '@/models/constants'
 import './header.scss'
 import TextButton from '../ux/TextButton'
 import LogoMaterial from '@/materials/ui/LogoMaterial'
-import TextMesh from '@/mesh/TextMesh'
-import UIMesh from '@/mesh/UIMesh'
+import TextMesh from '@/mesh/ui/TextMesh'
+import UIMesh from '@/mesh/ui/UIMesh'
 // Controllers
 import scenes from '@/controllers/SceneController'
 // Utils

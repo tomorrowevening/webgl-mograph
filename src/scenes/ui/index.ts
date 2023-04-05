@@ -4,8 +4,8 @@ import { Material, Object3D, OrthographicCamera, Scene, Texture, Vector2 } from 
 import webgl from '@/models/webgl'
 import { UIAlign } from '@/types'
 // Views
-import UIMesh from '@/mesh/UIMesh'
-import TextMesh from '@/mesh/TextMesh'
+import UIMesh from '@/mesh/ui/UIMesh'
+import TextMesh from '@/mesh/ui/TextMesh'
 // Utils
 import { dispose, updateCameraOrtho } from '@/utils/three'
 

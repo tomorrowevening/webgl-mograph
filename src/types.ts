@@ -1,6 +1,6 @@
 import { Material, Vector2 } from 'three'
-import TextMesh from './mesh/TextMesh'
-import UIMesh from './mesh/UIMesh'
+import TextMesh from './mesh/ui/TextMesh'
+import UIMesh from './mesh/ui/UIMesh'
 
 export type Scenes = 'lobby' | 'intro' | 'credits'
 

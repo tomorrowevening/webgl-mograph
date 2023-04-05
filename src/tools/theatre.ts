@@ -14,18 +14,6 @@ export const AppExtension = {
         set([
           {
             type: 'Flyout',
-            label: '🛠',
-            items: [
-              {
-                label: 'Click to Inspect',
-                onClick: () => {
-                  debugDispatcher.dispatchEvent({ type: Inspector.SINGLE_CLICK })
-                },
-              },
-            ],
-          },
-          {
-            type: 'Flyout',
             label: '🚀',
             items: [
               {
@@ -56,6 +44,18 @@ export const AppExtension = {
                     scene: 'credits',
                     transition: 'wipe',
                   })
+                },
+              },
+            ],
+          },
+          {
+            type: 'Flyout',
+            label: '🛠',
+            items: [
+              {
+                label: 'Click to Inspect',
+                onClick: () => {
+                  debugDispatcher.dispatchEvent({ type: Inspector.SINGLE_CLICK })
                 },
               },
             ],

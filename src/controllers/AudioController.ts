@@ -1,4 +1,3 @@
-import { start } from 'tone'
 import { Events, threeDispatcher } from '@/models/constants'
 
 class AudioController {
@@ -13,10 +12,8 @@ class AudioController {
 
   init(): Promise<void> {
     return new Promise((resolve) => {
-      start().then(() => {
-        threeDispatcher.dispatchEvent({ type: Events.TOGGLE_MUTE, playing: true })
-        resolve()
-      })
+      threeDispatcher.dispatchEvent({ type: Events.TOGGLE_MUTE, playing: true })
+      resolve()
     })
   }
 

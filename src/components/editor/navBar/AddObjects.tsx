@@ -142,6 +142,7 @@ function setMaterial(type: string) {
     // Custom
     case materials[3]:
       material = new StrokeMaterial()
+      console.log('StrokeMaterial requires the following attributes: lineMiter, lineNormal, and lineDistance')
       break
     case materials[4]:
       material = new TPMeshBasicMaterial()

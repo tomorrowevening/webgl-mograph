@@ -1,6 +1,5 @@
 import type { IExtension, ToolsetConfig } from '@theatre/studio'
 import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
-import Inspector from './Inspector'
 
 //////////////////////////////////////////////////
 // App
@@ -44,18 +43,6 @@ export const AppExtension = {
                     scene: 'credits',
                     transition: 'wipe',
                   })
-                },
-              },
-            ],
-          },
-          {
-            type: 'Flyout',
-            label: '🛠',
-            items: [
-              {
-                label: 'Click to Inspect',
-                onClick: () => {
-                  debugDispatcher.dispatchEvent({ type: Inspector.SINGLE_CLICK })
                 },
               },
             ],

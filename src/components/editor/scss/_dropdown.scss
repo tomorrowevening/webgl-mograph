@@ -1,0 +1,79 @@
+.dropdown {
+  color: #FFF;
+  display: inline-block;
+  margin-right: 1px;
+  text-align: left;
+  height: fit-content;
+  min-width: auto;
+  width: max-content;
+
+  button {
+    background-color: $BAR_COLOR;
+    color: #FFF;
+    padding: 5px 10px;
+    position: relative;
+    text-align: left;
+    min-width: $ROW_HEIGHT;
+    width: 100%;
+
+    &:hover {
+      background-color: $BTN_HOVER;
+    }
+
+    &.svg {
+      line-height: 0;
+      width: $BTN_SIZE;
+      height: $BTN_SIZE;
+    }
+  }
+
+  p {
+    background-color: $BAR_COLOR;
+    display: inline-block;
+    height: $ROW_HEIGHT;
+    margin: 0;
+    min-width: $ROW_HEIGHT;
+    padding: 5px;
+  }
+
+  svg {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  ul {
+    background-color: $BAR_COLOR;
+    display: block;
+    list-style: none;
+    margin: 0;
+    margin-block: 0;
+    padding-inline: 0;
+    position: absolute;
+    width: max-content;
+
+    li {
+      border-top: 1px solid $BORDER_COLOR;
+      display: block;
+      position: relative;
+
+      &.selected button {
+        background-color: $BTN_SELECTED;
+
+        &:hover {
+          background-color: $BTN_SELECTED_HOVER;
+        }
+      }
+    }
+  }
+
+  &.subdropdown {
+    min-width: 100%;
+
+    ul {
+      border-left: 1px solid $BORDER_COLOR;
+      left: 100%;
+      top: -1px;
+    }
+  }
+}

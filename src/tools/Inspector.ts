@@ -33,6 +33,7 @@ export default class Inspector extends Object3D {
   static CONTROLS_TRANSLATE = 'Inspector::controlsTranslate'
   static CONTROLS_ROTATE = 'Inspector::controlsRotate'
   static CONTROLS_SCALE = 'Inspector::controlsScale'
+  static SET_MATERIAL = 'Inspector::setMaterial'
 
   transformControls!: TransformControls
 
@@ -56,6 +57,7 @@ export default class Inspector extends Object3D {
     debugDispatcher.addEventListener(Inspector.CONTROLS_ROTATE, this.onToggleRotate)
     debugDispatcher.addEventListener(Inspector.CONTROLS_SCALE, this.onToggleScale)
     debugDispatcher.addEventListener(Inspector.CONTROLS_TRANSLATE, this.onToggleTranslate)
+    debugDispatcher.addEventListener(Inspector.SET_MATERIAL, this.onSetMaterial)
   }
 
   dispose() {
@@ -67,6 +69,7 @@ export default class Inspector extends Object3D {
     debugDispatcher.removeEventListener(Inspector.CONTROLS_ROTATE, this.onToggleRotate)
     debugDispatcher.removeEventListener(Inspector.CONTROLS_SCALE, this.onToggleScale)
     debugDispatcher.removeEventListener(Inspector.CONTROLS_TRANSLATE, this.onToggleTranslate)
+    debugDispatcher.removeEventListener(Inspector.SET_MATERIAL, this.onSetMaterial)
     this.debugFolder.dispose()
   }
 
@@ -94,12 +97,13 @@ export default class Inspector extends Object3D {
     }
   }
 
-  setCurrentObject(obj: Object3D) {
+  setCurrentObject(obj?: Object3D) {
     if (obj === this.currentObject) return
-    this.removeCurrent()
 
-    this.debugFolder.expanded = true
+    this.removeCurrent()
     this.currentObject = obj
+    if (obj === undefined) return
+
     delay(0.1).then(() => {
       this.debugBasic()
       this.debugMaterial()
@@ -109,6 +113,7 @@ export default class Inspector extends Object3D {
       this.debugLight()
       this.debugMesh()
       this.debugTransformControls()
+      this.debugFolder.expanded = true
     })
   }
 
@@ -384,5 +389,18 @@ export default class Inspector extends Object3D {
   private onToggleScale = () => {
     this.clickInspector.enabled = false
     this.transformControls.setMode('scale')
+  }
+
+  private onSetMaterial = (evt: any) => {
+    if (this.currentObject !== undefined) {
+      if (this.currentObject.type.search('Mesh') > -1) {
+        // @ts-ignore
+        this.currentObject.material = evt.value
+        // Refresh GUI
+        const prev = this.currentObject
+        this.setCurrentObject(undefined)
+        this.setCurrentObject(prev)
+      }
+    }
   }
 }

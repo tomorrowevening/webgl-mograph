@@ -8,6 +8,7 @@ import './sceneHierarchy.scss'
 // Controllers
 import scenes from '@/controllers/SceneController'
 import Inspector from '@/tools/Inspector'
+import { delay } from '@/utils/dom'
 
 function determineIcon(obj: Object3D): string {
   if (obj.name === 'cameras') {
@@ -97,15 +98,25 @@ export default function SceneHierarchy() {
   const [open, setOpen] = useState(false)
   const [scene, setScene] = useState<Object3D | null>(null)
 
-  useEffect(() => {
-    const onSceneReady = () => {
+  const onSceneReady = () => {
+    setScene(scenes.currentScene!)
+  }
+  const onUpdate = () => {
+    setOpen(false)
+    setScene(null)
+    delay(0.1).then(() => {
       setScene(scenes.currentScene!)
-    }
+    })
+  }
+
+  useEffect(() => {
     threeDispatcher.addEventListener(Events.SCENE_READY, onSceneReady)
+    threeDispatcher.addEventListener(Events.UPDATE_HIERARCHY, onUpdate)
     return () => {
       threeDispatcher.removeEventListener(Events.SCENE_READY, onSceneReady)
+      threeDispatcher.removeEventListener(Events.UPDATE_HIERARCHY, onUpdate)
     }
-  }, [])
+  }, [onSceneReady, onUpdate])
 
   return (
     <div id="SceneHierarchy">
@@ -120,13 +131,7 @@ export default function SceneHierarchy() {
           }}
         ></button>
         <span>Hierarchy: {scene?.name}</span>
-        <button
-          className="refresh hideText"
-          onClick={() => {
-            setScene(null)
-            setScene(scenes.currentScene!)
-          }}
-        >
+        <button className="refresh hideText" onClick={() => onUpdate()}>
           Refresh
         </button>
       </div>

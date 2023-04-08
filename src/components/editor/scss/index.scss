@@ -1,0 +1,30 @@
+@import 'theme';
+
+.editor {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 101;
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+  }
+
+  .navBar {
+    display: inline-block;
+    pointer-events: visible;
+    position: relative;
+    left: 180px;
+    top: 12px;
+  }
+
+  @import 'dropdown';
+}

@@ -1085,6 +1085,7 @@ export function acceptedMaterialNames(name: string): boolean {
     name === 'uniformsNeedUpdate' ||
     name === 'combine' ||
     name === 'precision' ||
+    name === 'attenuationDistance' ||
     name.slice(0, 5) === 'blend' ||
     name.slice(0, 4) === 'clip' ||
     name.slice(0, 7) === 'polygon' ||

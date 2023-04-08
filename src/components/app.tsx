@@ -14,6 +14,9 @@ import Header from './header'
 import Main from './main'
 // Utils
 import { AppExtension, CameraExtension } from '@/tools/theatre'
+import Editor from './editor'
+import AddObjects from './editor/navBar/AddObjects'
+import TransformSelector from './editor/navBar/TransformSelector'
 
 if (IS_DEV) {
   // @ts-ignore
@@ -27,6 +30,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     {IS_DEV ? (
       <>
         <Debug />
+        <Editor>
+          <TransformSelector />
+          <AddObjects />
+        </Editor>
         <Header />
         <Main />
         <Footer />

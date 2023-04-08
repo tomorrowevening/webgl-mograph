@@ -1,5 +1,5 @@
 // Models
-import { Events, debugDispatcher } from '@/models/constants'
+import { debugDispatcher } from '@/models/constants'
 // Views
 import Dropdown from '../components/Dropdown'
 // Controllers
@@ -19,17 +19,8 @@ const icon = `
 `
 
 const traverse = (obj: any) => {
-  // delete obj.geometry
-  // delete obj.geometries
   delete obj.layers
   delete obj.metadata
-  // delete obj.uuid
-  if (obj.userData !== undefined) {
-    if (obj.userData.model !== undefined) {
-      delete obj.children
-      return
-    }
-  }
 
   // Traverse children
   const children = obj.children
@@ -48,15 +39,20 @@ export default function TransformSelector() {
     const current = scenes.currentScene
     if (current === undefined) return
 
-    const json = current.world.toJSON()
-    traverse(json)
-    // const output = {
-    //   materials: json.materials,
-    //   children: json.object.children,
-    // }
-    copyToClipboard(json)
-    // console.log(output)
-    console.log(json)
+    let lightsJSON = current.lights.toJSON()
+    traverse(lightsJSON)
+    lightsJSON = lightsJSON.object.children
+
+    const worldJSON = current.world.toJSON()
+    traverse(worldJSON)
+    worldJSON.children = worldJSON.object.children
+    delete worldJSON.object
+
+    const output = {
+      lights: lightsJSON,
+      world: worldJSON,
+    }
+    copyToClipboard(output)
   }
 
   const selectItem = (value: string) => {

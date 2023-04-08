@@ -36,12 +36,6 @@ export default class IntroScene extends BaseScene {
     this.lights.add(light)
   }
 
-  protected override initMesh(): Promise<void> {
-    return new Promise((resolve) => {
-      resolve()
-    })
-  }
-
   protected override initPost(): Promise<void> {
     return new Promise((resolve) => {
       this.composer = new EffectComposer(webgl.renderer, {
@@ -70,10 +64,6 @@ export default class IntroScene extends BaseScene {
       transitionProgress: 1,
       onComplete: () => this.onHidden(),
     })
-  }
-
-  override update(): void {
-    //
   }
 
   override draw(renderTarget: WebGLRenderTarget | null): void {

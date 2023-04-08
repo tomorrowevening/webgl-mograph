@@ -1,1 +1,8 @@
-{}
+{
+  "meta": {},
+  "scenes": {
+    "lobby": {},
+    "intro": {},
+    "credits": {}
+  }
+}

@@ -54,6 +54,7 @@ export default class LobbyScene extends BaseScene {
     return new Promise((resolve) => {
       this.mat = new LobbyMaterial()
       const mesh = new Mesh(triangle.clone(), this.mat)
+      mesh.name = 'shaderMesh'
       this.world.add(mesh)
       resolve()
     })

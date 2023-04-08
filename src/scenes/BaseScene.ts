@@ -6,6 +6,7 @@ import webgl from '@/models/webgl'
 import { Scenes } from '@/types'
 // Controllers
 import scenes from '@/controllers/SceneController'
+import assets from '@/models/assets'
 
 export default class BaseScene extends Scene {
   camera!: PerspectiveCamera | OrthographicCamera
@@ -41,13 +42,15 @@ export default class BaseScene extends Scene {
   }
 
   async init() {
+    await this.buildFromJSON()
+    await this.initLighting()
     await this.initMesh()
     await this.initPost()
     await this.initAnimation()
     if (IS_DEV) this.initDebug()
   }
 
-  protected initLights(): Promise<void> {
+  protected initLighting(): Promise<void> {
     return new Promise((resolve) => {
       resolve()
     })
@@ -73,6 +76,16 @@ export default class BaseScene extends Scene {
 
   protected initDebug(): void {
     //
+  }
+
+  protected buildFromJSON(): Promise<void> {
+    return new Promise((resolve) => {
+      const json = assets.json.get(this.name)
+      if (json !== undefined) {
+        console.log(`${this.name} building...`)
+      }
+      resolve()
+    })
   }
 
   dispose(): void {

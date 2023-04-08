@@ -31,6 +31,7 @@ class SceneController extends EventDispatcher {
   composite?: CompositeScene
   ui?: UIScene
   autoUpdateUI = true // true if there's gonna be animation or UI change (interactivity)
+  private sceneReady = false
 
   // Transitioning
   transition?: Transition | undefined
@@ -142,7 +143,7 @@ class SceneController extends EventDispatcher {
   update() {
     this.dispatchEvent({ type: Events.UPDATE, value: this.clock.getElapsedTime() })
     this.previousScene?.update()
-    this.currentScene?.update()
+    if (this.sceneReady) this.currentScene?.update()
     if (IS_DEV) this.multiCams?.update()
   }
 
@@ -223,6 +224,7 @@ class SceneController extends EventDispatcher {
   private onSceneShow = (evt: any) => {
     const sceneName = evt.scene as Scenes
     let newScene: BaseScene | undefined = undefined
+    this.sceneReady = false
     switch (sceneName) {
       case 'lobby':
         newScene = new LobbyScene()
@@ -257,6 +259,7 @@ class SceneController extends EventDispatcher {
       this.currentScene = newScene
       this.currentSceneName = newScene.name
       this.currentScene.init().then(() => {
+        this.sceneReady = true
         threeDispatcher.dispatchEvent({ type: Events.SCENE_READY })
         if (IS_DEV) {
           this.currentScenePane?.refresh()

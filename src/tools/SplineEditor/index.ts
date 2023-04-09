@@ -1,7 +1,7 @@
 import { Camera, CatmullRomCurve3, Object3D, PerspectiveCamera, Vector3 } from 'three'
 import { FolderApi } from 'tweakpane'
 // Models
-import { IS_DEV } from '@/models/constants'
+import { Events, IS_DEV, debugDispatcher } from '@/models/constants'
 import Spline from './Spline'
 // Utils
 import { debugButton, debugFolder, debugInput, toolsTab } from '@/utils/debug'
@@ -26,10 +26,10 @@ export default class SplineEditor extends Object3D {
   constructor() {
     super()
     this.name = 'SplineEditor'
-    this.visible = false
   }
 
   dispose() {
+    debugDispatcher.removeEventListener(Events.ADD_SPLINE, this.onAddSpline)
     this._debugFolder?.dispose()
     this._debugFolder = undefined
     const total = this.children.length - 1
@@ -77,6 +77,7 @@ export default class SplineEditor extends Object3D {
   }
 
   initDebug() {
+    debugDispatcher.addEventListener(Events.ADD_SPLINE, this.onAddSpline)
     debugButton(this.debugFolder, 'New Spline', this.createSpline)
     debugInput(this.debugFolder, this, 'visible')
     debugInput(this.debugFolder, this, 'defaultScale', {
@@ -116,5 +117,9 @@ export default class SplineEditor extends Object3D {
       this._debugFolder = debugFolder('Spline Editor', toolsTab)
     }
     return this._debugFolder!
+  }
+
+  private onAddSpline = () => {
+    this.createSpline()
   }
 }

@@ -65,8 +65,7 @@ export default class LobbyScene extends BaseScene {
     this.mat.brightness = 0
     gsap.to(this.mat, {
       brightness: 1,
-      duration: 2,
-      delay: 0.5,
+      duration: 1,
     })
   }
 

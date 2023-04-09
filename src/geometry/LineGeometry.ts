@@ -3,7 +3,7 @@ import { BufferAttribute, BufferGeometry } from 'three'
 // @ts-ignore
 import getNormals from 'polyline-normals'
 // Utils
-import { distance2 } from '@/utils/math'
+import { distance3 } from '@/utils/math'
 
 const VERTS_PER_POINT = 2
 
@@ -96,7 +96,7 @@ export default class LineGeometry extends BufferGeometry {
     // Determine path length
     path.forEach((point) => {
       if (lastPt !== undefined) {
-        pathLength += distance2(point[0], point[1], lastPt[0], lastPt[1])
+        pathLength += distance3(point[0], point[1], point[2], lastPt[0], lastPt[1], lastPt[2])
       }
       lastPt = point
     })
@@ -122,12 +122,12 @@ export default class LineGeometry extends BufferGeometry {
 
       let dist = 0
       if (lastPt !== undefined) {
-        dist = distance2(point[0], point[1], lastPt[0], lastPt[1])
+        dist = distance3(point[0], point[1], point[2], lastPt[0], lastPt[1], lastPt[2])
       }
       lastPt = point
 
-      attrPosition.setXYZ(index++, point[0], point[1], 0)
-      attrPosition.setXYZ(index++, point[0], point[1], 0)
+      attrPosition.setXYZ(index++, point[0], point[1], point[2])
+      attrPosition.setXYZ(index++, point[0], point[1], point[2])
 
       if (attrDistance) {
         pos += dist

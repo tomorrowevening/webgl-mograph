@@ -25,6 +25,11 @@ import { debugButton, debugColor, debugFolder, debugInput, debugOptions } from '
 import { copyToClipboard } from '@/utils/dom'
 import { roundTo } from '@/utils/math'
 import { dispose } from '@/utils/three'
+import LineGeometry from '@/geometry/LineGeometry'
+import StrokeMaterial from '@/materials/StrokeMaterial'
+import scenes from '@/controllers/SceneController'
+import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
+import Inspector from '../Inspector'
 
 export type CurveType = 'catmullrom' | 'centripetal' | 'chordal'
 
@@ -143,8 +148,8 @@ export default class Spline extends Object3D {
       }
       this.addPoint(defaultPoints[total])
     } else {
-      this.addPoint(new Vector3(-this._draggableScale * 5, 0, 0), false)
-      this.addPoint(new Vector3(this._draggableScale * 5, 0, 0))
+      this.addPoint(new Vector3(-this._draggableScale * 50, 0, 0), false)
+      this.addPoint(new Vector3(this._draggableScale * 50, 0, 0))
     }
   }
 
@@ -272,6 +277,22 @@ export default class Spline extends Object3D {
 
   // Debug
 
+  private splineToStroke = () => {
+    const v3Arr = this.getPoints()
+    const verts: Array<number[]> = []
+    v3Arr.forEach((v: Vector3) => {
+      verts.push([v.x, v.y, v.z])
+    })
+    if (this.closed) verts.pop()
+    const geom = new LineGeometry(verts, { closed: this.closed, distances: true })
+    const material = new StrokeMaterial({})
+    const mesh = new Mesh(geom, material)
+    mesh.name = this.name
+    scenes.currentScene?.world.add(mesh)
+    debugDispatcher.dispatchEvent({ type: Inspector.SELECT, value: mesh })
+    threeDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })
+  }
+
   initDebug(parentFolder: any) {
     this.debugFolder = debugFolder(this.name, parentFolder)
     this.nameInput = debugInput(this.debugFolder, this, 'name', {
@@ -360,6 +381,7 @@ export default class Spline extends Object3D {
       dispose(this)
     })
     debugButton(this.debugFolder, 'Update Spline', this.updateSpline)
+    debugButton(this.debugFolder, 'To Stroke', this.splineToStroke)
 
     this._transform = Transformer.add(`${this.name} controls`, this.debugFolder)
     this._transform.camera = this._camera

@@ -19,6 +19,8 @@ export const Events = {
   AUDIO_START: 'audioStart',
   TOGGLE_MUTE: 'toggleMute',
   // Tools
+  ADD_GLTF: 'addGLTF',
+  ADD_SPLINE: 'addSpline',
   UPDATE_MULTICAMS: 'updateMultiCams',
   UPDATE_HIERARCHY: 'updateHierarchy',
 }

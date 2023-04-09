@@ -838,6 +838,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
       material.side = value
       material.needsUpdate = true
     },
+    material.side,
   )
 
   const propsFolder = debugFolder('Props', folder)
@@ -1020,6 +1021,10 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
       const uniform = shader.uniforms[i].value
       if (typeof uniform === 'number') {
         debugInput(uniformsFolder, shader.uniforms[i], 'value', { label: i })
+      } else if (uniform instanceof Vector2 || uniform instanceof Vector3) {
+        debugInput(uniformsFolder, shader.uniforms[i], 'value', { label: i })
+      } else if (uniform instanceof Color) {
+        debugColor(uniformsFolder, shader.uniforms[i], 'value', { label: i })
       } else if (uniform === null || uniform instanceof Texture) {
         debugImage(uniformsFolder, i, {
           texture: true,

@@ -48,6 +48,7 @@ import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
+import studio from '@theatre/studio'
 // Models
 import { Events, threeDispatcher } from '@/models/constants'
 import { settings } from '@/models/settings'
@@ -77,6 +78,7 @@ export function initDebug() {
   gui = new Pane()
   gui.registerPlugin(EssentialsPlugin)
   gui.registerPlugin(TweakpaneImagePlugin)
+  toggleDebugPanel(studio.ui.isHidden)
 
   const guiElement = gui.element.parentElement as HTMLElement
   guiElement.style.right = settings.mobile ? '12px' : '130px'
@@ -204,6 +206,11 @@ export function clearAppTab() {
   for (let i = total; i > -1; i--) {
     appTab.children[i].dispose()
   }
+}
+
+export function toggleDebugPanel(value: boolean) {
+  // @ts-ignore
+  gui.hidden = value
 }
 
 //////////////////////////////////////////////////

@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import { Object3D } from 'three'
 // Models
 import { debugDispatcher, Events, threeDispatcher } from '@/models/constants'
-// Components
-import './sceneHierarchy.scss'
 // Controllers
 import scenes from '@/controllers/SceneController'
 import Inspector from '@/tools/Inspector'

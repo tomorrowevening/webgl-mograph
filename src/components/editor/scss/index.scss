@@ -1,4 +1,6 @@
 @import 'theme';
+@import 'debug';
+@import 'sceneHierarchy';
 
 .editor {
   font-family: 'Helvetica', 'Arial', sans-serif;
@@ -22,7 +24,7 @@
     display: inline-block;
     pointer-events: visible;
     position: relative;
-    left: 180px;
+    left: 50px;
     top: 12px;
   }
 

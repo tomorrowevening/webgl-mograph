@@ -2,59 +2,6 @@ import type { IExtension, ToolsetConfig } from '@theatre/studio'
 import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
 
 //////////////////////////////////////////////////
-// App
-
-export const AppExtension = {
-  id: '@tomorrowevening/AppExtension',
-  toolbars: {
-    // @ts-ignore
-    global(set) {
-      const updateOptions = () =>
-        set([
-          {
-            type: 'Flyout',
-            label: '🚀',
-            items: [
-              {
-                label: 'Lobby',
-                onClick: () => {
-                  threeDispatcher.dispatchEvent({
-                    type: Events.SCENE_SHOW,
-                    scene: 'lobby',
-                    transition: 'wipe',
-                  })
-                },
-              },
-              {
-                label: 'Intro',
-                onClick: () => {
-                  threeDispatcher.dispatchEvent({
-                    type: Events.SCENE_SHOW,
-                    scene: 'intro',
-                    transition: 'wipe',
-                  })
-                },
-              },
-              {
-                label: 'Credits',
-                onClick: () => {
-                  threeDispatcher.dispatchEvent({
-                    type: Events.SCENE_SHOW,
-                    scene: 'credits',
-                    transition: 'wipe',
-                  })
-                },
-              },
-            ],
-          },
-        ])
-      updateOptions()
-    },
-  },
-  panes: [],
-}
-
-//////////////////////////////////////////////////
 // Camera
 
 const getToolsetConfig = (switchValue: string, switchOnChange: (value: string) => void): ToolsetConfig => [

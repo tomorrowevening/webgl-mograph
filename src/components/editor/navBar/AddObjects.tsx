@@ -23,7 +23,6 @@ import { DropdownOption } from '../components/types'
 import scenes from '@/controllers/SceneController'
 // Tools / Utils
 import Inspector from '@/tools/Inspector'
-import { delay } from '@/utils/dom'
 import StrokeMaterial from '@/materials/StrokeMaterial'
 import TPMeshBasicMaterial from '@/materials/textureProjection/TPMeshBasicMaterial'
 import TPMeshPhysicalMaterial from '@/materials/textureProjection/TPMeshPhysicalMaterial'

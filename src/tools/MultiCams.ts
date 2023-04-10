@@ -32,6 +32,7 @@ import {
 import { dispose } from '@/utils/three'
 import { Events, debugDispatcher } from '@/models/constants'
 import InfiniteGridHelper from '@/mesh/helpers/InfiniteGridHelper'
+import scenes from '@/controllers/SceneController'
 
 export type WindowParams = {
   index: number
@@ -487,8 +488,21 @@ export default class MultiCams extends Object3D {
   }
 
   private onUpdate = (evt: any) => {
-    this.grid.visible = evt.value === 'quadView'
-    this.mode = this.grid.visible ? 'quadCam' : 'default'
+    const value = evt.value
+    if (value === 'addCamera') {
+      const newCamera = scenes.currentScene?.camera.clone()
+      if (newCamera !== undefined) {
+        if (newCamera.name.length > 0) {
+          newCamera.name += ' clone'
+        } else {
+          newCamera.name = `cam ${newCamera.type}`
+        }
+        this.addCamera(newCamera)
+      }
+    } else {
+      this.grid.visible = value === 'quadView'
+      this.mode = this.grid.visible ? 'quadCam' : 'default'
+    }
     this.gridPanel.refresh()
   }
 

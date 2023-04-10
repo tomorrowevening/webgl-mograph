@@ -1,5 +1,5 @@
 // Models
-import { Events, threeDispatcher } from '@/models/constants'
+import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
 // Views
 import Dropdown from '../components/Dropdown'
 
@@ -16,7 +16,7 @@ const icon = `
 
 export default function Cameras() {
   const onSelect = (value: string) => {
-    console.log('Cameras:', value)
+    debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
   }
   return (
     <Dropdown
@@ -24,12 +24,12 @@ export default function Cameras() {
       options={[
         {
           title: 'Main Camera',
-          value: 'mainCamera',
+          value: 'rendered',
           type: 'option',
         },
         {
           title: 'Quad Cameras',
-          value: 'quadCameras',
+          value: 'quadView',
           type: 'option',
         },
         {

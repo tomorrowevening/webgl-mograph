@@ -8,6 +8,7 @@ $maxHeight: calc($barHeight * 10);
   right: 0;
   min-height: $barHeight;
   overflow: hidden;
+  pointer-events: visible;
   position: absolute;
   width: 250px;
   z-index: 100;

@@ -2,6 +2,21 @@ import { Color, Object3D, Mesh, Texture, Vector2, Material } from 'three'
 import TextGeometry from '@/geometry/TextGeometry'
 import TextMaterial from '@/materials/ui/TextMaterial'
 import { BaseUI, UIAlign } from '@/types'
+import { debugColor, debugFolder, debugInput, debugOptions } from '@/utils/debug'
+import fonts from '@/models/fonts'
+import assets from '@/models/assets'
+
+type TextMeshProps = {
+  align?: UIAlign
+  anchor?: Vector2
+  flipY?: boolean
+  font?: any
+  fontSize?: number
+  letterSpacing?: number
+  map?: Texture | null
+  text?: string
+  width?: number
+}
 
 export default class TextMesh extends Object3D implements BaseUI {
   align: UIAlign
@@ -54,7 +69,84 @@ export default class TextMesh extends Object3D implements BaseUI {
     this.container.add(this.mesh)
   }
 
-  update(options: any) {
+  initDebug() {
+    const folder = debugFolder(this.name)
+
+    // Alignment
+    const alignOptions: Array<UIAlign> = ['TL', 'TC', 'TR', 'CL', 'CC', 'CR', 'BL', 'BC', 'BR']
+    const alignList: Array<any> = []
+    alignOptions.forEach((align: UIAlign) => {
+      alignList.push({
+        text: align,
+        value: align,
+      })
+    })
+    debugOptions(
+      folder,
+      'Align',
+      alignList,
+      (align: UIAlign) => {
+        this.align = align
+      },
+      this.align,
+    )
+    debugColor(folder, this, 'color')
+    debugInput(folder, this, 'letterSpacing', {
+      min: -30,
+      max: 500,
+    })
+
+    // Fonts
+    const fontList: Array<any> = []
+    fonts.list.forEach((font: string) => {
+      fontList.push({
+        text: font,
+        value: font,
+      })
+    })
+    debugOptions(
+      folder,
+      'Font',
+      fontList,
+      (name: string) => {
+        const fontData = assets.json.get(name)
+        const texture = assets.textures.get(name).clone()
+        this.update({
+          font: fontData,
+          map: texture,
+        })
+      },
+      fonts.default,
+    )
+    debugInput(folder, this, 'fontSize', {
+      min: 0,
+      max: 1000,
+      onChange: () => this.checkToUpdate(),
+    })
+    debugInput(folder, this, 'opacity', {
+      min: 0,
+      max: 1,
+    })
+    debugInput(folder, this, 'text')
+    debugInput(folder, this, 'position')
+    debugInput(folder, this, 'rotation', {
+      x: {
+        min: -Math.PI,
+        max: Math.PI,
+      },
+      y: {
+        min: -Math.PI,
+        max: Math.PI,
+      },
+      z: {
+        min: -Math.PI,
+        max: Math.PI,
+      },
+    })
+    debugInput(folder, this, 'scale')
+  }
+
+  update(options: TextMeshProps) {
     if (options.align !== undefined) this.align = options.align
     if (options.anchor !== undefined) this.anchor = options.anchor
     if (options.flipY !== undefined) this.options.flipY = options.flipY

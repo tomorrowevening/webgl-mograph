@@ -21,6 +21,8 @@ export const Events = {
   // Tools
   ADD_GLTF: 'addGLTF',
   ADD_SPLINE: 'addSpline',
+  ADD_TEXT: 'addText',
+  TAKE_SCREENSHOT: 'takeScreenshot',
   UPDATE_MULTICAMS: 'updateMultiCams',
   UPDATE_HIERARCHY: 'updateHierarchy',
 }

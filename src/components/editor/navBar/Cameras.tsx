@@ -16,7 +16,11 @@ const icon = `
 
 export default function Cameras() {
   const onSelect = (value: string) => {
-    debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+    if (value === 'takeScreenshot') {
+      debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
+    } else {
+      debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+    }
   }
   return (
     <Dropdown
@@ -35,6 +39,11 @@ export default function Cameras() {
         {
           title: 'Add Camera',
           value: 'addCamera',
+          type: 'option',
+        },
+        {
+          title: 'Take Screenshot',
+          value: 'takeScreenshot',
           type: 'option',
         },
       ]}

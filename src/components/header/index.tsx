@@ -1,6 +1,6 @@
 // Libs
 import { useEffect, useState } from 'react'
-import { Material, MeshBasicMaterial, Vector2 } from 'three'
+import { Vector2 } from 'three'
 // Models
 import assets from '@/models/assets'
 import { Events, threeDispatcher } from '@/models/constants'

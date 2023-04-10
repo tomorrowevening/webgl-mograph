@@ -19,3 +19,7 @@ export function fileName(path: string): string {
   const period = path.lastIndexOf('.')
   return path.substring(slash, period)
 }
+
+export function randomID(): string {
+  return Math.round(Math.random() * 1000000).toString()
+}

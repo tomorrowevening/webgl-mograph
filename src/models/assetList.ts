@@ -1,4 +1,5 @@
 import { File } from '@/utils/preloader'
+import fonts from './fonts'
 
 const assetList: Array<File> = [
   //////////////////////////////////////////////////
@@ -13,45 +14,28 @@ const assetList: Array<File> = [
     file: 'json/animation.json',
     type: 'json',
   },
-  {
-    name: 'anurati',
-    file: 'json/fonts/anurati.json',
-    type: 'json',
-  },
-  {
-    name: 'kroe0665',
-    file: 'json/fonts/kroe0665.json',
-    type: 'json',
-  },
-  {
-    name: 'moon_bold',
-    file: 'json/fonts/moon_bold.json',
-    type: 'json',
-  },
   //////////////////////////////////////////////////
   // Models
   //////////////////////////////////////////////////
   // Textures
-  {
-    name: 'anurati',
-    file: 'textures/fonts/anurati.png',
-    type: 'texture',
-  },
-  {
-    name: 'kroe0665',
-    file: 'textures/fonts/kroe0665.png',
-    type: 'texture',
-  },
-  {
-    name: 'moon_bold',
-    file: 'textures/fonts/moon_bold.png',
-    type: 'texture',
-  },
   {
     name: 'uv_grid',
     file: 'textures/uv_grid_opengl.jpeg',
     type: 'texture',
   },
 ]
+
+fonts.list.forEach((font: string) => {
+  assetList.push({
+    name: font,
+    file: `json/fonts/${font}.json`,
+    type: 'json',
+  })
+  assetList.push({
+    name: font,
+    file: `textures/fonts/${font}.png`,
+    type: 'texture',
+  })
+})
 
 export default assetList

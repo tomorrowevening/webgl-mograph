@@ -1,7 +1,7 @@
 // Libs
 import { Material, Mesh, PerspectiveCamera, OrthographicCamera, Texture, Vector2, EventDispatcher, Clock } from 'three'
 // Models
-import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
+import { Events, IS_DEV, debugDispatcher, threeDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
 import { Scenes, Transitions, UIAlign } from '@/types'
 // Views
@@ -95,7 +95,7 @@ class SceneController extends EventDispatcher {
       transition: undefined,
     }
     debugButton(scenesTab, 'Save Screenshot', () => {
-      this.saveScreenshot = true
+      debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
     })
     this.currentScenePane = debugInput(scenesTab, this, 'currentSceneName', {
       label: 'Current Scene',
@@ -115,6 +115,10 @@ class SceneController extends EventDispatcher {
     })
     debugLerp(scenesTab, 'Progress', (progress: number) => {
       this.transitionProgress = progress
+    })
+
+    debugDispatcher.addEventListener(Events.TAKE_SCREENSHOT, () => {
+      this.saveScreenshot = true
     })
 
     // Tools

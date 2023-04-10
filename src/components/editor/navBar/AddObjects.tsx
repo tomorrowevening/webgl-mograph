@@ -71,7 +71,7 @@ function addLight(type: string) {
   }
 }
 
-const objs = ['Plane', 'Cube', 'Circle', 'Sphere', 'GLTF', 'Spline']
+const objs = ['Plane', 'Cube', 'Sphere', 'GLTF', 'Spline', 'Text']
 const objOptions: Array<DropdownOption> = []
 objs.forEach((option: string) => {
   objOptions.push({
@@ -91,16 +91,16 @@ function addObj(type: string) {
       geom = new BoxGeometry()
       break
     case objs[2]:
-      geom = new CircleGeometry()
-      break
-    case objs[3]:
       geom = new SphereGeometry()
       break
-    case objs[4]:
+    case objs[3]:
       debugDispatcher.dispatchEvent({ type: Events.ADD_GLTF })
       break
-    case objs[5]:
+    case objs[4]:
       debugDispatcher.dispatchEvent({ type: Events.ADD_SPLINE })
+      break
+    case objs[5]:
+      debugDispatcher.dispatchEvent({ type: Events.ADD_TEXT })
       break
   }
   if (geom !== undefined) {

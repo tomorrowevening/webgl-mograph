@@ -4,12 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "install": "git clone https://github.com/patriciogonzalezvivo/lygia.git src/glsl/lygia ; git clone git@github.com:jamieowen/glsl-blend.git src/glsl/glsl-blend ; git clone git@github.com:hughsk/glsl-noise.git src/glsl/glsl-noise",
     "dev": "vite --open",
     "build": "tsc && vite build",
     "preview": "vite preview --open",
-    "lint": "eslint --fix -c .eslintrc --ignore-path .eslintignore src",
-    "clearLibs": "sudo rm -R src/glsl/lygia ; rm -R src/glsl/glsl-blend ; rm -R src/glsl/glsl-noise"
+    "lint": "eslint --fix -c .eslintrc --ignore-path .eslintignore src"
   },
   "dependencies": {
     "@theatre/core": "^0.6.0",

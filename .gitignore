@@ -11,9 +11,6 @@ node_modules
 dist
 dist-ssr
 *.local
-src/glsl/glsl-blend
-src/glsl/glsl-noise
-src/glsl/lygia
 
 # Editor directories and files
 .vscode/*

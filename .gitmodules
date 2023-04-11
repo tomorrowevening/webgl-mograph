@@ -1,0 +1,11 @@
+[submodule "src/glsl/lygia"]
+	path = src/glsl/lygia
+	url = git@github.com:patriciogonzalezvivo/lygia.git
+
+[submodule "src/glsl/glsl-blend"]
+	path = src/glsl/glsl-blend
+	url = git@github.com:jamieowen/glsl-blend.git
+
+[submodule "src/glsl/glsl-noise"]
+	path = src/glsl/glsl-noise
+	url = git@github.com:hughsk/glsl-noise.git

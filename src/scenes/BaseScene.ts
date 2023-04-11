@@ -23,6 +23,7 @@ import {
   ShaderMaterial,
   SphereGeometry,
   SpotLight,
+  Texture,
   WebGLRenderTarget,
 } from 'three'
 // Models
@@ -216,6 +217,33 @@ export default class BaseScene extends Scene {
         geom.uuid = item.uuid
         geometries.set(item.uuid, geom)
       }
+    })
+
+    // Images
+    const images: Map<string, string> = new Map()
+    scene.images.forEach((value: any) => {
+      console.log('image:', value.uuid)
+      images.set(value.uuid, value.url)
+    })
+
+    // Textures
+    const textures: Map<string, Texture> = new Map()
+    scene.textures.forEach((value: any) => {
+      const texture = new Texture(
+        value.image,
+        value.mapping,
+        value.wrap[0],
+        value.wrap[1],
+        value.magFilter,
+        value.minFilter,
+        value.format,
+        value.type,
+        value.anisotropy,
+        value.encoding,
+      )
+      texture.name = value.name
+      texture.uuid = value.uuid
+      textures.set(value.uuid, texture)
     })
 
     // Materials

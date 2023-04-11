@@ -1,6 +1,8 @@
 // Libs
-import { Clock, Mesh, MeshBasicMaterial, OrthographicCamera, ShaderMaterial } from 'three'
+import { Mesh, OrthographicCamera, ShaderMaterial, Vector2 } from 'three'
 import { gsap } from 'gsap'
+// Models
+import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
 import vertex from '@/glsl/default.vert'
@@ -14,6 +16,9 @@ class LobbyMaterial extends ShaderMaterial {
       uniforms: {
         brightness: {
           value: 1,
+        },
+        resolution: {
+          value: new Vector2(webgl.width, webgl.height),
         },
         time: {
           value: 0,
@@ -82,5 +87,6 @@ export default class LobbyScene extends BaseScene {
 
   override update(): void {
     this.mat.time = this.clock.getElapsedTime()
+    this.mat.uniforms.resolution.value.set(webgl.width, webgl.height)
   }
 }

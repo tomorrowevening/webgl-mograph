@@ -25,15 +25,6 @@ export default class IntroScene extends BaseScene {
     this.mainCamera.position.z = 300
     this.camera = this.mainCamera
     this.cameras.add(this.mainCamera)
-
-    const ambient = new AmbientLight(0xffffff, 0.5)
-    ambient.name = 'ambient'
-    this.lights.add(ambient)
-
-    const light = new PointLight(0xffffff)
-    light.name = 'pointLight'
-    light.position.set(300, 600, 500)
-    this.lights.add(light)
   }
 
   protected override initPost(): Promise<void> {

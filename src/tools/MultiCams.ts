@@ -53,6 +53,12 @@ export default class MultiCams extends Object3D {
   windowColor = new Color(0x242529)
   mode: MultiCamsMode = 'default'
 
+  // Quad Cameras
+  tlCam?: Camera
+  trCam?: Camera
+  blCam?: Camera
+  brCam?: Camera
+
   private _activeCamera?: PerspectiveCamera | OrthographicCamera
   private multiCamContainer: Object3D
   private camerasContainer: Object3D
@@ -148,6 +154,10 @@ export default class MultiCams extends Object3D {
     backCamera.position.set(0, 0, -scale)
     backCamera.lookAt(0, 0, 0)
     this.addCamera(backCamera, false, false, false)
+
+    this.trCam = orthoCamera
+    this.blCam = leftCamera
+    this.brCam = topCamera
 
     // TransformControls
     Transformer.addEventListener(TransformController.DRAG_START, this.onTransformDrag)
@@ -263,6 +273,10 @@ export default class MultiCams extends Object3D {
   }
 
   quadCams(scene: BaseScene) {
+    if (this.tlCam === undefined || this.trCam === undefined || this.blCam === undefined || this.brCam === undefined) {
+      return
+    }
+
     // Store original
     const scissor = new Vector4()
     const viewport = new Vector4()
@@ -274,13 +288,14 @@ export default class MultiCams extends Object3D {
     //
     const w = webgl.width / 2
     const y = webgl.height - webgl.height / 2
-    const debug = this.cameras.get('debug')!
-    const top = this.cameras.get('top')!
-    const right = this.cameras.get('right')!
-    this.renderScene(scene, scene.camera, w, 0, 0)
-    this.renderScene(scene, debug, w, w, 0)
-    this.renderScene(scene, top, w, 0, y)
-    this.renderScene(scene, right, w, w, y)
+    // const debug = this.cameras.get('debug')!
+    // const top = this.cameras.get('top')!
+    // const right = this.cameras.get('right')!
+    // scene.camera
+    this.renderScene(scene, this.tlCam, w, 0, 0)
+    this.renderScene(scene, this.trCam, w, w, 0)
+    this.renderScene(scene, this.blCam, w, 0, y)
+    this.renderScene(scene, this.brCam, w, w, y)
 
     // Reset
     webgl.renderer.setViewport(viewport)
@@ -407,10 +422,15 @@ export default class MultiCams extends Object3D {
 
     this.debugFolder = debugFolder('Cameras', toolsTab, { index: this.debugIndex })
     const cameraOptions: Array<string> = []
+    const cameraArr: Array<any> = []
     let longName = false
     for (const camera of this.cameras.values()) {
       if (camera.name.length > 10) longName = true
       cameraOptions.push(camera.name)
+      cameraArr.push({
+        text: camera.name,
+        value: camera.name,
+      })
     }
     const totalCameras = this.cameras.size
     const columns = longName ? 1 : 2
@@ -463,6 +483,49 @@ export default class MultiCams extends Object3D {
     debugButton(windowFolder, 'Add Window', () => {
       this.addWindow(windowFolder)
     })
+
+    this.tlCam = scenes.currentScene?.camera
+
+    debugOptions(
+      this.debugFolder,
+      'TL Cam',
+      cameraArr,
+      (value: string) => {
+        const camera = this.cameras.get(value)
+        if (camera !== undefined) this.tlCam = camera
+      },
+      this.tlCam,
+    )
+    debugOptions(
+      this.debugFolder,
+      'TR Cam',
+      cameraArr,
+      (value: string) => {
+        const camera = this.cameras.get(value)
+        if (camera !== undefined) this.trCam = camera
+      },
+      this.trCam,
+    )
+    debugOptions(
+      this.debugFolder,
+      'BL Cam',
+      cameraArr,
+      (value: string) => {
+        const camera = this.cameras.get(value)
+        if (camera !== undefined) this.blCam = camera
+      },
+      this.blCam,
+    )
+    debugOptions(
+      this.debugFolder,
+      'BR Cam',
+      cameraArr,
+      (value: string) => {
+        const camera = this.cameras.get(value)
+        if (camera !== undefined) this.brCam = camera
+      },
+      this.brCam,
+    )
   }
 
   private updateCamera(camera: OrthographicCamera | PerspectiveCamera, width: number, height: number): void {
@@ -530,6 +593,7 @@ export default class MultiCams extends Object3D {
 
   set activeCamera(value: PerspectiveCamera | OrthographicCamera | undefined) {
     this._activeCamera = value
+    this.tlCam = value
     if (value !== undefined) {
       Transformer.updateCamera(value)
       this.currentOrbit = this.orbits.get(value.name)

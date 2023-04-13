@@ -13,6 +13,12 @@ Install
 Development
 `yarn dev`
 
+Build
+```
+vercel build
+vercel deploy --prebuilt
+```
+
 ### Helpers
 
 - Add `#debugGrid` to URL to show an overlay grid to help compositing

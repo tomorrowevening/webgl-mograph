@@ -3,6 +3,13 @@
   "author": "@tomorrowevening",
   "version": "0.0.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomorrowevening/webgl-mograph.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tomorrowevening/webgl-mograph/issues"
+  },
   "scripts": {
     "dev": "vite --open",
     "build": "tsc && vite build",

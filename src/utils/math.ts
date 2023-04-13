@@ -28,6 +28,10 @@ export function mix(min: number, max: number, value: number) {
   return min * (1 - value) + max * value
 }
 
+export function random(min = 0, max = 1): number {
+  return mix(min, max, Math.random())
+}
+
 /**
  * Transforms your value from one set to another (ie. 0 - 1 to 0 - 10, etc)
  * @param min1 The original minimum value

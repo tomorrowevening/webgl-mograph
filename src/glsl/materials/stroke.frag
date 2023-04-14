@@ -40,7 +40,7 @@ void main() {
     float per = lineU.x / lineU.y;
     float start = min(trim.x, trim.y) + offset;
     float end = max(trim.x, trim.y) + offset;
-    
+
     if(start == end) {
       opacityMod = 0.0;
     } else if(end > 1.0) {

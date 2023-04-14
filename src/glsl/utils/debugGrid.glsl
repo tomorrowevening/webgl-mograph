@@ -6,4 +6,3 @@ vec3 debugGrid(vec2 pos, vec2 res, vec2 offset, float gridSize, float gridWidth)
   grid = mix(grid, vec3(1.0, 1.0, 0.0), quads * 0.75);
   return grid;
 }
-#pragma glslify: export(debugGrid)

@@ -113,6 +113,8 @@ export default class Inspector extends Object3D {
       this.debugLight()
       this.debugMesh()
       this.debugTransformControls()
+      // @ts-ignore
+      if (obj.onSelect !== undefined) obj.onSelect() // additional debugging for selected item (opt)
       this.debugFolder.expanded = true
     })
   }

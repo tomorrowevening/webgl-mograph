@@ -165,12 +165,16 @@ export default class MultiCams extends Object3D {
 
     this.initDebug()
     debugDispatcher.addEventListener(Events.UPDATE_MULTICAMS, this.onUpdate)
+    debugDispatcher.addEventListener(Events.SET_MULTICAMS_CAMERA, this.onSetCamera)
+    debugDispatcher.addEventListener(Events.TOGGLE_ORBIT, this.onToggleOrbit)
   }
 
   dispose(): void {
     Transformer.removeEventListener(TransformController.DRAG_START, this.onTransformDrag)
     Transformer.removeEventListener(TransformController.DRAG_END, this.onTransformEnd)
     debugDispatcher.removeEventListener(Events.UPDATE_MULTICAMS, this.onUpdate)
+    debugDispatcher.removeEventListener(Events.SET_MULTICAMS_CAMERA, this.onSetCamera)
+    debugDispatcher.removeEventListener(Events.TOGGLE_ORBIT, this.onToggleOrbit)
     this.debugFolder.dispose()
   }
 
@@ -567,6 +571,18 @@ export default class MultiCams extends Object3D {
       this.mode = this.grid.visible ? 'quadCam' : 'default'
     }
     this.gridPanel.refresh()
+  }
+
+  private onSetCamera = (evt: any) => {
+    const camera = this.cameras.get(evt.value)
+    if (camera !== undefined) {
+      this.activeCamera = camera
+      scenes.currentScene?.updateCamera(camera)
+    }
+  }
+
+  private onToggleOrbit = () => {
+    this.enabled = !this.enabled
   }
 
   set enabled(value: boolean) {

@@ -1,3 +1,5 @@
+import { Vector3 } from "three"
+
 /**
  * Restricts your number to the min/max values
  * @param min Minimum value
@@ -30,6 +32,10 @@ export function mix(min: number, max: number, value: number) {
 
 export function random(min = 0, max = 1): number {
   return mix(min, max, Math.random())
+}
+
+export function random3(min = 0, max = 1): Vector3 {
+  return new Vector3(mix(min, max, Math.random()), mix(min, max, Math.random()), mix(min, max, Math.random()))
 }
 
 /**

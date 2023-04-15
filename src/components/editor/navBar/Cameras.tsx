@@ -18,6 +18,12 @@ export default function Cameras() {
   const onSelect = (value: string) => {
     if (value === 'takeScreenshot') {
       debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
+    } else if (value === 'toggleOrbit') {
+      debugDispatcher.dispatchEvent({ type: Events.TOGGLE_ORBIT })
+    } else if (value === 'debugCamera') {
+      debugDispatcher.dispatchEvent({ type: Events.SET_MULTICAMS_CAMERA, value: 'debug' })
+    } else if (value === 'topCamera') {
+      debugDispatcher.dispatchEvent({ type: Events.SET_MULTICAMS_CAMERA, value: 'top' })
     } else {
       debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
     }
@@ -39,6 +45,21 @@ export default function Cameras() {
         {
           title: 'Add Camera',
           value: 'addCamera',
+          type: 'option',
+        },
+        {
+          title: 'Toggle Orbit',
+          value: 'toggleOrbit',
+          type: 'option',
+        },
+        {
+          title: 'Debug Camera',
+          value: 'debugCamera',
+          type: 'option',
+        },
+        {
+          title: 'Top Camera',
+          value: 'topCamera',
           type: 'option',
         },
         {

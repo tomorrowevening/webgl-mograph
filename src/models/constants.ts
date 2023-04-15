@@ -22,9 +22,12 @@ export const Events = {
   ADD_GLTF: 'addGLTF',
   ADD_SPLINE: 'addSpline',
   ADD_TEXT: 'addText',
-  TAKE_SCREENSHOT: 'takeScreenshot',
-  UPDATE_MULTICAMS: 'updateMultiCams',
   UPDATE_HIERARCHY: 'updateHierarchy',
+  // multicams
+  TAKE_SCREENSHOT: 'takeScreenshot',
+  TOGGLE_ORBIT: 'toggleOrbit',
+  SET_MULTICAMS_CAMERA: 'setMultiCamsCamera',
+  UPDATE_MULTICAMS: 'updateMultiCams',
 }
 
 export const threeDispatcher = new EventDispatcher()

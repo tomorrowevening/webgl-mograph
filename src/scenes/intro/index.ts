@@ -1,6 +1,7 @@
 // Libs
 import {
   AmbientLight,
+  DirectionalLight,
   HalfFloatType,
   OrthographicCamera,
   PerspectiveCamera,
@@ -13,18 +14,45 @@ import { EffectComposer, EffectPass, FXAAEffect, Pass, RenderPass, VignetteEffec
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
+import Field from './Field'
 
 export default class IntroScene extends BaseScene {
   composer!: EffectComposer
   private mainCamera: PerspectiveCamera
 
+  field!: Field
+
   constructor() {
     super('intro')
-    this.mainCamera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 1000)
+    this.mainCamera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 2000)
     this.mainCamera.name = 'introMainCam'
-    this.mainCamera.position.z = 300
+    this.mainCamera.position.z = 500
     this.camera = this.mainCamera
     this.cameras.add(this.mainCamera)
+  }
+
+  protected override initLighting(): Promise<void> {
+    return new Promise((resolve) => {
+      const ambient = new AmbientLight(0xffffff, 0.25)
+      ambient.name = 'ambient'
+      this.lights.add(ambient)
+
+      const directional = new DirectionalLight(0xffffff, 2)
+      directional.name = 'directional'
+      directional.position.set(-50, 30, 100)
+      this.lights.add(directional)
+
+      resolve()
+    })
+  }
+
+  protected override initMesh(): Promise<void> {
+    return new Promise((resolve) => {
+      this.field = new Field()
+      this.world.add(this.field)
+
+      resolve()
+    })
   }
 
   protected override initPost(): Promise<void> {
@@ -42,6 +70,10 @@ export default class IntroScene extends BaseScene {
     })
   }
 
+  protected override initDebug(): void {
+    this.field.initDebug()
+  }
+
   override dispose(): void {
     this.composer.dispose()
   }
@@ -55,6 +87,11 @@ export default class IntroScene extends BaseScene {
       transitionProgress: 1,
       onComplete: () => this.onHidden(),
     })
+  }
+
+  override update(): void {
+    const delta = this.clock.getDelta()
+    this.field.update(delta)
   }
 
   override draw(renderTarget: WebGLRenderTarget | null): void {

@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector3 } from 'three'
 
 /**
  * Restricts your number to the min/max values

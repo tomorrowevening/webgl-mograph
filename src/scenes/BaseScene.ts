@@ -221,52 +221,57 @@ export default class BaseScene extends Scene {
 
     // Images
     const images: Map<string, string> = new Map()
-    scene.images.forEach((value: any) => {
-      console.log('image:', value.uuid)
-      images.set(value.uuid, value.url)
-    })
+    if (scene.images !== undefined) {
+      scene.images.forEach((value: any) => {
+        images.set(value.uuid, value.url)
+      })
+    }
 
     // Textures
     const textures: Map<string, Texture> = new Map()
-    scene.textures.forEach((value: any) => {
-      const texture = new Texture(
-        value.image,
-        value.mapping,
-        value.wrap[0],
-        value.wrap[1],
-        value.magFilter,
-        value.minFilter,
-        value.format,
-        value.type,
-        value.anisotropy,
-        value.encoding,
-      )
-      texture.name = value.name
-      texture.uuid = value.uuid
-      textures.set(value.uuid, texture)
-    })
+    if (scene.textures !== undefined) {
+      scene.textures.forEach((value: any) => {
+        const texture = new Texture(
+          value.image,
+          value.mapping,
+          value.wrap[0],
+          value.wrap[1],
+          value.magFilter,
+          value.minFilter,
+          value.format,
+          value.type,
+          value.anisotropy,
+          value.encoding,
+        )
+        texture.name = value.name
+        texture.uuid = value.uuid
+        textures.set(value.uuid, texture)
+      })
+    }
 
     // Materials
     const materials: Map<string, Material> = new Map()
-    scene.materials.forEach((item: any) => {
-      let material = undefined
-      switch (item.type) {
-        case 'MeshBasicMaterial':
-          material = new MeshBasicMaterial(item)
-          break
-        case 'MeshPhysicalMaterial':
-          material = new MeshPhysicalMaterial(item)
-          break
-        case 'ShaderMaterial':
-          material = new ShaderMaterial(item)
-          break
-      }
+    if (scene.materials !== undefined) {
+      scene.materials.forEach((item: any) => {
+        let material = undefined
+        switch (item.type) {
+          case 'MeshBasicMaterial':
+            material = new MeshBasicMaterial(item)
+            break
+          case 'MeshPhysicalMaterial':
+            material = new MeshPhysicalMaterial(item)
+            break
+          case 'ShaderMaterial':
+            material = new ShaderMaterial(item)
+            break
+        }
 
-      if (material !== undefined) {
-        material.uuid = item.uuid
-        materials.set(item.uuid, material)
-      }
-    })
+        if (material !== undefined) {
+          material.uuid = item.uuid
+          materials.set(item.uuid, material)
+        }
+      })
+    }
 
     // Objects
     const addObject = (item: any, parent?: Object3D): Object3D | undefined => {

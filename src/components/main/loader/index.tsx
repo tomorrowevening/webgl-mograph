@@ -19,12 +19,10 @@ export default function Loader() {
     }
 
     // Detect settings & begin load
-    window.onload = () => {
-      settings.detect().then(() => {
-        if (IS_DEV) initDebug()
-        preloadAssets((progess: number) => setPercent(progess), startApp)
-      })
-    }
+    settings.detect().then(() => {
+      if (IS_DEV) initDebug()
+      preloadAssets((progess: number) => setPercent(progess), startApp)
+    })
   }, [])
 
   return (

@@ -59,6 +59,7 @@ import DebugMaterial from '@/materials/utils/DebugMaterial'
 import { clamp } from './math'
 import Transformer from '@/tools/Transformer'
 import { fileName } from './dom'
+import scenes from '@/controllers/SceneController'
 
 let gui: Pane
 let tabs: any
@@ -630,6 +631,7 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
     debugInput(lightFolder, light, 'rotation')
   }
   debugInput(lightFolder, light, 'visible')
+
   let helper: any
   let transform: TransformControls | undefined = undefined
   if (light instanceof DirectionalLight) {
@@ -643,7 +645,7 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
       helper.lookAt(0, 0, 0)
     }
     helper.visible = false
-    container.add(helper)
+    scenes.currentScene?.utils.add(helper)
     debugInput(lightFolder, helper, 'visible', {
       label: 'Show Helper',
       onChange: (value: boolean) => {
@@ -685,7 +687,7 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
       }
     }
     helper.visible = false
-    container.add(helper)
+    scenes.currentScene?.utils.add(helper)
     debugInput(lightFolder, helper, 'visible', {
       label: 'Show Helper',
       onChange: (value: boolean) => {
@@ -706,7 +708,7 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
     helper = new RectAreaLightHelper(rectAreaLight)
     helper.name = `${light.name}:helper`
     helper.visible = false
-    container.add(helper)
+    scenes.currentScene?.utils.add(helper)
     debugInput(lightFolder, helper, 'visible', {
       label: 'Show Helper',
       onChange: (value: boolean) => {
@@ -735,7 +737,8 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
     helper.name = `${light.name}:helper`
     helper.onBeforeRender = helper.update
     helper.visible = false
-    light.parent?.add(helper)
+    scenes.currentScene?.utils.add(helper)
+
     transform = Transformer.add(helper.name, lightFolder)
     transform.attach(light)
     transform.addEventListener('change', () => {
@@ -746,13 +749,11 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
       label: 'Show Helper',
       onChange: (value: boolean) => {
         if (value) {
-          // @ts-ignore
-          light.parent?.add(helper)
-          light.parent?.add(transform!)
+          scenes.currentScene?.utils.add(helper)
+          scenes.currentScene?.utils.add(transform!)
         } else {
-          // @ts-ignore
-          light.parent?.remove(helper)
-          light.parent?.remove(transform!)
+          scenes.currentScene?.utils.remove(helper)
+          scenes.currentScene?.utils.remove(transform!)
         }
       },
     })

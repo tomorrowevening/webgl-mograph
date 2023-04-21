@@ -135,27 +135,12 @@ export default class BaseScene extends Scene {
       }
 
       if (light !== undefined) {
-        const m = info.matrix as Array<number>
-        light.matrix.set(
-          m[0],
-          m[1],
-          m[2],
-          m[3],
-          m[4],
-          m[5],
-          m[6],
-          m[7],
-          m[8],
-          m[9],
-          m[10],
-          m[11],
-          m[12],
-          m[13],
-          m[14],
-          m[15],
-        )
         light.name = info.name
         light.uuid = info.uuid
+        const matrix = new Matrix4()
+        matrix.fromArray(info.matrix as Array<number>)
+        light.applyMatrix4(matrix)
+        light.updateMatrix()
         this.lights.add(light)
       }
     })
@@ -295,9 +280,8 @@ export default class BaseScene extends Scene {
       if (obj !== undefined) {
         obj.name = item.name
         obj.uuid = item.uuid
-        const m = item.matrix as Array<number>
         const matrix = new Matrix4()
-        matrix.set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])
+        matrix.fromArray(item.matrix as Array<number>)
         obj.applyMatrix4(matrix)
         obj.updateMatrix()
         parent?.add(obj)

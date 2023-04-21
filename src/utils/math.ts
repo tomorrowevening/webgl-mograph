@@ -93,6 +93,12 @@ export function sin(minimum: number, maximum: number, time: number): number {
   return mix(minimum, maximum, clamp(0, 1, Math.sin(time) * 0.5 + 0.5))
 }
 
+export function strNum(value: string): number | undefined {
+  const trans = +value
+  if (isNaN(trans)) return undefined
+  return trans
+}
+
 // Bezier
 
 function isLinear(x0: number, y0: number, x1: number, y1: number): boolean {

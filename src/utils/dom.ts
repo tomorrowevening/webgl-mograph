@@ -23,3 +23,31 @@ export function fileName(path: string): string {
 export function randomID(): string {
   return Math.round(Math.random() * 1000000).toString()
 }
+
+export type FileUploadResponse = {
+  file: File
+  fileReader: FileReader
+}
+export function uploadFile(): Promise<FileUploadResponse> {
+  return new Promise((resolve, reject) => {
+    const fileInput = document.createElement('input')
+    fileInput.style.display = 'none'
+    fileInput.type = 'file'
+    fileInput.name = 'file'
+    fileInput.onchange = () => {
+      if (fileInput.files !== null) {
+        const fileReader = new FileReader()
+        fileReader.onload = () => {
+          const file = fileInput.files![0] as File
+          resolve({ file, fileReader })
+        }
+        fileReader.onerror = () => reject()
+        fileReader.onabort = () => reject()
+        fileReader.readAsText(fileInput.files[0])
+      }
+    }
+    document.body.appendChild(fileInput)
+    fileInput.click()
+    document.body.removeChild(fileInput)
+  })
+}

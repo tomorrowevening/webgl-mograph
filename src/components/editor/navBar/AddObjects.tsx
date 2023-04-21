@@ -14,6 +14,7 @@ import {
   SphereGeometry,
   SpotLight,
 } from 'three'
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 // Models
 import { Events, debugDispatcher } from '@/models/constants'
 // Views
@@ -23,6 +24,8 @@ import { DropdownOption } from '../components/types'
 import scenes from '@/controllers/SceneController'
 // Tools / Utils
 import Inspector from '@/tools/Inspector'
+import { FileUploadResponse, uploadFile } from '@/utils/dom'
+import { strNum } from '@/utils/math'
 import StrokeMaterial from '@/materials/StrokeMaterial'
 import TPMeshBasicMaterial from '@/materials/textureProjection/TPMeshBasicMaterial'
 import TPMeshPhysicalMaterial from '@/materials/textureProjection/TPMeshPhysicalMaterial'
@@ -44,6 +47,8 @@ lights.forEach((option: string) => {
 })
 
 function addLight(type: string) {
+  const prompParams = prompt('Name', '')
+  if (prompParams === null || prompParams === '') return
   let light = undefined
   switch (type) {
     case lights[0]:
@@ -64,7 +69,7 @@ function addLight(type: string) {
   }
 
   if (light !== undefined) {
-    light.name = `light_${type.toLowerCase()}`
+    light.name = prompParams
     scenes.currentScene?.lights.add(light)
     debugDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })
     debugDispatcher.dispatchEvent({ type: Inspector.SELECT, value: light })
@@ -83,18 +88,64 @@ objs.forEach((option: string) => {
 
 function addObj(type: string) {
   let geom = undefined
+  let prompParams: string | null
+  let params: Array<string>
   switch (type) {
     case objs[0]:
-      geom = new PlaneGeometry()
+      prompParams = prompt('Width, Height, X Segments, Y Segments', '1, 1, 1, 1')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      geom = new PlaneGeometry(strNum(params[0]), strNum(params[1]), strNum(params[2]), strNum(params[3]))
       break
     case objs[1]:
-      geom = new BoxGeometry()
+      prompParams = prompt('Width, Height, Depth, X Segments, Y Segments, Z Segments', '1, 1, 1, 1, 1, 1')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      geom = new BoxGeometry(
+        strNum(params[0]),
+        strNum(params[1]),
+        strNum(params[2]),
+        strNum(params[3]),
+        strNum(params[4]),
+        strNum(params[5]),
+      )
       break
     case objs[2]:
-      geom = new SphereGeometry()
+      prompParams = prompt('Radius, Width Segments, Height Segments', '1, 32, 16')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      geom = new SphereGeometry(strNum(params[0]), strNum(params[1]), strNum(params[2]))
       break
     case objs[3]:
-      debugDispatcher.dispatchEvent({ type: Events.ADD_GLTF })
+      uploadFile().then((response: FileUploadResponse) => {
+        const { file, fileReader } = response
+        const result = fileReader.result
+        const fileName = file.name.substring(0, file.name.indexOf('.'))
+        if (file.name.search('.gltf') > -1 || file.name.search('.glb') > -1) {
+          try {
+            new GLTFLoader().parse(
+              result!,
+              '',
+              (gltf: GLTF) => {
+                const addedObject = gltf.scene
+                if (!addedObject) {
+                  console.log('> No scene in GLTF:', gltf)
+                  return
+                }
+                if (addedObject.name?.length === 0) addedObject.name = fileName
+                debugDispatcher.dispatchEvent({ type: Events.ADD_GLTF, value: gltf })
+              },
+              () => {
+                console.log('error loading')
+              },
+            )
+          } catch (err: any) {
+            console.log('Error parsing GLTF, try loading file instead:', fileName)
+            console.log('file:', file)
+            console.log('result:', result)
+          }
+        }
+      })
       break
     case objs[4]:
       debugDispatcher.dispatchEvent({ type: Events.ADD_SPLINE })
@@ -104,8 +155,10 @@ function addObj(type: string) {
       break
   }
   if (geom !== undefined) {
+    prompParams = prompt('Name', '')
+    if (prompParams === null || prompParams === '') return
     const mesh = new Mesh(geom, new MeshBasicMaterial())
-    mesh.name = `mesh_${type}`
+    mesh.name = prompParams
     scenes.currentScene?.world.add(mesh)
     debugDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })
     debugDispatcher.dispatchEvent({ type: Inspector.SELECT, value: mesh })

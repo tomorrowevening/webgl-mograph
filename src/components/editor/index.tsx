@@ -1,17 +1,21 @@
 // Libs
 import { useEffect, useState } from 'react'
 import studio from '@theatre/studio'
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
+// Models
+import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
+import fonts from '@/models/fonts'
+import assets from '@/models/assets'
 // Views
 import './scss/index.scss'
 import SceneHierarchy from './components/SceneHierarchy'
-// Tools
-import { toggleDebugPanel } from '@/utils/debug'
-import { Events, debugDispatcher } from '@/models/constants'
 import TextMesh from '@/mesh/ui/TextMesh'
-import { randomID } from '@/utils/dom'
-import fonts from '@/models/fonts'
-import assets from '@/models/assets'
+// Controllers
 import scenes from '@/controllers/SceneController'
+// Tools
+import Inspector from '@/tools/Inspector'
+import { toggleDebugPanel } from '@/utils/debug'
+import { randomID } from '@/utils/dom'
 
 type EditorProps = {
   children?: JSX.Element | JSX.Element[]
@@ -36,8 +40,10 @@ export default function Editor(props: EditorProps) {
 
   // Event handling
   useEffect(() => {
-    const onAddGLTF = () => {
-      console.log('> add GLTF')
+    const onAddGLTF = (gltf: GLTF) => {
+      scenes.currentScene?.world.add(gltf.scene)
+      debugDispatcher.dispatchEvent({ type: Inspector.SELECT, value: gltf.scene })
+      threeDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })
     }
 
     const onAddText = () => {
@@ -58,7 +64,7 @@ export default function Editor(props: EditorProps) {
     const onEvt = (evt: any) => {
       switch (evt.type) {
         case Events.ADD_GLTF:
-          onAddGLTF()
+          onAddGLTF(evt.value)
           break
         case Events.ADD_TEXT:
           onAddText()

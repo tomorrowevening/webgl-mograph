@@ -27,10 +27,19 @@ const traverse = (obj: any) => {
   if (children !== undefined) {
     const total = children.length
     for (let i = 0; i < total; i++) {
-      traverse(children[i])
+      const child = children[i]
+      if (child.type.search('Helper') < 0) {
+        if (child.updateMatrix !== undefined) child.updateMatrix()
+        traverse(child)
+      } else {
+        children.splice(i, 1)
+      }
     }
   } else if (obj.object !== undefined) {
-    traverse(obj.object)
+    if (obj.object.type.search('Helper') < 0) {
+      if (obj.object.updateMatrix !== undefined) obj.object.updateMatrix()
+      traverse(obj.object)
+    }
   }
 }
 
@@ -38,6 +47,8 @@ export default function TransformSelector() {
   const exportScene = () => {
     const current = scenes.currentScene
     if (current === undefined) return
+
+    current.updateWorldMatrix(false, true)
 
     let lightsJSON = current.lights.toJSON()
     traverse(lightsJSON)

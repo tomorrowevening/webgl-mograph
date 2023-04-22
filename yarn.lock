@@ -633,6 +633,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@pangenerator/tweakpane-textarea-plugin@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pangenerator/tweakpane-textarea-plugin/-/tweakpane-textarea-plugin-1.0.4.tgz#5addc669b261da9610370b5429b0b3e1c1955a3e"
+  integrity sha512-fVQJBT456ssOFVcJiqduzQVLVqw4lAItx6hwaVOsUe9+hyKFhWUqcHi93lGcGOtDz3YhSKhfyIJPKOzwTCNiGw==
+
 "@rollup/pluginutils@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-5.0.2.tgz#012b8f53c71e4f6f9cb317e311df1404f56e7a33"

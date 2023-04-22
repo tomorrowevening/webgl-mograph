@@ -17,6 +17,7 @@
     "lint": "eslint --fix -c .eslintrc --ignore-path .eslintignore src"
   },
   "dependencies": {
+    "@pangenerator/tweakpane-textarea-plugin": "^1.0.4",
     "@theatre/core": "^0.6.0",
     "@tweakpane/plugin-essentials": "^0.1.8",
     "detect-gpu": "^5.0.14",

@@ -48,6 +48,7 @@ import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
+import * as TextareaPlugin from '@pangenerator/tweakpane-textarea-plugin'
 import studio from '@theatre/studio'
 // Models
 import { Events, threeDispatcher } from '@/models/constants'
@@ -79,6 +80,7 @@ export function initDebug() {
   gui = new Pane()
   gui.registerPlugin(EssentialsPlugin)
   gui.registerPlugin(TweakpaneImagePlugin)
+  gui.registerPlugin(TextareaPlugin)
   toggleDebugPanel(studio.ui.isHidden)
 
   const guiElement = gui.element.parentElement as HTMLElement
@@ -539,6 +541,12 @@ export const debugInput = (parentFolder: any, obj: any, value: string, props?: a
     if (props.w !== undefined) properties['w'] = props.w
     // @ts-ignore
     if (props.disabled !== undefined) properties['disabled'] = props.disabled
+    // @ts-ignore
+    if (props.view !== undefined) properties['view'] = props.view
+    // @ts-ignore
+    if (props.lineCount !== undefined) properties['lineCount'] = props.lineCount
+    // @ts-ignore
+    if (props.placeholder !== undefined) properties['placeholder'] = props.placeholder
   }
   try {
     const added = pane.addInput(obj, value, properties)

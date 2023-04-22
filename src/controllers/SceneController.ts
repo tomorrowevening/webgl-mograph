@@ -94,9 +94,6 @@ class SceneController extends EventDispatcher {
       scene: '',
       transition: undefined,
     }
-    debugButton(scenesTab, 'Save Screenshot', () => {
-      debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
-    })
     this.currentScenePane = debugInput(scenesTab, this, 'currentSceneName', {
       label: 'Current Scene',
       disabled: true,

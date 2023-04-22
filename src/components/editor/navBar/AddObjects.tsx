@@ -47,28 +47,46 @@ lights.forEach((option: string) => {
 })
 
 function addLight(type: string) {
-  const prompParams = prompt('Name', '')
-  if (prompParams === null || prompParams === '') return
+  let prompParams: string | null
+  let params: Array<string>
   let light = undefined
+
   switch (type) {
     case lights[0]:
-      light = new AmbientLight()
+      prompParams = prompt('Color, Intensity', 'ffffff, 1')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      light = new AmbientLight(`#${params[0]}`, strNum(params[1]))
       break
     case lights[1]:
-      light = new DirectionalLight()
+      prompParams = prompt('Color, Intensity', 'ffffff, 1')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      light = new DirectionalLight(`#${params[0]}`, strNum(params[1]))
       break
     case lights[2]:
-      light = new PointLight()
+      prompParams = prompt('Color, Intensity, Distance, Decay', 'ffffff, 1, 0, 2')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      light = new PointLight(`#${params[0]}`, strNum(params[1]), strNum(params[2]), strNum(params[3]))
       break
     case lights[3]:
-      light = new RectAreaLight()
+      prompParams = prompt('Color, Intensity, Width, Height', 'ffffff, 1, 10, 10')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      light = new RectAreaLight(`#${params[0]}`, strNum(params[1]), strNum(params[2]), strNum(params[3]))
       break
     case lights[4]:
-      light = new SpotLight()
+      prompParams = prompt('Color, Intensity', 'ffffff, 1')
+      if (prompParams === null || prompParams === '') return
+      params = prompParams.replaceAll(' ', '').split(',')
+      light = new SpotLight(`#${params[0]}`, strNum(params[1]))
       break
   }
 
   if (light !== undefined) {
+    prompParams = prompt('Name', '')
+    if (prompParams === null || prompParams === '') return
     light.name = prompParams
     scenes.currentScene?.lights.add(light)
     debugDispatcher.dispatchEvent({ type: Events.UPDATE_HIERARCHY })

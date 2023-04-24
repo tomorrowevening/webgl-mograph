@@ -14,3 +14,7 @@ export interface DropdownProps {
   onSelect?: (value: any) => void
   subdropdown?: boolean
 }
+
+export interface DropdownItemProps {
+  option: DropdownOption
+}

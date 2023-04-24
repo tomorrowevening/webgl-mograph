@@ -51,9 +51,11 @@ export default function Dropdown(props: DropdownProps) {
   const [expanded, setExpanded] = useState(false)
 
   const list: Array<any> = []
-  {props.options.map((option: DropdownOption, index: number) => {
-    list.push(<DropdownItem option={option} key={index} />)
-  })}
+  {
+    props.options.map((option: DropdownOption, index: number) => {
+      list.push(<DropdownItem option={option} key={index} />)
+    })
+  }
 
   let ddClassName = 'dropdown'
   if (props.subdropdown) ddClassName += ' subdropdown'
@@ -61,9 +63,7 @@ export default function Dropdown(props: DropdownProps) {
   return (
     <div className={ddClassName} onMouseEnter={() => setExpanded(true)} onMouseLeave={() => setExpanded(false)}>
       <NavButton title={props.title} />
-      <ul style={{ visibility: expanded ? 'visible' : 'hidden' }}>
-        {list}
-      </ul>
+      <ul style={{ visibility: expanded ? 'visible' : 'hidden' }}>{list}</ul>
     </div>
   )
 }

@@ -2,6 +2,8 @@
 
 Real-time Motion Graphics on the web using [Three.js](https://threejs.org/) and [Theatre](https://www.theatrejs.com/)
 
+Created by [Colin Duffy](http://tomorrowevening.com/)
+
 - [Fonts](fonts.md)
 - [Inspiration](inspiration.md)
 

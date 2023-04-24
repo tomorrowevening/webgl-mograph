@@ -1,0 +1,23 @@
+@use 'theme';
+
+.draggable {
+  li {
+    button {
+      background-color: $BAR_COLOR;
+      transition: background-color 0.25s linear;
+      &:hover {
+        background-color: $BTN_HOVER;
+      }
+      span, svg {
+        pointer-events: none;
+      }
+      span {
+        margin-left: 10px;
+      }
+      svg {
+        position: absolute;
+        left: 10px;
+      }
+    }
+  }
+}

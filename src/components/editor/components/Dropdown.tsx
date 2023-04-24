@@ -6,9 +6,21 @@ import { randomID } from '@/utils/dom'
 function DropdownItem(props: DropdownItemProps) {
   const { option } = props
   const [selected, setSelected] = useState('')
-  return (
-    <li className={selected === option.title ? 'selected' : ''} key={randomID()}>
-      {option.type === 'option' ? (
+
+  let element = null
+  switch (option.type) {
+    case 'dropdown':
+      element = (
+        <Dropdown
+          title={option.title}
+          options={option.value as Array<DropdownOption>}
+          onSelect={option.onSelect}
+          subdropdown={true}
+        />
+      )
+      break
+    case 'option':
+      element = (
         <button
           onClick={() => {
             if (option.onSelect !== undefined) option.onSelect(option.value)
@@ -24,14 +36,13 @@ function DropdownItem(props: DropdownItemProps) {
         >
           {option.title}
         </button>
-      ) : (
-        <Dropdown
-          title={option.title}
-          options={option.value as Array<DropdownOption>}
-          onSelect={option.onSelect}
-          subdropdown={true}
-        />
-      )}
+      )
+      break
+  }
+
+  return (
+    <li className={selected === option.title ? 'selected' : ''} key={randomID()}>
+      {element}
     </li>
   )
 }
@@ -39,20 +50,20 @@ function DropdownItem(props: DropdownItemProps) {
 export default function Dropdown(props: DropdownProps) {
   const [expanded, setExpanded] = useState(false)
 
-  const list = expanded ? (
-    <ul>
-      {props.options.map((option: DropdownOption, index: number) => {
-        return <DropdownItem option={option} key={index} />
-      })}
-    </ul>
-  ) : null
+  const list: Array<any> = []
+  {props.options.map((option: DropdownOption, index: number) => {
+    list.push(<DropdownItem option={option} key={index} />)
+  })}
 
-  const ddClassName = `dropdown${props.subdropdown === true ? ' subdropdown' : ''}`
+  let ddClassName = 'dropdown'
+  if (props.subdropdown) ddClassName += ' subdropdown'
 
   return (
     <div className={ddClassName} onMouseEnter={() => setExpanded(true)} onMouseLeave={() => setExpanded(false)}>
       <NavButton title={props.title} />
-      {list}
+      <ul style={{ visibility: expanded ? 'visible' : 'hidden' }}>
+        {list}
+      </ul>
     </div>
   )
 }

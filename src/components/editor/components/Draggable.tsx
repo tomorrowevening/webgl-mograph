@@ -3,25 +3,26 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 // Views
 import NavButton from '../components/NavButton'
+import { DraggableItemProps, DraggableProps } from './types'
 // Utils
 import useMeasurePosition from '../hooks/useMeasurePosition'
 import { usePositionReorder } from '../hooks/usePositionReorder'
 
 const DragIcon = (
-  <svg width="14" height="14" fill="#666666" stroke="none">
+  <svg className="dragIcon" width="14" height="14" fill="#666666" stroke="none">
     <path d="M10.43,4H3.57C3.26,4,3,4.22,3,4.5v1C3,5.78,3.26,6,3.57,6h6.86C10.74,6,11,5.78,11,5.5v-1
 C11,4.22,10.74,4,10.43,4z M10.43,8H3.57C3.26,8,3,8.22,3,8.5v1C3,9.78,3.26,10,3.57,10h6.86C10.74,10,11,9.78,11,9.5v-1
 C11,8.22,10.74,8,10.43,8z"/>
   </svg>
 )
 
-export type DraggableItemProps = {
-  index: number
-  title: string
-  updateOrder: any
-  updatePosition: (index: number, pos: number) => void
-  onDragComplete: () => void
-}
+const CloseIcon = (
+  <svg className="closeIcon" width="14" height="14" fill="none" stroke="#666666" strokeMiterlimit="10">
+    <circle cx="7" cy="7" r="6"/>
+    <line x1="4" y1="4" x2="10" y2="10"/>
+    <line x1="4" y1="10" x2="10" y2="4"/>
+  </svg>
+)
 
 export function DraggableItem(props: DraggableItemProps) {
   const [dragging, setDragging] = useState(false)
@@ -29,7 +30,7 @@ export function DraggableItem(props: DraggableItemProps) {
 
   return (
     <li>
-      <motion.button
+      <motion.div
         style={{
           zIndex: dragging ? 2 : 1,
         }}
@@ -55,21 +56,16 @@ export function DraggableItem(props: DraggableItemProps) {
       >
         {DragIcon}
         <span>{props.title}</span>
-      </motion.button>
+        <button className="closeIcon" onClick={props.onDelete}>{CloseIcon}</button>
+      </motion.div>
     </li>
   )
 }
 
-export type DraggableProps = {
-  title: string
-  list: Array<string>
-  onDragComplete: (list: Array<string>) => void
-  subdropdown?: boolean
-}
-
 export default function Draggable(props: DraggableProps) {
   const [expanded, setExpanded] = useState(false)
-  const [updatedList, updatePosition, updateOrder] = usePositionReorder(props.list)
+  const [listedItems, setListedItems] = useState<string[]>(props.options)
+  const [updatedList, updatePosition, updateOrder] = usePositionReorder(listedItems)
 
   const onDragComplete = () => {
     props.onDragComplete(updatedList)
@@ -85,6 +81,10 @@ export default function Draggable(props: DraggableProps) {
         updateOrder={updateOrder}
         updatePosition={updatePosition}
         onDragComplete={onDragComplete}
+        onDelete={() => {
+          setListedItems(updatedList.splice(index, 1))
+          props.onDragComplete(updatedList)
+        }}
       />
     )
   ))}

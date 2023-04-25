@@ -1,6 +1,10 @@
+// Libs
 import { useState } from 'react'
+// Views
 import NavButton from './NavButton'
+import Draggable from './Draggable'
 import { DropdownItemProps, DropdownOption, DropdownProps } from './types'
+// Utils
 import { randomID } from '@/utils/dom'
 
 function DropdownItem(props: DropdownItemProps) {
@@ -9,6 +13,18 @@ function DropdownItem(props: DropdownItemProps) {
 
   let element = null
   switch (option.type) {
+    case 'draggable':
+      element = (
+        <Draggable
+          title={option.title}
+          options={option.value as Array<string>}
+          onDragComplete={(options: string[]) => {
+            if (option.onDragComplete !== undefined) option.onDragComplete(options)
+          }}
+          subdropdown={true}
+        />
+      )
+      break
     case 'dropdown':
       element = (
         <Dropdown
@@ -53,6 +69,9 @@ export default function Dropdown(props: DropdownProps) {
   const list: Array<any> = []
   {
     props.options.map((option: DropdownOption, index: number) => {
+      if (props.onSelect !== undefined) {
+        option.onSelect = props.onSelect
+      }
       list.push(<DropdownItem option={option} key={index} />)
     })
   }

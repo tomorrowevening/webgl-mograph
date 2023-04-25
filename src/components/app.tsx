@@ -15,6 +15,7 @@ import Main from './main'
 import Editor from './editor'
 import AddObjects from './editor/navBar/AddObjects'
 import Cameras from './editor/navBar/Cameras'
+import PostComponent from './editor/navBar/PostComponent'
 import Scenes from './editor/navBar/Scenes'
 import TransformSelector from './editor/navBar/TransformSelector'
 
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Cameras />
           <TransformSelector />
           <AddObjects />
+          <PostComponent />
         </Editor>
         <Header />
         <Main />

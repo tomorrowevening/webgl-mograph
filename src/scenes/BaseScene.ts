@@ -27,22 +27,26 @@ import {
   WebGLRenderTarget,
 } from 'three'
 // Models
+import assets from '@/models/assets'
 import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
-import webgl from '@/models/webgl'
 import { Scenes } from '@/types'
+import webgl from '@/models/webgl'
 // Controllers
 import scenes from '@/controllers/SceneController'
-import assets from '@/models/assets'
+import PostController from '@/controllers/PostController'
 
 export default class BaseScene extends Scene {
   camera!: PerspectiveCamera | OrthographicCamera
   clock: Clock
+  post!: PostController
 
   // Scene setup
   cameras: Object3D
   lights: Object3D
   world: Object3D
   utils: Object3D // Helpers / controls
+
+  protected inited = false
 
   constructor(name: Scenes) {
     super()
@@ -68,12 +72,14 @@ export default class BaseScene extends Scene {
   }
 
   async init() {
+    this.inited = false
     await this.buildFromJSON()
     await this.initLighting()
     await this.initMesh()
     await this.initPost()
     await this.initAnimation()
     if (IS_DEV) this.initDebug()
+    this.inited = true
   }
 
   protected initLighting(): Promise<void> {
@@ -90,6 +96,7 @@ export default class BaseScene extends Scene {
 
   protected initPost(): Promise<void> {
     return new Promise((resolve) => {
+      this.post = new PostController(this, this.camera)
       resolve()
     })
   }
@@ -348,10 +355,8 @@ export default class BaseScene extends Scene {
   }
 
   draw(renderTarget: WebGLRenderTarget | null): void {
-    // Backup drawing to renderer (if no post-processing)
-    webgl.renderer.setRenderTarget(renderTarget)
-    webgl.renderer.clear()
-    webgl.renderer.render(this, this.camera)
+    if (!this.inited) return
+    this.post.render(this.clock.getDelta(), renderTarget)
   }
 
   postDraw(): void {
@@ -359,11 +364,12 @@ export default class BaseScene extends Scene {
   }
 
   resize(width: number, height: number): void {
-    // update camera
+    this.post.resize(width, height)
   }
 
   updateCamera(camera: PerspectiveCamera | OrthographicCamera) {
     this.camera = camera
+    this.post.updateCamera(camera)
   }
 
   get transitionProgress(): number {

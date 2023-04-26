@@ -44,6 +44,9 @@ import {
   SepiaEffect,
   TiltShiftEffect,
   ToneMappingEffect,
+  ClearPass,
+  CopyPass,
+  LambdaPass,
 } from 'postprocessing'
 import { Camera, HalfFloatType, Scene, Texture, WebGLRenderTarget } from 'three'
 // Models
@@ -52,6 +55,7 @@ import { BlendOptions } from '@/types'
 // Utils
 import { debugButton, debugFolder, debugImage, debugInput, debugOptions } from '../utils/debug'
 import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
+import { copyToClipboard } from '@/utils/dom'
 
 export type PostEffects =
   | 'Bloom'
@@ -105,6 +109,13 @@ const emptyRT = new WebGLRenderTarget(1, 1, {
 })
 emptyRT.texture.name = 'emptyRT'
 
+class CustomEffectPass extends EffectPass {
+  getEffects(): Effect[] {
+    // @ts-ignore
+    return this.effects
+  }
+}
+
 export default class PostController {
   scene: Scene
   camera: Camera
@@ -134,6 +145,7 @@ export default class PostController {
       debugButton(this.debugFolder, 'Passes', () => {
         console.log(this.composer.passes)
       })
+      debugButton(this.debugFolder, 'Export', this.export)
       debugButton(this.debugFolder, 'Prune', this.prune)
     }
   }
@@ -186,7 +198,7 @@ export default class PostController {
     for (let i = 1; i < this.composer.passes.length; i++) {
       const prev = this.composer.passes[i - 1]
       const pass = this.composer.passes[i]
-      if (prev instanceof EffectPass && pass instanceof EffectPass) {
+      if (prev instanceof CustomEffectPass && pass instanceof CustomEffectPass) {
         // @ts-ignore
         const effects = prev.effects.concat(pass.effects)
         console.log('> Combine passes:', effects)
@@ -194,6 +206,71 @@ export default class PostController {
         // _prev.pa
         // const effects = prev.pas
       }
+    }
+  }
+
+  export = (): any => {
+    const passesInfo: Array<any> = []
+    this.composer.passes.forEach((pass: Pass) => {
+      let type = 'Pass'
+      let data = undefined
+      if (pass instanceof AdaptiveLuminancePass) {
+        type = 'AdaptiveLuminancePass'
+      } else if (pass instanceof BoxBlurPass) {
+        type = 'BoxBlurPass'
+      } else if (pass instanceof ClearMaskPass) {
+        type = 'ClearMaskPass'
+      } else if (pass instanceof ClearPass) {
+        type = 'ClearPass'
+      } else if (pass instanceof CopyPass) {
+        type = 'CopyPass'
+      } else if (pass instanceof DepthCopyPass) {
+        type = 'DepthCopyPass'
+      } else if (pass instanceof DepthDownsamplingPass) {
+        type = 'DepthDownsamplingPass'
+      } else if (pass instanceof DepthPass) {
+        type = 'DepthPass'
+      } else if (pass instanceof DepthPickingPass) {
+        type = 'DepthPickingPass'
+      } else if (pass instanceof GaussianBlurPass) {
+        type = 'GaussianBlurPass'
+      } else if (pass instanceof KawaseBlurPass) {
+        type = 'KawaseBlurPass'
+      } else if (pass instanceof LambdaPass) {
+        type = 'LambdaPass'
+      } else if (pass instanceof LuminancePass) {
+        type = 'LuminancePass'
+      } else if (pass instanceof MaskPass) {
+        type = 'MaskPass'
+      } else if (pass instanceof NormalPass) {
+        type = 'NormalPass'
+      } else if (pass instanceof RenderPass) {
+        type = 'RenderPass'
+      } else if (pass instanceof ShaderPass) {
+        type = 'ShaderPass'
+      } else if (pass instanceof CustomEffectPass) {
+        type = 'EffectPass'
+        const passes = pass.getEffects()
+        data = []
+        passes.forEach((effect: Effect) => {
+          data.push({
+            blendMode: effect.blendMode.blendFunction,
+            name: effect.name,
+            defines: JSON.parse(JSON.stringify(Object.fromEntries(effect.defines))),
+            uniforms: JSON.parse(JSON.stringify(Object.fromEntries(effect.uniforms))),
+            fragmentShader: effect.getFragmentShader(),
+          })
+        })
+      }
+      passesInfo.push({
+        name: pass.name,
+        type: type,
+        data: data,
+      })
+    })
+    return {
+      enabled: this.enabled,
+      passes: passesInfo,
     }
   }
 
@@ -245,7 +322,7 @@ export default class PostController {
       threeDispatcher.dispatchEvent({ type: Events.UPDATE_POST })
     } else {
       */
-    this.addPass(name, new EffectPass(this.camera, ...effects))
+    this.addPass(name, new CustomEffectPass(this.camera, ...effects))
     // }
   }
 
@@ -405,7 +482,7 @@ export default class PostController {
       const totalPasses = this.composer.passes.length
       for (let i = 0; i < totalPasses; i++) {
         const pass = this.composer.passes[i]
-        if (pass instanceof EffectPass) {
+        if (pass instanceof CustomEffectPass) {
           if (effect.name.search(pass.name) > -1) {
             this.composer.removePass(pass)
             this.passes.delete(pass.name)

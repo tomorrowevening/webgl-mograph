@@ -61,6 +61,7 @@ export default function TransformSelector() {
 
     const output = {
       lights: lightsJSON,
+      post: current.post.export(),
       world: worldJSON,
     }
     copyToClipboard(output)

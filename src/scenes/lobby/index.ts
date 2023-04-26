@@ -67,6 +67,7 @@ export default class LobbyScene extends BaseScene {
 
   override show(): void {
     super.show()
+    this.post.enabled = false
     this.mat.brightness = 0
     gsap.to(this.mat, {
       brightness: 1,

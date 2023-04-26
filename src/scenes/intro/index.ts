@@ -1,14 +1,14 @@
 // Libs
-import { HalfFloatType, OrthographicCamera, PerspectiveCamera, WebGLRenderTarget } from 'three'
+import { PerspectiveCamera } from 'three'
 import gsap from 'gsap'
-import { EffectComposer, EffectPass, FXAAEffect, Pass, RenderPass, VignetteEffect } from 'postprocessing'
+import { FXAAEffect, VignetteEffect } from 'postprocessing'
 // Models
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
+import PostController from '@/controllers/PostController'
 
 export default class IntroScene extends BaseScene {
-  composer!: EffectComposer
   private mainCamera: PerspectiveCamera
 
   constructor() {
@@ -34,25 +34,15 @@ export default class IntroScene extends BaseScene {
 
   protected override initPost(): Promise<void> {
     return new Promise((resolve) => {
-      this.composer = new EffectComposer(webgl.renderer, {
-        frameBufferType: HalfFloatType,
-      })
-      this.composer.autoRenderToScreen = false
-      // Default pass
-      this.composer.addPass(new RenderPass(this, this.camera))
-      // AA + Vignette
-      this.composer.addPass(new EffectPass(this.camera, new FXAAEffect(), new VignetteEffect()))
+      this.post = new PostController(this, this.camera)
+      this.post.addEffect('FXAA_Vignette', new FXAAEffect(), new VignetteEffect())
 
       resolve()
     })
   }
 
-  protected override initDebug(): void {
-    //
-  }
-
   override dispose(): void {
-    this.composer.dispose()
+    this.post.dispose()
   }
 
   override hide(): void {
@@ -66,27 +56,10 @@ export default class IntroScene extends BaseScene {
     })
   }
 
-  override update(): void {
-    //
-  }
-
-  override draw(renderTarget: WebGLRenderTarget | null): void {
-    const delta = this.clock.getDelta()
-    this.composer.outputBuffer = renderTarget!
-    this.composer.render(delta)
-  }
-
   override resize(width: number, height: number): void {
     const cam = this.camera as PerspectiveCamera
     cam.aspect = width / height
     cam.updateProjectionMatrix()
-    this.composer.setSize(width, height)
-  }
-
-  override updateCamera(camera: PerspectiveCamera | OrthographicCamera) {
-    super.updateCamera(camera)
-    this.composer.passes.forEach((pass: Pass) => {
-      pass.mainCamera = camera
-    })
+    this.post.resize(width, height)
   }
 }

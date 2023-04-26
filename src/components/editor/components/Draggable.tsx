@@ -88,7 +88,7 @@ export default function Draggable(props: DraggableProps) {
           onDragComplete={onDragComplete}
           onDelete={() => {
             setListedItems(updatedList.splice(index, 1))
-            props.onDragComplete(updatedList)
+            onDragComplete()
           }}
         />,
       ),

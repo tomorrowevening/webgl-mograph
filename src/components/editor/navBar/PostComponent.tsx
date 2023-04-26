@@ -1,10 +1,14 @@
 // Libs
 import { useEffect, useState } from 'react'
+import { Pass } from 'postprocessing'
+// Models
+import { Events, threeDispatcher } from '@/models/constants'
 // Views
 import Dropdown from '../components/Dropdown'
 import { DropdownOption } from '../components/types'
-import { Events, threeDispatcher } from '@/models/constants'
+// Controllers
 import scenes from '@/controllers/SceneController'
+import { PostEffects, PostPasses } from '@/controllers/PostController'
 
 const icon = `
 <svg width="14" height="14" fill="white" stroke="none">
@@ -19,52 +23,90 @@ c0.4-0.4,0.4-1,0-1.4L7,4.7L5.8,3.5z M4.3,5.1l0.8-0.8l0.8,0.8L5.1,5.9L4.3,5.1z M5
 </svg>
 `
 
-const effectList: DropdownOption[] = [
-  {
-    type: 'option',
-    title: 'Bloom',
-    value: 'Bloom',
-  },
-  {
-    type: 'option',
-    title: 'Color Adjustments',
-    value: 'Color Adjustments',
-  },
-  {
-    type: 'option',
-    title: 'Copy',
-    value: 'Copy',
-  },
-  {
-    type: 'option',
-    title: 'Depth Of Field',
-    value: 'Depth Of Field',
-  },
-  {
-    type: 'option',
-    title: 'Texture',
-    value: 'Texture',
-  },
-  {
-    type: 'option',
-    title: 'Vignette',
-    value: 'Vignette',
-  },
+const effectOptions = [
+  'Bloom',
+  'BrightnessContrast',
+  'ChromaticAberration',
+  'ColorAverage',
+  'ColorDepth',
+  'Depth',
+  'DepthOfField',
+  'DotScreen',
+  'FXAA',
+  'Glitch',
+  'Grid',
+  'HueSaturation',
+  'LUT',
+  'Noise',
+  'Outline',
+  'Pixelation',
+  'SMAA',
+  'SSAO',
+  'Scanline',
+  'SelectiveBloom',
+  'Sepia',
+  'Texture',
+  'TiltShift',
+  'ToneMapping',
+  'Vignette',
 ]
+const effectList: DropdownOption[] = []
+effectOptions.forEach((value: string) => {
+  effectList.push({
+    type: 'option',
+    title: value,
+    value: value,
+  })
+})
+
+const passOptions = [
+  'AdaptiveLuminance',
+  'BoxBlur',
+  'ClearMask',
+  'Copy',
+  'DepthCopy',
+  'DepthDownsampling',
+  'Depth',
+  'DepthPicking',
+  'GaussianBlur',
+  'KawaseBlur',
+  'Luminance',
+  'Mask',
+  'Normal',
+  'Render',
+  'Shader',
+  'TiltShiftBlur',
+]
+const passList: DropdownOption[] = []
+passOptions.forEach((value: string) => {
+  passList.push({
+    type: 'option',
+    title: value,
+    value: value,
+  })
+})
 
 export default function PostComponent() {
-  const [sceneEffects, setSceneEffects] = useState<string[]>([])
+  const [scenePasses, setScenePasses] = useState<string[]>([])
+
+  const refreshList = () => {
+    const scene = scenes.currentScene
+    if (scene !== undefined && scene.post !== undefined) {
+      const { post } = scene
+      const passList: string[] = []
+      post.passes.forEach((pass: Pass, key: string) => {
+        passList.push(key)
+      })
+      setScenePasses(passList)
+    }
+  }
 
   useEffect(() => {
-    const onReady = () => {
-      const scene = scenes.currentScene
-      console.log(scene)
-    }
-    threeDispatcher.addEventListener(Events.SCENE_READY, onReady)
+    threeDispatcher.addEventListener(Events.UPDATE_POST, refreshList)
     return () => {
-      threeDispatcher.removeEventListener(Events.SCENE_READY, onReady)
+      threeDispatcher.removeEventListener(Events.UPDATE_POST, refreshList)
     }
-  }, [])
+  }, [refreshList])
 
   return (
     <Dropdown
@@ -72,23 +114,37 @@ export default function PostComponent() {
       options={[
         {
           type: 'dropdown',
-          title: 'Add Effects',
+          title: 'Add Effect',
           value: effectList,
+          onSelect: (value) => {
+            const scene = scenes.currentScene
+            if (scene !== undefined) {
+              scene.post.addPostEffect(value as PostEffects)
+              refreshList()
+            }
+          },
+        },
+        {
+          type: 'dropdown',
+          title: 'Add Pass',
+          value: passList,
+          onSelect: (value) => {
+            const scene = scenes.currentScene
+            if (scene !== undefined) {
+              scene.post.addPostPass(value as PostPasses)
+              refreshList()
+            }
+          },
         },
         {
           type: 'draggable',
-          title: 'Effects',
-          value: sceneEffects,
+          title: 'Passes',
+          value: scenePasses,
           onDragComplete: (list: string[]) => {
-            console.log('Post effects updated:', list)
+            console.log('Rearrage passes:', list)
           },
         },
       ]}
-      onSelect={(value: string) => {
-        const newArr = [...sceneEffects]
-        newArr.push(value)
-        setSceneEffects(newArr)
-      }}
     />
   )
 }

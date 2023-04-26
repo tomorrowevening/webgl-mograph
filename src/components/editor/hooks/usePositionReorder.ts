@@ -3,7 +3,7 @@ import move from 'array-move'
 import { clamp, distance } from '@/utils/math'
 
 export function usePositionReorder(initialState: any) {
-  const [order, setOrder] = useState(initialState)
+  const [updatedList, setUpdatedList] = useState(initialState)
 
   // We need to collect an array of height and position data for all of this component's
   // `Item` children, so we can later us that in calculations to decide when a dragging
@@ -17,10 +17,12 @@ export function usePositionReorder(initialState: any) {
   // sibling.
   const updateOrder = (i: number, dragOffset: number) => {
     const targetIndex = findIndex(i, dragOffset, positions)
-    if (targetIndex !== i) setOrder(move(order, i, targetIndex))
+    if (targetIndex !== i) {
+      setUpdatedList(move(updatedList, i, targetIndex))
+    }
   }
 
-  return [order, updatePosition, updateOrder]
+  return [updatedList, updatePosition, updateOrder]
 }
 
 const buffer = 5

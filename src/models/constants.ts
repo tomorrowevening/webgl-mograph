@@ -28,6 +28,8 @@ export const Events = {
   TOGGLE_ORBIT: 'toggleOrbit',
   SET_MULTICAMS_CAMERA: 'setMultiCamsCamera',
   UPDATE_MULTICAMS: 'updateMultiCams',
+  // post
+  UPDATE_POST: 'updatePost',
 }
 
 export const threeDispatcher = new EventDispatcher()

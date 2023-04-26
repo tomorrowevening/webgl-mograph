@@ -558,7 +558,7 @@ export const debugInput = (parentFolder: any, obj: any, value: string, props?: a
 
     return added
   } catch {
-    console.log('> debugInput error:', obj, value)
+    console.log('> debugInput error:', value, obj, properties)
     return null
   }
 }

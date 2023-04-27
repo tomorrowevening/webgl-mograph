@@ -51,3 +51,7 @@ export function uploadFile(): Promise<FileUploadResponse> {
     document.body.removeChild(fileInput)
   })
 }
+
+export function mapToObj(map: Map<string, any>): any {
+  return JSON.parse(JSON.stringify(Object.fromEntries(map)))
+}

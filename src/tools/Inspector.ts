@@ -1,5 +1,19 @@
 // Libs
-import { Camera, Light, Mesh, Object3D, SkeletonHelper } from 'three'
+import {
+  Camera,
+  Color,
+  Light,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera,
+  RawShaderMaterial,
+  ShaderMaterial,
+  SkeletonHelper,
+  Vector2,
+  Vector3,
+} from 'three'
 import { degToRad } from 'three/src/math/MathUtils'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -11,6 +25,8 @@ import ClickToInspect from './ClickToInspect'
 import Transformer from './Transformer'
 // Utils
 import {
+  acceptedMaterialNames,
+  acceptedMaterialTypes,
   debugButton,
   debugCamera,
   debugFile,
@@ -18,11 +34,13 @@ import {
   debugInput,
   debugLight,
   debugMaterial,
+  debugOptions,
   toolsTab,
 } from '@/utils/debug'
 import { dispose } from '@/utils/three'
 import { delay } from '@/utils/dom'
 import BaseScene from '@/scenes/BaseScene'
+import animation from '@/models/animation'
 
 const transformControlsName = 'Transform Controls'
 
@@ -193,7 +211,85 @@ export default class Inspector extends Object3D {
     try {
       if (this.currentObject instanceof Mesh) {
         const mesh = this.currentObject as Mesh
-        debugInput(this.debugFolder, mesh.material, 'type', { label: 'Material', disabled: true })
+        const materialFolder = debugMaterial(this.debugFolder, mesh)
+
+        debugOptions(materialFolder, 'Animate', animation.sheetOptions, (value: any) => {
+          const animate = {}
+          if (!Array.isArray(mesh.material)) {
+            for (const i in mesh.material) {
+              // @ts-ignore
+              const value = mesh.material[i]
+              if (i.substring(0, 1) !== '_') {
+                if (acceptedMaterialNames(i)) {
+                  if (typeof value === 'number') {
+                    // @ts-ignore
+                    animate[i] = value
+                  } else if (value instanceof Vector2) {
+                    // @ts-ignore
+                    animate[i] = { x: value.x, y: value.y }
+                  } else if (value instanceof Vector3) {
+                    // @ts-ignore
+                    animate[i] = { x: value.x, y: value.y, z: value.z }
+                  } else if (value instanceof Color) {
+                    // @ts-ignore
+                    animate[i] = { r: value.r, g: value.g, b: value.b }
+                  }
+                }
+              }
+            }
+
+            // Uniforms
+            if (mesh.material instanceof ShaderMaterial || mesh.material instanceof RawShaderMaterial) {
+              const uniforms = mesh.material.uniforms
+              // @ts-ignore
+              animate.uniforms = {}
+              for (const i in uniforms) {
+                const uniform = uniforms[i].value
+                if (typeof uniform === 'number') {
+                  // @ts-ignore
+                  animate.uniforms[i] = uniform
+                } else if (uniform instanceof Vector2) {
+                  const value = uniform as Vector2
+                  // @ts-ignore
+                  animate.uniforms[i] = { x: value.x, y: value.y }
+                } else if (uniform instanceof Vector3) {
+                  const value = uniform as Vector3
+                  // @ts-ignore
+                  animate.uniforms[i] = { x: value.x, y: value.y, z: value.z }
+                } else if (uniform instanceof Color) {
+                  const value = uniform as Color
+                  // @ts-ignore
+                  animate.uniforms[i] = { r: value.r, g: value.g, b: value.b }
+                }
+              }
+            }
+          }
+
+          // Add to sheet
+          animation
+            .animateObject(value, this.currentObject!.name, { material: animate })!
+            .onValuesChange((values: any) => {
+              const material = mesh.material
+              for (const i in values.material) {
+                const value = values.material[i]
+                if (i === 'uniforms') {
+                  const uniforms = value
+                  for (const u in uniforms) {
+                    const uniform = uniforms[u]
+                    if (typeof uniform === 'number') {
+                      // @ts-ignore
+                      material.uniforms[u].value = uniform
+                    } else if (uniform instanceof Vector2 || uniform instanceof Vector3 || uniform instanceof Color) {
+                      // @ts-ignore
+                      material.uniforms[u].value.copy(uniform)
+                    }
+                  }
+                } else {
+                  //
+                }
+              }
+            })
+        })
       }
     } catch (reason: any) {
       console.log('> debugMaterial error:', reason)
@@ -243,13 +339,37 @@ export default class Inspector extends Object3D {
   private debugTransform(): void {
     try {
       const transformFolder = debugFolder('Transform', this.debugFolder)
-      // if (this.sheet !== undefined) {
-      //   animateProp(transformFolder, this.currentObject, this.sheet)
-      // }
       debugInput(transformFolder, this.currentObject, 'visible')
       this.posPane = debugInput(transformFolder, this.currentObject, 'position')
       this.rotPane = debugInput(transformFolder, this.currentObject, 'rotation')
       this.sclPane = debugInput(transformFolder, this.currentObject, 'scale')
+      debugOptions(transformFolder, 'Animate', animation.sheetOptions, (value: any) => {
+        animation
+          .animateObject(value, this.currentObject!.name, {
+            position: {
+              x: this.currentObject!.position.x,
+              y: this.currentObject!.position.y,
+              z: this.currentObject!.position.z,
+            },
+            rotation: {
+              x: this.currentObject!.rotation.x,
+              y: this.currentObject!.rotation.y,
+              z: this.currentObject!.rotation.z,
+            },
+            scale: {
+              x: this.currentObject!.scale.x,
+              y: this.currentObject!.scale.y,
+              z: this.currentObject!.scale.z,
+            },
+            visible: this.currentObject!.visible,
+          })!
+          .onValuesChange((values: any) => {
+            this.currentObject!.position.set(values.position.x, values.position.y, values.position.z)
+            this.currentObject!.rotation.set(values.rotation.x, values.rotation.y, values.rotation.z)
+            this.currentObject!.scale.set(values.scale.x, values.scale.y, values.scale.z)
+            this.currentObject!.visible = values.visible
+          })
+      })
     } catch (reason: any) {
       console.log('> debugTransform error:', reason)
     }
@@ -294,11 +414,6 @@ export default class Inspector extends Object3D {
       if (hasSkin) {
         this.skeletonHelper = new SkeletonHelper(mesh)
         this.add(this.skeletonHelper)
-      }
-      // @ts-ignore
-      if (mesh['isMesh'] !== undefined || mesh['isLine'] !== undefined) {
-        // @ts-ignore
-        debugMaterial(this.debugFolder, mesh, { sheet: this.sheet })
       }
     } catch (reason: any) {
       console.log('> debugMesh error:', reason)

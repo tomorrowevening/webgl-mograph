@@ -11,6 +11,7 @@ class AnimationSingleton {
   project!: IProject
   // Create sheets once so they can be globally accessible
   sheets: Map<string, ISheet> = new Map()
+  sheetObjects: Map<string, ISheetObject> = new Map()
   private debugFolder: any
 
   init(): void {
@@ -77,11 +78,21 @@ class AnimationSingleton {
 
     // Scene sheets
     this.createSheet('lobby')
+    this.createSheet('intro')
+    this.createSheet('credits')
 
     this.refresh()
   }
 
-  private refresh(): void {
+  get sheetOptions(): Array<any> {
+    const sheetOptions: Array<any> = [{ text: '', value: '' }]
+    for (const [key] of this.sheets) {
+      sheetOptions.push({ text: key, value: key })
+    }
+    return sheetOptions
+  }
+
+  refresh(): void {
     if (!IS_DEV) return
     if (this.debugFolder === undefined) {
       this.debugFolder = debugFolder('Animation', scenesTab)
@@ -93,10 +104,7 @@ class AnimationSingleton {
       child.dispose()
     }
 
-    const sheetOptions: Array<any> = [{ text: '', value: '' }]
-    for (const [key] of this.sheets) {
-      sheetOptions.push({ text: key, value: key })
-    }
+    const sheetOptions = this.sheetOptions
 
     debugButton(this.debugFolder, 'Create Sheet', () => {
       const name = prompt('Name', '')
@@ -108,9 +116,9 @@ class AnimationSingleton {
       objName: '',
       objParams: '',
     }
-    debugInput(this.debugFolder, params, 'objName', { label: 'Key' })
+    debugInput(this.debugFolder, params, 'objName', { label: 'Object Name' })
     debugInput(this.debugFolder, params, 'objParams', {
-      label: 'Params',
+      label: 'Object Params',
       view: 'textarea',
       lineCount: 6,
       placeholder: '',
@@ -152,7 +160,17 @@ class AnimationSingleton {
   animateObject(sheetName: string, key: string, props: any): ISheetObject | undefined {
     const sheet = this.sheets.get(sheetName)
     if (sheet === undefined) return undefined
-    return sheet.object(key, props)
+
+    const objName = `${sheetName}_${key}`
+    let obj = this.sheetObjects.get(objName)
+    if (obj !== undefined) {
+      obj = sheet.object(key, { ...props, ...obj.value }, { reconfigure: true })
+      return obj
+    }
+
+    obj = sheet.object(key, props)
+    this.sheetObjects.set(objName, obj)
+    return obj
   }
 }
 

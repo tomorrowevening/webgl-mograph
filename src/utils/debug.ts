@@ -778,6 +778,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
   const pane = parentFolder !== undefined ? parentFolder : scenesTab
   const folder = debugFolder('Material', pane)
   const material = mesh.material as Material
+  debugInput(folder, mesh.material, 'type', { label: 'Material', disabled: true })
 
   debugOptions(
     folder,

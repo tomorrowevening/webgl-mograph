@@ -55,7 +55,7 @@ import { BlendOptions } from '@/types'
 // Utils
 import { debugButton, debugFolder, debugImage, debugInput, debugOptions } from '../utils/debug'
 import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
-import { copyToClipboard } from '@/utils/dom'
+import { copyToClipboard, mapToObj } from '@/utils/dom'
 
 export type PostEffects =
   | 'Bloom'
@@ -110,6 +110,42 @@ const emptyRT = new WebGLRenderTarget(1, 1, {
 emptyRT.texture.name = 'emptyRT'
 
 class CustomEffectPass extends EffectPass {
+  addEffect(effect: Effect, index?: number) {
+    // @ts-ignore
+    const effects = [...this.effects]
+    if (index !== undefined) {
+      effects.splice(index, 0, effect)
+    } else {
+      effects.push(effect)
+    }
+    this.setEffects(effects)
+  }
+
+  removeEffect(effect: Effect | string) {
+    // @ts-ignore
+    const effects = [...this.effects]
+    const total = effects.length
+    if (typeof effect === 'string') {
+      for (let i = 0; i < total; i++) {
+        const current = effects[i]
+        if (current.name === effect) {
+          effects.splice(i, 1)
+          this.setEffects(effects)
+          return
+        }
+      }
+    } else {
+      for (let i = 0; i < total; i++) {
+        const current = effects[i]
+        if (current === effect) {
+          effects.splice(i, 1)
+          this.setEffects(effects)
+          return
+        }
+      }
+    }
+  }
+
   getEffects(): Effect[] {
     // @ts-ignore
     return this.effects
@@ -256,8 +292,8 @@ export default class PostController {
           data.push({
             blendMode: effect.blendMode.blendFunction,
             name: effect.name,
-            defines: JSON.parse(JSON.stringify(Object.fromEntries(effect.defines))),
-            uniforms: JSON.parse(JSON.stringify(Object.fromEntries(effect.uniforms))),
+            defines: mapToObj(effect.defines),
+            uniforms: mapToObj(effect.uniforms),
             fragmentShader: effect.getFragmentShader(),
           })
         })

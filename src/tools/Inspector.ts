@@ -18,6 +18,7 @@ import { degToRad } from 'three/src/math/MathUtils'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FolderApi } from 'tweakpane'
+import { types, val } from '@theatre/core'
 // Models
 import { debugDispatcher, Events } from '@/models/constants'
 // Tools
@@ -215,6 +216,7 @@ export default class Inspector extends Object3D {
 
         debugOptions(materialFolder, 'Animate', animation.sheetOptions, (value: any) => {
           const animate = {}
+          const meshMat = mesh.material
           if (!Array.isArray(mesh.material)) {
             for (const i in mesh.material) {
               // @ts-ignore
@@ -232,7 +234,7 @@ export default class Inspector extends Object3D {
                     animate[i] = { x: value.x, y: value.y, z: value.z }
                   } else if (value instanceof Color) {
                     // @ts-ignore
-                    animate[i] = { r: value.r, g: value.g, b: value.b }
+                    animate[i] = types.rgba({ r: value.r * 255, g: value.g * 255, b: value.b * 255, a: 1 })
                   }
                 }
               }
@@ -269,23 +271,34 @@ export default class Inspector extends Object3D {
           animation
             .animateObject(value, this.currentObject!.name, { material: animate })!
             .onValuesChange((values: any) => {
-              const material = mesh.material
-              for (const i in values.material) {
-                const value = values.material[i]
-                if (i === 'uniforms') {
-                  const uniforms = value
-                  for (const u in uniforms) {
-                    const uniform = uniforms[u]
+              const { material } = values
+              for (const key in material) {
+                if (key === 'uniforms') {
+                  const uniforms = material[key]
+                  for (const uniKey in uniforms) {
+                    const uniform = uniforms[uniKey]
                     if (typeof uniform === 'number') {
                       // @ts-ignore
-                      material.uniforms[u].value = uniform
-                    } else if (uniform instanceof Vector2 || uniform instanceof Vector3 || uniform instanceof Color) {
+                      meshMat.uniforms[uniKey].value = uniform
+                    } else {
                       // @ts-ignore
-                      material.uniforms[u].value.copy(uniform)
+                      meshMat.uniforms[uniKey].value.copy(uniform)
                     }
                   }
                 } else {
-                  //
+                  const value = material[key]
+                  if (typeof value === 'number') {
+                    // @ts-ignore
+                    mesh.material[key] = value
+                  } else if (value.r !== undefined) {
+                    // color
+                    // @ts-ignore
+                    mesh.material[key].copy(value)
+                  } else if (value.x !== undefined) {
+                    // vector
+                    // @ts-ignore
+                    mesh.material[key].copy(value)
+                  }
                 }
               }
             })
@@ -346,28 +359,31 @@ export default class Inspector extends Object3D {
       debugOptions(transformFolder, 'Animate', animation.sheetOptions, (value: any) => {
         animation
           .animateObject(value, this.currentObject!.name, {
-            position: {
-              x: this.currentObject!.position.x,
-              y: this.currentObject!.position.y,
-              z: this.currentObject!.position.z,
+            transform: {
+              position: {
+                x: this.currentObject!.position.x,
+                y: this.currentObject!.position.y,
+                z: this.currentObject!.position.z,
+              },
+              rotation: {
+                x: this.currentObject!.rotation.x,
+                y: this.currentObject!.rotation.y,
+                z: this.currentObject!.rotation.z,
+              },
+              scale: {
+                x: this.currentObject!.scale.x,
+                y: this.currentObject!.scale.y,
+                z: this.currentObject!.scale.z,
+              },
+              visible: this.currentObject!.visible,
             },
-            rotation: {
-              x: this.currentObject!.rotation.x,
-              y: this.currentObject!.rotation.y,
-              z: this.currentObject!.rotation.z,
-            },
-            scale: {
-              x: this.currentObject!.scale.x,
-              y: this.currentObject!.scale.y,
-              z: this.currentObject!.scale.z,
-            },
-            visible: this.currentObject!.visible,
           })!
           .onValuesChange((values: any) => {
-            this.currentObject!.position.set(values.position.x, values.position.y, values.position.z)
-            this.currentObject!.rotation.set(values.rotation.x, values.rotation.y, values.rotation.z)
-            this.currentObject!.scale.set(values.scale.x, values.scale.y, values.scale.z)
-            this.currentObject!.visible = values.visible
+            const transform = values.transform
+            this.currentObject!.position.set(transform.position.x, transform.position.y, transform.position.z)
+            this.currentObject!.rotation.set(transform.rotation.x, transform.rotation.y, transform.rotation.z)
+            this.currentObject!.scale.set(transform.scale.x, transform.scale.y, transform.scale.z)
+            this.currentObject!.visible = transform.visible
           })
       })
     } catch (reason: any) {

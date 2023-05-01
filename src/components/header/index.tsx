@@ -60,8 +60,8 @@ export default function Header() {
             name="logo"
             width={148}
             height={44}
-            left={20}
-            top={20}
+            left={10}
+            top={10}
             align="TL"
             material={logoMat}
             params={{
@@ -70,7 +70,7 @@ export default function Header() {
               text: 'TOMORROW\nEVENING',
             }}
             onInit={(mesh: TextMesh | UIMesh) => {
-              mesh.position.set(0, -10, 0)
+              mesh.position.set(-1.5, -4.5, 0)
             }}
             onClick={() => {
               console.log('TextButton::onClick')

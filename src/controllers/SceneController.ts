@@ -259,29 +259,33 @@ class SceneController extends EventDispatcher {
 
       this.currentScene = newScene
       this.currentSceneName = newScene.name
-      this.currentScene.init().then(() => {
-        this.sceneReady = true
-        threeDispatcher.dispatchEvent({ type: Events.SCENE_READY })
-        if (IS_DEV) {
-          this.currentScenePane?.refresh()
-          Transformer.clear()
-
-          // Inspector
-          this.inspector?.changeScene(this.currentScene!)
-
-          // Multi-Cameras
-          this.multiCams?.changeScene(this.currentScene!)
-
-          // Splines
-          this.splineEditor!.dispose()
-          this.currentScene!.utils.add(this.splineEditor!)
-          this.splineEditor!.camera = this.currentScene!.camera
-          this.splineEditor!.initDebug()
-        }
-        threeDispatcher.dispatchEvent({ type: Events.SCENE_HIDE })
-        this.currentScene!.show()
-      })
+      this.test()
     }
+  }
+
+  private async test() {
+    await this.currentScene!.init()
+    //
+    this.sceneReady = true
+    threeDispatcher.dispatchEvent({ type: Events.SCENE_READY })
+    if (IS_DEV) {
+      this.currentScenePane?.refresh()
+      Transformer.clear()
+
+      // Inspector
+      this.inspector?.changeScene(this.currentScene!)
+
+      // Multi-Cameras
+      this.multiCams?.changeScene(this.currentScene!)
+
+      // Splines
+      this.splineEditor!.dispose()
+      this.currentScene!.utils.add(this.splineEditor!)
+      this.splineEditor!.camera = this.currentScene!.camera
+      this.splineEditor!.initDebug()
+    }
+    threeDispatcher.dispatchEvent({ type: Events.SCENE_HIDE })
+    this.currentScene!.show()
   }
 
   /**

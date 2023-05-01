@@ -71,7 +71,7 @@ export default class SplineEditor extends Object3D {
     spline.closed = data.closed
     spline.subdivide = data.subdivide
     spline.tension = data.tension
-    spline.type = data.type
+    // spline.type = data.type
     spline.updateSpline()
     return spline
   }

@@ -539,7 +539,7 @@ export default class MultiCams extends Object3D {
       cam.right = width / 2
       cam.top = height / 2
       cam.bottom = height / -2
-    } else {
+    } else if (camera instanceof PerspectiveCamera) {
       camera.aspect = width / height
     }
     camera.updateProjectionMatrix()

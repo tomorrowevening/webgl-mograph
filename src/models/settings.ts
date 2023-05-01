@@ -3,7 +3,7 @@ import { FloatType, HalfFloatType, RGBAFormat, WebGLRenderer, WebGLRenderTarget 
 
 export type Quality = 'low' | 'medium' | 'high'
 
-function testFBO(renderer: WebGLRenderer, type: number): boolean {
+function testFBO(renderer: WebGLRenderer, type: any): boolean {
   const rt = new WebGLRenderTarget(4, 4, {
     depthBuffer: false,
     type,

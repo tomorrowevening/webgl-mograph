@@ -14,6 +14,7 @@ import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
 import { EffectComposer, EffectPass, FXAAEffect, Pass, RenderPass } from 'postprocessing'
+import animation from '@/models/animation'
 
 export default class CreditsScene extends BaseScene {
   composer!: EffectComposer
@@ -53,6 +54,7 @@ export default class CreditsScene extends BaseScene {
 
   protected override initAnimation(): Promise<void> {
     return new Promise((resolve) => {
+      animation.createSheet(this.name)
       resolve()
     })
   }

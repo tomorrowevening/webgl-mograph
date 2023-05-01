@@ -1,11 +1,13 @@
 // Libs
-import { PerspectiveCamera } from 'three'
+import { PerspectiveCamera, RectAreaLight } from 'three'
 import gsap from 'gsap'
-import { FXAAEffect, VignetteEffect } from 'postprocessing'
+import { FXAAEffect, NoiseEffect, VignetteEffect } from 'postprocessing'
 // Models
+import animation from '@/models/animation'
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
+// Controllers
 import PostController from '@/controllers/PostController'
 
 export default class IntroScene extends BaseScene {
@@ -15,21 +17,10 @@ export default class IntroScene extends BaseScene {
     super('intro')
     this.mainCamera = new PerspectiveCamera(60, webgl.width / webgl.height, 1, 2000)
     this.mainCamera.name = 'introMainCam'
-    this.mainCamera.position.set(0, 100, 500)
+    this.mainCamera.position.set(0, 500, 0)
+    this.mainCamera.rotateX(-Math.PI / 2)
     this.camera = this.mainCamera
     this.cameras.add(this.mainCamera)
-  }
-
-  protected override initLighting(): Promise<void> {
-    return new Promise((resolve) => {
-      resolve()
-    })
-  }
-
-  protected override initMesh(): Promise<void> {
-    return new Promise((resolve) => {
-      resolve()
-    })
   }
 
   protected override initPost(): Promise<void> {
@@ -37,6 +28,13 @@ export default class IntroScene extends BaseScene {
       this.post = new PostController(this, this.camera)
       this.post.addEffect('FXAA_Vignette', new FXAAEffect(), new VignetteEffect())
 
+      resolve()
+    })
+  }
+
+  protected override initAnimation(): Promise<void> {
+    return new Promise((resolve) => {
+      animation.createSheet(this.name)
       resolve()
     })
   }

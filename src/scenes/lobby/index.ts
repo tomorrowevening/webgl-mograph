@@ -9,6 +9,7 @@ import vertex from '@/glsl/default.vert'
 import fragment from './lobby.frag'
 // Utils
 import { triangle } from '@/utils/three'
+import animation from '@/models/animation'
 
 class LobbyMaterial extends ShaderMaterial {
   constructor() {
@@ -61,6 +62,13 @@ export default class LobbyScene extends BaseScene {
       const mesh = new Mesh(triangle.clone(), this.mat)
       mesh.name = 'shaderMesh'
       this.world.add(mesh)
+      resolve()
+    })
+  }
+
+  protected override initAnimation(): Promise<void> {
+    return new Promise((resolve) => {
+      animation.createSheet(this.name)
       resolve()
     })
   }

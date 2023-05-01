@@ -2,8 +2,7 @@
 import { getProject, IProject, ISheet, ISheetObject } from '@theatre/core'
 // Models
 import assets from './assets'
-import { IS_DEV, threeDispatcher } from './constants'
-import { Events } from './constants'
+import { Events, IS_DEV, threeDispatcher } from './constants'
 // Utils
 import { debugButton, debugFolder, debugInput, debugOptions, scenesTab } from '@/utils/debug'
 
@@ -75,11 +74,6 @@ class AnimationSingleton {
       appTriggers.event.name = values.event.name
       appTriggers.event.value = values.event.value
     })
-
-    // Scene sheets
-    this.createSheet('lobby')
-    this.createSheet('intro')
-    this.createSheet('credits')
 
     this.refresh()
   }

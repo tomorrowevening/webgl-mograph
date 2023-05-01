@@ -73,11 +73,13 @@ export default class BaseScene extends Scene {
 
   async init() {
     this.inited = false
-    await this.buildFromJSON()
-    await this.initLighting()
-    await this.initMesh()
-    await this.initPost()
-    await this.initAnimation()
+    await Promise.all([
+      this.buildFromJSON(),
+      this.initLighting(),
+      this.initMesh(),
+      this.initPost(),
+      this.initAnimation(),
+    ])
     if (IS_DEV) this.initDebug()
     this.inited = true
   }

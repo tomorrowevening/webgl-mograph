@@ -48,14 +48,14 @@ import {
   CopyPass,
   LambdaPass,
 } from 'postprocessing'
-import { Camera, HalfFloatType, Scene, Texture, WebGLRenderTarget } from 'three'
+import { Camera, HalfFloatType, RepeatWrapping, Scene, Texture, WebGLRenderTarget } from 'three'
 // Models
+import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
 import { BlendOptions } from '@/types'
 // Utils
 import { debugButton, debugFolder, debugImage, debugInput, debugOptions } from '../utils/debug'
-import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
-import { copyToClipboard, mapToObj } from '@/utils/dom'
+import { mapToObj } from '@/utils/dom'
 
 export type PostEffects =
   | 'Bloom'
@@ -284,6 +284,7 @@ export default class PostController {
         type = 'RenderPass'
       } else if (pass instanceof ShaderPass) {
         type = 'ShaderPass'
+        data = pass.fullscreenMaterial.toJSON()
       } else if (pass instanceof CustomEffectPass) {
         type = 'EffectPass'
         const passes = pass.getEffects()
@@ -294,7 +295,6 @@ export default class PostController {
             name: effect.name,
             defines: mapToObj(effect.defines),
             uniforms: mapToObj(effect.uniforms),
-            fragmentShader: effect.getFragmentShader(),
           })
         })
       }
@@ -437,7 +437,7 @@ export default class PostController {
         effect = new SepiaEffect(params)
         break
       case 'Texture':
-        effect = new TextureEffect(params)
+        effect = new TextureEffect({ ...params, texture: emptyRT.texture })
         break
       case 'TiltShift':
         effect = new TiltShiftEffect(params)
@@ -604,7 +604,7 @@ export default class PostController {
         },
       })
     } else if (effect instanceof NoiseEffect) {
-      folder.dispose()
+      //
     } else if (effect instanceof OutlineEffect) {
       const fx = effect as OutlineEffect
       debugInput(folder, fx, 'edgeStrength', { min: 0, max: 1 })
@@ -631,6 +631,9 @@ export default class PostController {
       debugImage(folder, 'Texture', {
         texture: true,
         onChange: (value: Texture) => {
+          value.wrapS = RepeatWrapping
+          value.wrapT = RepeatWrapping
+          value.needsUpdate = true
           fx.texture = value
         },
       })

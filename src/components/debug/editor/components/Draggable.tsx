@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 // Views
-import NavButton from '../components/NavButton'
+import NavButton from './NavButton'
 import { DraggableItemProps, DraggableProps } from './types'
 // Utils
 import useMeasurePosition from '../hooks/useMeasurePosition'

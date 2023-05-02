@@ -49,7 +49,6 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
 import * as TextareaPlugin from '@pangenerator/tweakpane-textarea-plugin'
-import studio from '@theatre/studio'
 // Models
 import { Events, threeDispatcher } from '@/models/constants'
 import { settings } from '@/models/settings'
@@ -83,7 +82,6 @@ export function initDebug() {
   gui.registerPlugin(EssentialsPlugin)
   gui.registerPlugin(TweakpaneImagePlugin)
   gui.registerPlugin(TextareaPlugin)
-  toggleDebugPanel(studio.ui.isHidden)
 
   const guiElement = gui.element.parentElement as HTMLElement
   guiElement.style.right = settings.mobile ? '12px' : '130px'

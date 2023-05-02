@@ -5,12 +5,13 @@ import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import { settings } from '@/models/settings'
 // Components
 import './loader.scss'
+import DebugInit from '@/components/debug/DebugInit'
 // Utils
 import { preloadAssets } from '@/utils/preloader'
-import { initDebug } from '@/utils/debug'
 
 export default function Loader() {
   // States
+  const [settingsDetected, setSettingsDetected] = useState(false)
   const [percent, setPercent] = useState(0)
 
   useEffect(() => {
@@ -20,14 +21,17 @@ export default function Loader() {
 
     // Detect settings & begin load
     settings.detect().then(() => {
-      if (IS_DEV) initDebug()
+      setSettingsDetected(true)
       preloadAssets((progess: number) => setPercent(progess), startApp)
     })
   }, [])
 
   return (
-    <div className="loader absoluteCenter">
-      <p>Loading assets {Math.round(percent * 100)}%</p>
-    </div>
+    <>
+      <div className="loader absoluteCenter">
+        <p>Loading assets {Math.round(percent * 100)}%</p>
+      </div>
+      {IS_DEV && settingsDetected ? <DebugInit /> : null}
+    </>
   )
 }

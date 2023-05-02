@@ -259,11 +259,11 @@ class SceneController extends EventDispatcher {
 
       this.currentScene = newScene
       this.currentSceneName = newScene.name
-      this.test()
+      this.initScene()
     }
   }
 
-  private async test() {
+  protected async initScene() {
     await this.currentScene!.init()
     //
     this.sceneReady = true

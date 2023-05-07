@@ -1,5 +1,5 @@
 uniform float time;
-uniform float brightness;
+uniform float opacity;
 uniform vec2 resolution;
 varying vec2 vUv;
 
@@ -37,5 +37,5 @@ void main() {
 		snoise(vec3(uv.x, uv.y, t + 0.50)) * 0.5 + 0.33
 	);
 	color = hueShift(color, time * 0.5);
-  gl_FragColor = vec4(color * brightness, 1.0);
+  gl_FragColor = vec4(color, opacity);
 }

@@ -2,6 +2,7 @@
 import { Mesh, OrthographicCamera, ShaderMaterial, Vector2 } from 'three'
 import { gsap } from 'gsap'
 // Models
+import animation from '@/models/animation'
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '../BaseScene'
@@ -9,13 +10,12 @@ import vertex from '@/glsl/default.vert'
 import fragment from './lobby.frag'
 // Utils
 import { triangle } from '@/utils/three'
-import animation from '@/models/animation'
 
 class LobbyMaterial extends ShaderMaterial {
   constructor() {
     super({
       uniforms: {
-        brightness: {
+        opacity: {
           value: 1,
         },
         resolution: {
@@ -27,15 +27,16 @@ class LobbyMaterial extends ShaderMaterial {
       },
       vertexShader: vertex,
       fragmentShader: fragment,
+      transparent: true,
     })
   }
 
-  get brightness(): number {
-    return this.uniforms.brightness.value
+  get matOpacity(): number {
+    return this.uniforms.opacity.value
   }
 
-  set brightness(value: number) {
-    this.uniforms.brightness.value = value
+  set matOpacity(value: number) {
+    this.uniforms.opacity.value = value
   }
 
   get time(): number {
@@ -76,9 +77,9 @@ export default class LobbyScene extends BaseScene {
   override show(): void {
     super.show()
     this.post.enabled = false
-    this.mat.brightness = 0
+    this.mat.matOpacity = 0
     gsap.to(this.mat, {
-      brightness: 1,
+      matOpacity: 1,
       duration: 1,
       delay: 0.5,
     })
@@ -95,8 +96,8 @@ export default class LobbyScene extends BaseScene {
     })
   }
 
-  override update(): void {
-    this.mat.time = this.clock.getElapsedTime()
-    this.mat.uniforms.resolution.value.set(webgl.width, webgl.height)
-  }
+  // override update(): void {
+  //   this.mat.time = this.clock.getElapsedTime()
+  //   this.mat.uniforms.resolution.value.set(webgl.width, webgl.height)
+  // }
 }

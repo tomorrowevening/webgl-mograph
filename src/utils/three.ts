@@ -1,4 +1,5 @@
 import {
+  Bone,
   BufferGeometry,
   Camera,
   Float32BufferAttribute,
@@ -218,6 +219,26 @@ export class DoubleFBO extends FBO {
     this.flip = !this.flip
   }
 }
+
+// Skeleton
+
+/**
+ * Unexposed function from:
+ * https://github.com/mrdoob/three.js/blob/fbf6d9de8d652105b27666a85498b3221c5d7daa/src/helpers/SkeletonHelper.js#L107
+ */
+export function getBoneList(object: any): Array<Bone> {
+  const boneList: Array<Bone> = []
+  if (object.isBone === true) {
+    boneList.push(object as Bone)
+  }
+  for (let i = 0; i < object.children.length; i++) {
+    // eslint-disable-next-line prefer-spread
+    boneList.push.apply(boneList, getBoneList(object.children[i]))
+  }
+  return boneList
+}
+
+// Utils
 
 let outputCanvas: HTMLCanvasElement | null = null
 let outputLink: HTMLAnchorElement | null = null

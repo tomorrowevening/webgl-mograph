@@ -21,6 +21,10 @@ vercel build
 vercel deploy --prebuilt
 ```
 
+### Notes
+
+- Much of the Debugging Components are temporary until Theatre's AI update
+
 ### Helpers
 
 - Add `#debugGrid` to URL to show an overlay grid to help compositing

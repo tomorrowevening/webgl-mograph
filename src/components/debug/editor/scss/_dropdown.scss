@@ -12,16 +12,18 @@
   button {
     backdrop-filter: blur(2px);
     background-color: $BAR_COLOR;
-    color: #FFF;
+    color: rgba($color: #FFF, $alpha: 0.5);
+    font-size: 12px;
     padding: 5px 10px;
     position: relative;
     text-align: left;
     min-width: $ROW_HEIGHT;
     width: 100%;
-    transition: background-color 0.2s linear;
+    transition: all 0.2s linear;
 
     &:hover {
       background-color: $BTN_HOVER;
+      color: #FFF;
     }
 
     &.svg {

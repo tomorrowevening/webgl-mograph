@@ -327,7 +327,7 @@ export default class BaseScene extends Scene {
   }
 
   dispose(): void {
-    //
+    this.post.dispose()
   }
 
   enable(): void {

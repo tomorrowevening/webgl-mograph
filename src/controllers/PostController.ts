@@ -204,7 +204,6 @@ export default class PostController {
       this.composer.render(delta)
     } else {
       webgl.renderer.setRenderTarget(renderTarget)
-      webgl.renderer.setClearAlpha(0)
       webgl.renderer.clear()
       webgl.renderer.render(this.scene, this.camera)
     }

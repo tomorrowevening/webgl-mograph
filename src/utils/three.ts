@@ -151,7 +151,6 @@ export function anchorGeometryTL(geometry: BufferGeometry) {
  */
 export const renderToTexture = (scene: Object3D, camera: Camera, target: WebGLRenderTarget) => {
   webgl.renderer.setRenderTarget(target)
-  // webgl.renderer.setClearAlpha(0)
   webgl.renderer.clear()
   webgl.renderer.render(scene, camera)
 }

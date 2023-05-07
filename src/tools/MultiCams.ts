@@ -13,9 +13,13 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FolderApi } from 'tweakpane'
 // Models
+import { Events, debugDispatcher } from '@/models/constants'
 import webgl from '@/models/webgl'
 // Views
 import BaseScene from '@/scenes/BaseScene'
+import InfiniteGridHelper from '@/mesh/helpers/InfiniteGridHelper'
+// Controllers
+import scenes from '@/controllers/SceneController'
 // Tools / Utils
 import Transformer, { TransformController } from './Transformer'
 import {
@@ -30,9 +34,6 @@ import {
   toolsTab,
 } from '@/utils/debug'
 import { dispose } from '@/utils/three'
-import { Events, debugDispatcher } from '@/models/constants'
-import InfiniteGridHelper from '@/mesh/helpers/InfiniteGridHelper'
-import scenes from '@/controllers/SceneController'
 
 export type WindowParams = {
   index: number
@@ -309,8 +310,7 @@ export default class MultiCams extends Object3D {
   }
 
   postRender(scene: Scene): void {
-    if (this.windows.length < 0) return
-    if (this.mode === 'quadCam') return
+    if (this.windows.length < 1 || this.mode === 'quadCam') return
 
     // Reset values
     const scissor = new Vector4()

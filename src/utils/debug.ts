@@ -609,6 +609,7 @@ export const debugLerp = (parentFolder: any, label: string, callback: (progress:
     onChange: (value: number) => {
       callback(value)
     },
+    label: label,
     ...props,
   })
 }

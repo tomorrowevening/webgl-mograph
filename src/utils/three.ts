@@ -1,16 +1,24 @@
 import {
+  AddEquation,
   Bone,
   BufferGeometry,
   Camera,
+  CustomBlending,
+  DstColorFactor,
   Float32BufferAttribute,
   Material,
   Matrix4,
   Mesh,
+  NormalBlending,
   Object3D,
+  OneFactor,
+  OneMinusDstColorFactor,
+  OneMinusSrcAlphaFactor,
   OrthographicCamera,
   PerspectiveCamera,
   PlaneGeometry,
   PositionalAudio,
+  SrcAlphaFactor,
   Texture,
   WebGLRenderTarget,
   WebGLRenderTargetOptions,
@@ -144,6 +152,41 @@ export function anchorGeometryTL(geometry: BufferGeometry) {
 }
 
 //////////////////////////////////////////////////
+// Materials
+
+export function setMaterialBlendNormal(material: Material) {
+  material.blending = NormalBlending
+  material.blendEquation = AddEquation
+  material.blendSrc = SrcAlphaFactor
+  material.blendDst = OneMinusSrcAlphaFactor
+  material.needsUpdate = true
+}
+
+export function setMaterialBlendAdd(material: Material) {
+  material.blending = CustomBlending
+  material.blendEquation = AddEquation
+  material.blendSrc = SrcAlphaFactor
+  material.blendDst = OneFactor
+  material.needsUpdate = true
+}
+
+export function setMaterialBlendMultiply(material: Material) {
+  material.blending = CustomBlending
+  material.blendEquation = AddEquation
+  material.blendSrc = DstColorFactor
+  material.blendDst = OneMinusSrcAlphaFactor
+  material.needsUpdate = true
+}
+
+export function setMaterialBlendScreen(material: Material) {
+  material.blending = CustomBlending
+  material.blendEquation = AddEquation
+  material.blendSrc = OneMinusDstColorFactor
+  material.blendDst = OneFactor
+  material.needsUpdate = true
+}
+
+//////////////////////////////////////////////////
 // Rendering / Shaders
 
 /**
@@ -219,6 +262,7 @@ export class DoubleFBO extends FBO {
   }
 }
 
+//////////////////////////////////////////////////
 // Skeleton
 
 /**

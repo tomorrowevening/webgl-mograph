@@ -62,6 +62,7 @@ import { fileName } from './dom'
 import scenes from '@/controllers/SceneController'
 import animation from '@/models/animation'
 import { types } from '@theatre/core'
+import { setMaterialBlendAdd, setMaterialBlendMultiply, setMaterialBlendNormal, setMaterialBlendScreen } from './three'
 
 let gui: Pane
 let tabs: any
@@ -962,32 +963,16 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
     (value: number) => {
       switch (value) {
         case 0:
-          material.blending = NormalBlending
-          material.blendEquation = AddEquation
-          material.blendSrc = SrcAlphaFactor
-          material.blendDst = OneMinusSrcAlphaFactor
-          material.needsUpdate = true
+          setMaterialBlendNormal(material)
           break
         case 1:
-          material.blending = CustomBlending
-          material.blendEquation = AddEquation
-          material.blendSrc = SrcAlphaFactor
-          material.blendDst = OneFactor
-          material.needsUpdate = true
+          setMaterialBlendAdd(material)
           break
         case 2:
-          material.blending = CustomBlending
-          material.blendEquation = AddEquation
-          material.blendSrc = OneMinusDstColorFactor
-          material.blendDst = OneFactor
-          material.needsUpdate = true
+          setMaterialBlendScreen(material)
           break
         case 3:
-          material.blending = CustomBlending
-          material.blendEquation = AddEquation
-          material.blendSrc = DstColorFactor
-          material.blendDst = OneMinusSrcAlphaFactor
-          material.needsUpdate = true
+          setMaterialBlendMultiply(material)
           break
       }
     },

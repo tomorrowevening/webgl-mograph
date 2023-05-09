@@ -3,6 +3,8 @@ import {
   Camera,
   CameraHelper,
   Color,
+  MeshDepthMaterial,
+  MeshNormalMaterial,
   Object3D,
   OrthographicCamera,
   PerspectiveCamera,
@@ -34,6 +36,7 @@ import {
   toolsTab,
 } from '@/utils/debug'
 import { dispose } from '@/utils/three'
+import DebugMaterial from '@/materials/utils/DebugMaterial'
 
 export type WindowParams = {
   index: number
@@ -556,19 +559,41 @@ export default class MultiCams extends Object3D {
 
   private onUpdate = (evt: any) => {
     const value = evt.value
-    if (value === 'addCamera') {
-      const newCamera = scenes.currentScene?.camera.clone()
-      if (newCamera !== undefined) {
-        if (newCamera.name.length > 0) {
-          newCamera.name += ' clone'
-        } else {
-          newCamera.name = `cam ${newCamera.type}`
-        }
-        this.addCamera(newCamera)
+    const currentScene = scenes.currentScene
+    if (currentScene !== undefined) {
+      switch (value) {
+        case 'camera_add':
+          const newCamera = scenes.currentScene?.camera.clone()
+          if (newCamera !== undefined) {
+            if (newCamera.name.length > 0) {
+              newCamera.name += ' clone'
+            } else {
+              newCamera.name = `cam ${newCamera.type}`
+            }
+            this.addCamera(newCamera)
+          }
+          break
+        case 'singleView':
+          this.grid.visible = false
+          this.mode = 'default'
+          break
+        case 'quadView':
+          this.grid.visible = true
+          this.mode = 'quadCam'
+          break
+        case 'render_default':
+          currentScene.overrideMaterial = null
+          break
+        case 'render_depth':
+          currentScene.overrideMaterial = new MeshDepthMaterial()
+          break
+        case 'render_normals':
+          currentScene.overrideMaterial = new MeshNormalMaterial()
+          break
+        case 'render_uvs':
+          currentScene.overrideMaterial = new DebugMaterial()
+          break
       }
-    } else {
-      this.grid.visible = value === 'quadView'
-      this.mode = this.grid.visible ? 'quadCam' : 'default'
     }
     this.gridPanel.refresh()
   }

@@ -1,7 +1,13 @@
+// Libs
+import { useEffect } from 'react'
 // Models
 import { Events, debugDispatcher, threeDispatcher } from '@/models/constants'
 // Views
 import Dropdown from '../components/Dropdown'
+import { DropdownOption } from '../components/types'
+// Controllers
+import scenes from '@/controllers/SceneController'
+import { Object3D } from 'three'
 
 const icon = `
 <svg width="14" height="14" fill="none" stroke="white">
@@ -14,61 +20,147 @@ const icon = `
 </svg>
 `
 
+const viewOptions: DropdownOption[] = [
+  {
+    type: 'option',
+    title: 'Default',
+    value: 'render_default',
+  },
+  {
+    type: 'option',
+    title: 'Depth',
+    value: 'render_depth',
+  },
+  {
+    type: 'option',
+    title: 'Normals',
+    value: 'render_normals',
+  },
+  {
+    type: 'option',
+    title: 'UVs',
+    value: 'render_uvs',
+  },
+]
+
 export default function Cameras() {
   const onSelect = (value: string) => {
-    if (value === 'takeScreenshot') {
-      debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
-    } else if (value === 'toggleOrbit') {
-      debugDispatcher.dispatchEvent({ type: Events.TOGGLE_ORBIT })
-    } else if (value === 'debugCamera') {
-      debugDispatcher.dispatchEvent({ type: Events.SET_MULTICAMS_CAMERA, value: 'debug' })
-    } else if (value === 'topCamera') {
-      debugDispatcher.dispatchEvent({ type: Events.SET_MULTICAMS_CAMERA, value: 'top' })
+    if (value.search('camera_') > -1) {
+      switch (value) {
+        case 'camera_add':
+          debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+          break
+        default:
+        case 'camera_main':
+        case 'camera_debug':
+          const cameraName = value.slice(7, value.length)
+          debugDispatcher.dispatchEvent({ type: Events.SET_MULTICAMS_CAMERA, value: cameraName })
+          break
+      }
+    } else if (value.search('render_') > -1) {
+      switch (value) {
+        default:
+        case 'render_default':
+        case 'render_depth':
+        case 'render_normals':
+        case 'render_uvs':
+          debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+          break
+      }
     } else {
-      debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+      switch (value) {
+        case 'takeScreenshot':
+          debugDispatcher.dispatchEvent({ type: Events.TAKE_SCREENSHOT })
+          break
+        case 'toggleOrbit':
+          debugDispatcher.dispatchEvent({ type: Events.TOGGLE_ORBIT })
+          break
+        case 'quadView':
+        case 'singleView':
+          debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
+          break
+      }
     }
   }
-  return (
-    <Dropdown
-      title={icon}
-      options={[
-        {
-          title: 'Main Camera',
-          value: 'rendered',
-          type: 'option',
-        },
-        {
-          title: 'Quad Cameras',
-          value: 'quadView',
-          type: 'option',
-        },
-        {
-          title: 'Add Camera',
-          value: 'addCamera',
-          type: 'option',
-        },
-        {
-          title: 'Toggle Orbit',
-          value: 'toggleOrbit',
-          type: 'option',
-        },
-        {
-          title: 'Debug Camera',
-          value: 'debugCamera',
-          type: 'option',
-        },
-        {
-          title: 'Top Camera',
-          value: 'topCamera',
-          type: 'option',
-        },
-        {
-          title: 'Take Screenshot',
-          value: 'takeScreenshot',
-          type: 'option',
-        },
-      ]}
-      onSelect={onSelect}
-    />
-  )
+
+  const cameraOptions: DropdownOption[] = [
+    {
+      type: 'option',
+      title: 'Debug',
+      value: 'camera_debug',
+    },
+    {
+      type: 'option',
+      title: 'Top',
+      value: 'camera_top',
+    },
+    {
+      type: 'option',
+      title: 'Left',
+      value: 'camera_left',
+    },
+    {
+      type: 'option',
+      title: 'Front',
+      value: 'camera_front',
+    },
+    {
+      type: 'option',
+      title: 'Ortho',
+      value: 'camera_ortho',
+    },
+  ]
+
+  useEffect(() => {
+    const onReady = () => {
+      const scene = scenes.currentScene
+      if (scene !== undefined) {
+        scene.cameras.children.forEach((camera: Object3D) => {
+          cameraOptions.splice(0, 0, {
+            type: 'option',
+            title: camera.name,
+            value: `camera_${camera.name}`,
+          })
+        })
+      }
+    }
+    threeDispatcher.addEventListener(Events.SCENE_READY, onReady)
+    return () => {
+      threeDispatcher.removeEventListener(Events.SCENE_READY, onReady)
+    }
+  }, [])
+
+  const options: DropdownOption[] = [
+    {
+      type: 'dropdown',
+      title: 'Cameras',
+      value: cameraOptions,
+    },
+    {
+      type: 'option',
+      title: 'Single View',
+      value: 'singleView',
+    },
+    {
+      type: 'option',
+      title: 'Quad View',
+      value: 'quadView',
+    },
+    {
+      type: 'option',
+      title: 'Toggle Orbit',
+      value: 'toggleOrbit',
+    },
+    {
+      type: 'option',
+      title: 'Take Screenshot',
+      value: 'takeScreenshot',
+    },
+    {
+      type: 'dropdown',
+      title: 'View Modes',
+      value: viewOptions,
+    },
+  ]
+  return <Dropdown title={icon} options={options} onSelect={onSelect} />
 }

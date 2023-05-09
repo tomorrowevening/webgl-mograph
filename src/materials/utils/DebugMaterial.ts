@@ -5,15 +5,15 @@ import fragment from '@/glsl/materials/debug.frag'
 import { debugInput, debugOptions } from '@/utils/debug'
 
 export default class DebugMaterial extends ShaderMaterial {
-  constructor(defines: any = {}) {
-    const _defines = { ...defines }
-    _defines['USE_UV'] = ''
+  constructor(mode = 0) {
     super({
-      defines: _defines,
+      defines: {
+        USE_UV: '',
+      },
       uniforms: UniformsUtils.merge([
         {
           debug: {
-            value: 0,
+            value: mode,
           },
           opacity: {
             value: 1,

@@ -30,7 +30,6 @@ import {
 import assets from '@/models/assets'
 import { Events, IS_DEV, threeDispatcher } from '@/models/constants'
 import { Scenes } from '@/types'
-import webgl from '@/models/webgl'
 // Controllers
 import scenes from '@/controllers/SceneController'
 import PostController from '@/controllers/PostController'

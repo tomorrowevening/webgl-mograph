@@ -96,8 +96,8 @@ export default class LobbyScene extends BaseScene {
     })
   }
 
-  // override update(): void {
-  //   this.mat.time = this.clock.getElapsedTime()
-  //   this.mat.uniforms.resolution.value.set(webgl.width, webgl.height)
-  // }
+  override update(): void {
+    this.mat.time = this.clock.getElapsedTime()
+    this.mat.uniforms.resolution.value.set(webgl.width, webgl.height)
+  }
 }

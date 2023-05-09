@@ -1,5 +1,5 @@
 // Libs
-import { PerspectiveCamera, RectAreaLight } from 'three'
+import { Mesh, MeshPhysicalMaterial, PerspectiveCamera, PlaneGeometry, RectAreaLight } from 'three'
 import gsap from 'gsap'
 import { FXAAEffect, NoiseEffect, VignetteEffect } from 'postprocessing'
 // Models
@@ -23,11 +23,30 @@ export default class IntroScene extends BaseScene {
     this.cameras.add(this.mainCamera)
   }
 
+  protected override initLighting(): Promise<void> {
+    return new Promise((resolve) => {
+      const portal = new RectAreaLight(0xffffff, 1, 100, 100)
+      portal.name = 'portalLight'
+      this.lights.add(portal)
+      resolve()
+    })
+  }
+
+  protected override initMesh(): Promise<void> {
+    return new Promise((resolve) => {
+      const floor = new Mesh(new PlaneGeometry(), new MeshPhysicalMaterial({ color: 0xffffff }))
+      floor.name = 'floor'
+      floor.rotateX(-Math.PI / 2)
+      floor.scale.setScalar(2000)
+      this.world.add(floor)
+      resolve()
+    })
+  }
+
   protected override initPost(): Promise<void> {
     return new Promise((resolve) => {
       this.post = new PostController(this, this.camera)
-      this.post.addEffect('FXAA_Vignette', new FXAAEffect(), new VignetteEffect())
-
+      this.post.addEffect('FXAA', new FXAAEffect())
       resolve()
     })
   }
@@ -37,10 +56,6 @@ export default class IntroScene extends BaseScene {
       animation.createSheet(this.name)
       resolve()
     })
-  }
-
-  override dispose(): void {
-    this.post.dispose()
   }
 
   override hide(): void {

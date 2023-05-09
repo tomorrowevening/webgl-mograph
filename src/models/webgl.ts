@@ -11,11 +11,11 @@ class WebGLSingleton {
     this.renderer = new WebGLRenderer({
       canvas: canvas,
       powerPreference: 'high-performance',
-      antialias: false,
       stencil: false,
     })
     this.renderer.autoClear = false
     this.renderer.info.autoReset = !IS_DEV // debug performance
+    this.renderer.setClearColor(0x0d0d0d)
     this.renderer.setPixelRatio(settings.quality === 'low' ? 1 : devicePixelRatio)
 
     this.addRT('previousScene')

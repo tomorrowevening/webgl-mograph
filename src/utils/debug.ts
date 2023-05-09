@@ -1202,7 +1202,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
     material.needsUpdate = true
   })
   const debugMaterialFolder: any = debugFolder('Debug Material', folder)
-  const debugMaterial = new DebugMaterial(material.defines)
+  const debugMaterial = new DebugMaterial()
   debugMaterial.initDebug(debugMaterialFolder)
   debugToggle(debugMaterialFolder, 'Debug Material', false, (value: any) => {
     if (value) {

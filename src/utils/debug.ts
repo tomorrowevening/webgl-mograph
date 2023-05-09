@@ -977,6 +977,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
       }
     },
   )
+
   debugOptions(
     folder,
     'Side',
@@ -1001,6 +1002,11 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
     material.side,
   )
 
+  debugButton(folder, 'Update Material', () => {
+    // @ts-ignore
+    material.needsUpdate = true
+  })
+
   const propsFolder = debugFolder('Props', folder)
   for (const i in material) {
     // @ts-ignore
@@ -1020,10 +1026,14 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               material.needsUpdate = true
             }
           }
-          debugInput(propsFolder, material, i, params)
+
+          if (i.search('Intensity') < 0) {
+            debugInput(propsFolder, material, i, params)
+          }
         } else if (value instanceof Color) {
           debugColor(propsFolder, material, i, { label: i })
         } else if (value instanceof Texture || value === null) {
+          const textureFolder = debugFolder(i, propsFolder)
           const textureParams = {
             offset: new Vector2(0, 0),
             repeat: new Vector2(1, 1),
@@ -1084,9 +1094,9 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               imgProps['url'] = dataURL
             }
           }
-          const imgPane = debugImage(propsFolder, i, imgProps)
+          const imgPane = debugImage(textureFolder, i, imgProps)
           debugOptions(
-            propsFolder,
+            textureFolder,
             'wrapS',
             wrapOptions,
             (value: any) => {
@@ -1101,7 +1111,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
             defaultWrapS,
           )
           debugOptions(
-            propsFolder,
+            textureFolder,
             'wrapT',
             wrapOptions,
             (value: any) => {
@@ -1125,7 +1135,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               max: 100,
             },
           }
-          debugInput(propsFolder, textureParams, 'offset', {
+          debugInput(textureFolder, textureParams, 'offset', {
             ...repeatParams,
             onChange: (value: Vector2) => {
               // @ts-ignore
@@ -1135,7 +1145,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               }
             },
           })
-          debugInput(propsFolder, textureParams, 'repeat', {
+          debugInput(textureFolder, textureParams, 'repeat', {
             ...repeatParams,
             onChange: (value: Vector2) => {
               // @ts-ignore
@@ -1145,7 +1155,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               }
             },
           })
-          debugInput(propsFolder, textureParams, 'flipY', {
+          debugInput(textureFolder, textureParams, 'flipY', {
             onChange: (value: boolean) => {
               // @ts-ignore
               if (material[i] !== null) {
@@ -1156,19 +1166,19 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
               }
             },
           })
-          debugButton(
-            propsFolder,
-            'clear',
-            () => {
-              // @ts-ignore
-              imgPane.controller_.valueController.updateImage(emptyImg)
-              // @ts-ignore
-              material[i] = null
-              // @ts-ignore
-              material.needsUpdate = true
-            },
-            { label: i },
-          )
+          const intensity = `${i}Intensity`
+          // @ts-ignore
+          if (material[intensity] !== undefined) {
+            debugInput(textureFolder, material, intensity, { min: 0, label: 'Intensity' })
+          }
+          debugButton(textureFolder, 'Clear', () => {
+            // @ts-ignore
+            imgPane.controller_.valueController.updateImage(emptyImg)
+            // @ts-ignore
+            material[i] = null
+            // @ts-ignore
+            material.needsUpdate = true
+          })
         }
       }
     }
@@ -1197,10 +1207,6 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
     }
   }
 
-  debugButton(folder, 'Update Material', () => {
-    // @ts-ignore
-    material.needsUpdate = true
-  })
   const debugMaterialFolder: any = debugFolder('Debug Material', folder)
   const debugMaterial = new DebugMaterial()
   debugMaterial.initDebug(debugMaterialFolder)

@@ -5,11 +5,14 @@ import {
   Camera,
   CustomBlending,
   DstColorFactor,
+  EqualStencilFunc,
   Float32BufferAttribute,
+  KeepStencilOp,
   Material,
   Matrix4,
   Mesh,
   NormalBlending,
+  NotEqualStencilFunc,
   Object3D,
   OneFactor,
   OneMinusDstColorFactor,
@@ -153,6 +156,36 @@ export function anchorGeometryTL(geometry: BufferGeometry) {
 
 //////////////////////////////////////////////////
 // Materials
+
+/**
+ * Based on:
+ * https://github.com/pmndrs/drei/blob/master/src/core/Mask.tsx
+ */
+export function useMask(mesh: Mesh, id: number, inverse = false) {
+  mesh.renderOrder = -id
+  const material = mesh.material
+  if (Array.isArray(material)) {
+    material.forEach((mat: Material) => {
+      mat.colorWrite = false
+      mat.depthWrite = false
+      mat.stencilWrite = true
+      mat.stencilRef = id
+      mat.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc
+      mat.stencilFail = KeepStencilOp
+      mat.stencilZFail = KeepStencilOp
+      mat.stencilZPass = KeepStencilOp
+    })
+  } else {
+    material.colorWrite = false
+    material.depthWrite = false
+    material.stencilWrite = true
+    material.stencilRef = id
+    material.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc
+    material.stencilFail = KeepStencilOp
+    material.stencilZFail = KeepStencilOp
+    material.stencilZPass = KeepStencilOp
+  }
+}
 
 export function setMaterialBlendNormal(material: Material) {
   material.blending = NormalBlending

@@ -581,6 +581,9 @@ export default class MultiCams extends Object3D {
           this.grid.visible = true
           this.mode = 'quadCam'
           break
+        case 'toggleGrid':
+          this.grid.visible = !this.grid.visible
+          break
         case 'render_default':
           currentScene.overrideMaterial = null
           break

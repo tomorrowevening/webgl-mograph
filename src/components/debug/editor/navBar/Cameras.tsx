@@ -77,6 +77,7 @@ export default function Cameras() {
           break
         case 'quadView':
         case 'singleView':
+        case 'toggleGrid':
           debugDispatcher.dispatchEvent({ type: Events.UPDATE_MULTICAMS, value: value })
           break
       }
@@ -150,6 +151,11 @@ export default function Cameras() {
       type: 'option',
       title: 'Toggle Orbit',
       value: 'toggleOrbit',
+    },
+    {
+      type: 'option',
+      title: 'Toggle Grid',
+      value: 'toggleGrid',
     },
     {
       type: 'option',

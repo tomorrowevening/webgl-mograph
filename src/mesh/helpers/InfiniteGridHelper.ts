@@ -13,5 +13,6 @@ export default class InfiniteGridHelper extends Mesh {
     super(new PlaneGeometry(2, 2), new InfiniteGridMaterial())
     this.frustumCulled = false
     this.name = 'InfiniteGridHelper'
+    this.position.y = 0.1
   }
 }

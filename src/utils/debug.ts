@@ -19,6 +19,12 @@ import {
   LinearToneMapping,
   Material,
   Mesh,
+  MeshBasicMaterial,
+  MeshLambertMaterial,
+  MeshMatcapMaterial,
+  MeshPhongMaterial,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
   MirroredRepeatWrapping,
   NormalBlending,
   NoToneMapping,
@@ -933,12 +939,31 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
   })
 }
 
-export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any): any => {
-  const pane = parentFolder !== undefined ? parentFolder : scenesTab
-  const folder = debugFolder('Material', pane)
-  const material = mesh.material as Material
-  debugInput(folder, mesh.material, 'type', { label: 'Material', disabled: true })
+const debugOptTexture = (parentFolder: any, material: Material, label: string) => {
+  const folder = debugFolder(label, parentFolder)
+  debugImage(folder, label, {
+    texture: true,
+    onChange: (value: Texture) => {
+      // @ts-ignore
+      material[label] = value
+    },
+  })
+  debugButton(folder, 'Clear', () => {
+    // @ts-ignore
+    material[label] = null
+  })
+}
 
+const debugMaterialCore = (parentFolder: any, material: Material) => {
+  const folder = debugFolder('Core', parentFolder)
+  const extra = {
+    defines: JSON.stringify(material.defines),
+  }
+  debugButton(folder, 'Update', () => {
+    material.needsUpdate = true
+  })
+  debugInput(folder, material, 'type', { label: 'Material', disabled: true })
+  debugInput(folder, extra, 'defines', { label: 'Defines', disabled: true })
   debugOptions(
     folder,
     'Blend Mode',
@@ -977,7 +1002,6 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
       }
     },
   )
-
   debugOptions(
     folder,
     'Side',
@@ -997,214 +1021,200 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
     ],
     (value: any) => {
       material.side = value
-      material.needsUpdate = true
     },
-    material.side,
   )
+  debugInput(folder, material, 'alphaTest', { min: 0, max: 1 })
+  debugInput(folder, material, 'opacity', { min: 0, max: 1 })
+  debugInput(folder, material, 'dithering')
+  debugInput(folder, material, 'depthTest')
+  debugInput(folder, material, 'depthWrite')
+  debugInput(folder, material, 'stencilWrite')
+  debugInput(folder, material, 'transparent')
+  // @ts-ignore
+  if (material['wireframe'] !== undefined) debugInput(folder, material, 'wireframe')
+}
 
-  debugButton(folder, 'Update Material', () => {
-    // @ts-ignore
-    material.needsUpdate = true
-  })
+const debugMeshBasicMaterial = (parentFolder: any, material: MeshBasicMaterial) => {
+  const folder = debugFolder('Basic', parentFolder)
+  debugOptTexture(folder, material, 'alphaMap')
+  debugOptTexture(folder, material, 'aoMap')
+  debugInput(folder, material, 'aoMapIntensity', { min: 0, max: 1 })
+  debugColor(folder, material, 'color')
+  debugOptTexture(folder, material, 'envMap')
+  debugInput(folder, material, 'fog')
+  debugOptTexture(folder, material, 'lightMap')
+  debugInput(folder, material, 'lightMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'map')
+  debugInput(folder, material, 'reflectivity', { min: 0, max: 1 })
+  debugInput(folder, material, 'refractionRatio', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'specularMap')
+}
 
-  const propsFolder = debugFolder('Props', folder)
-  for (const i in material) {
-    // @ts-ignore
-    const value = material[i]
-    if (i.substring(0, 1) !== '_') {
-      if (acceptedMaterialTypes(value) && acceptedMaterialNames(i)) {
-        if (
-          typeof value === 'boolean' ||
-          typeof value === 'number' ||
-          value instanceof Vector2 ||
-          value instanceof Vector3
-        ) {
-          const params = { label: i }
-          if (typeof value === 'boolean') {
-            // @ts-ignore
-            params['onChange'] = () => {
-              material.needsUpdate = true
-            }
-          }
+const debugMeshLambertMaterial = (parentFolder: any, material: MeshLambertMaterial) => {
+  const folder = debugFolder('Lambert', parentFolder)
+  debugOptTexture(folder, material, 'alphaMap')
+  debugOptTexture(folder, material, 'aoMap')
+  debugInput(folder, material, 'aoMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'bumpMap')
+  debugInput(folder, material, 'bumpScale')
+  debugColor(folder, material, 'color')
+  debugOptTexture(folder, material, 'displacementMap')
+  debugInput(folder, material, 'displacementScale', { min: 0, max: 1 })
+  debugColor(folder, material, 'emissive')
+  debugOptTexture(folder, material, 'emissiveMap')
+  debugInput(folder, material, 'emissiveIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'envMap')
+  debugInput(folder, material, 'flatShading')
+  debugInput(folder, material, 'fog')
+  debugOptTexture(folder, material, 'lightMap')
+  debugInput(folder, material, 'lightMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'map')
+  debugOptTexture(folder, material, 'normalMap')
+  debugInput(folder, material, 'normalScale')
+  debugInput(folder, material, 'reflectivity', { min: 0, max: 1 })
+  debugInput(folder, material, 'refractionRatio', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'specularMap')
+}
 
-          if (i.search('Intensity') < 0) {
-            debugInput(propsFolder, material, i, params)
-          }
-        } else if (value instanceof Color) {
-          debugColor(propsFolder, material, i, { label: i })
-        } else if (value instanceof Texture || value === null) {
-          const textureFolder = debugFolder(i, propsFolder)
-          const textureParams = {
-            offset: new Vector2(0, 0),
-            repeat: new Vector2(1, 1),
-            wrapS: ClampToEdgeWrapping,
-            wrapT: ClampToEdgeWrapping,
-            flipY: true,
-          }
-          const imgProps = {
-            texture: true,
-            onChange: (value: Texture) => {
-              value.offset.copy(textureParams.offset)
-              value.repeat.copy(textureParams.repeat)
-              value.wrapS = textureParams.wrapS
-              value.wrapT = textureParams.wrapT
-              value.flipY = textureParams.flipY
-              value.needsUpdate = true
-              // @ts-ignore
-              material[i] = value
-              // @ts-ignore
-              material.needsUpdate = true
-            },
-          }
-          const wrapOptions = [
-            {
-              text: 'ClampToEdgeWrapping',
-              value: ClampToEdgeWrapping,
-            },
-            {
-              text: 'RepeatWrapping',
-              value: RepeatWrapping,
-            },
-            {
-              text: 'MirroredRepeatWrapping',
-              value: MirroredRepeatWrapping,
-            },
-          ]
-          let defaultWrapS = wrapOptions[0].value
-          let defaultWrapT = wrapOptions[0].value
-          if (value !== null) {
-            defaultWrapS = value.wrapS
-            defaultWrapT = value.wrapT
-            textureParams.offset.copy(value.offset)
-            textureParams.repeat.copy(value.repeat)
-            textureParams.wrapS = value.wrapS
-            textureParams.wrapT = value.wrapT
-            textureParams.flipY = value.flipY
-            if (value.source.data !== undefined) {
-              // @ts-ignore
-              imgProps['url'] = value.source.data.currentSrc
-            }
-            if (value.source.data instanceof ImageBitmap) {
-              const bitmap = value.source.data as ImageBitmap
-              canvas.width = bitmap.width
-              canvas.height = bitmap.height
-              context.drawImage(bitmap, 0, 0)
-              const dataURL = canvas.toDataURL()
-              // @ts-ignore
-              imgProps['url'] = dataURL
-            }
-          }
-          const imgPane = debugImage(textureFolder, i, imgProps)
-          debugOptions(
-            textureFolder,
-            'wrapS',
-            wrapOptions,
-            (value: any) => {
-              textureParams.wrapS = value
-              // @ts-ignore
-              const texture = material[i] as Texture
-              if (texture !== null) {
-                texture.wrapS = value
-                texture.needsUpdate = true
-              }
-            },
-            defaultWrapS,
-          )
-          debugOptions(
-            textureFolder,
-            'wrapT',
-            wrapOptions,
-            (value: any) => {
-              textureParams.wrapT = value
-              // @ts-ignore
-              const texture = material[i] as Texture
-              if (texture !== null) {
-                texture.wrapT = value
-                texture.needsUpdate = true
-              }
-            },
-            defaultWrapT,
-          )
-          const repeatParams = {
-            x: {
-              min: -100,
-              max: 100,
-            },
-            y: {
-              min: -100,
-              max: 100,
-            },
-          }
-          debugInput(textureFolder, textureParams, 'offset', {
-            ...repeatParams,
-            onChange: (value: Vector2) => {
-              // @ts-ignore
-              if (material[i] !== null) {
-                // @ts-ignore
-                material[i].offset.copy(value)
-              }
-            },
-          })
-          debugInput(textureFolder, textureParams, 'repeat', {
-            ...repeatParams,
-            onChange: (value: Vector2) => {
-              // @ts-ignore
-              if (material[i] !== null) {
-                // @ts-ignore
-                material[i].repeat.copy(value)
-              }
-            },
-          })
-          debugInput(textureFolder, textureParams, 'flipY', {
-            onChange: (value: boolean) => {
-              // @ts-ignore
-              if (material[i] !== null) {
-                // @ts-ignore
-                material[i].flipY = value
-                // @ts-ignore
-                material[i].needsUpdate = true
-              }
-            },
-          })
-          const intensity = `${i}Intensity`
+const debugMeshMatcapMaterial = (parentFolder: any, material: MeshMatcapMaterial) => {
+  const folder = debugFolder('Matcap', parentFolder)
+  debugOptTexture(folder, material, 'alphaMap')
+  debugOptTexture(folder, material, 'bumpMap')
+  debugInput(folder, material, 'bumpScale')
+  debugColor(folder, material, 'color')
+  debugOptTexture(folder, material, 'displacementMap')
+  debugInput(folder, material, 'displacementScale', { min: 0, max: 1 })
+  debugInput(folder, material, 'flatShading')
+  debugInput(folder, material, 'fog')
+  debugOptTexture(folder, material, 'map')
+  debugOptTexture(folder, material, 'matcap')
+  debugOptTexture(folder, material, 'normalMap')
+  debugInput(folder, material, 'normalScale')
+}
+
+const debugMeshPhongMaterial = (parentFolder: any, material: MeshPhongMaterial) => {
+  const folder = debugFolder('Phong', parentFolder)
+  debugOptTexture(folder, material, 'alphaMap')
+  debugOptTexture(folder, material, 'aoMap')
+  debugInput(folder, material, 'aoMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'bumpMap')
+  debugInput(folder, material, 'bumpScale')
+  debugColor(folder, material, 'color')
+  debugOptTexture(folder, material, 'displacementMap')
+  debugInput(folder, material, 'displacementScale', { min: 0, max: 1 })
+  debugColor(folder, material, 'emissive')
+  debugOptTexture(folder, material, 'emissiveMap')
+  debugInput(folder, material, 'emissiveIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'envMap')
+  debugInput(folder, material, 'flatShading')
+  debugInput(folder, material, 'fog')
+  debugOptTexture(folder, material, 'lightMap')
+  debugInput(folder, material, 'lightMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'map')
+  debugOptTexture(folder, material, 'normalMap')
+  debugInput(folder, material, 'normalScale')
+  debugInput(folder, material, 'reflectivity', { min: 0, max: 1 })
+  debugInput(folder, material, 'refractionRatio', { min: 0, max: 1 })
+  debugInput(folder, material, 'shininess', { min: 0, max: 1 })
+  debugColor(folder, material, 'specular')
+  debugOptTexture(folder, material, 'specularMap')
+}
+
+const debugMeshPhysicalMaterial = (parentFolder: any, material: MeshPhysicalMaterial) => {
+  debugMeshStandardMaterial(parentFolder, material)
+  const folder = debugFolder('Physical', parentFolder)
+  debugColor(folder, material, 'attenuationColor')
+  debugInput(folder, material, 'clearcoat', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'clearcoatMap')
+  debugOptTexture(folder, material, 'clearcoatNormalMap')
+  debugInput(folder, material, 'clearcoatNormalScale')
+  debugInput(folder, material, 'clearcoatRoughness')
+  debugOptTexture(folder, material, 'clearcoatRoughnessMap')
+  debugInput(folder, material, 'ior', { min: 1, max: 2.333 })
+  debugInput(folder, material, 'reflectivity', { min: 0, max: 1 })
+  debugInput(folder, material, 'sheen', { min: 0, max: 1 })
+  debugInput(folder, material, 'sheenRoughness', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'sheenRoughnessMap')
+  debugColor(folder, material, 'sheenColor')
+  debugOptTexture(folder, material, 'sheenColorMap')
+  debugInput(folder, material, 'specularIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'specularIntensityMap')
+  debugColor(folder, material, 'specularColor')
+  debugOptTexture(folder, material, 'specularColorMap')
+  debugInput(folder, material, 'thickness', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'thicknessMap')
+  debugInput(folder, material, 'transmission', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'transmissionMap')
+}
+
+const debugMeshStandardMaterial = (parentFolder: any, material: MeshStandardMaterial | MeshPhysicalMaterial) => {
+  const folder = debugFolder('Standard', parentFolder)
+  debugOptTexture(folder, material, 'alphaMap')
+  debugOptTexture(folder, material, 'aoMap')
+  debugInput(folder, material, 'aoMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'bumpMap')
+  debugInput(folder, material, 'bumpScale', { min: 0, max: 1 })
+  debugColor(folder, material, 'color')
+  debugOptTexture(folder, material, 'displacementMap')
+  debugInput(folder, material, 'displacementScale', { min: 0, max: 1 })
+  debugColor(folder, material, 'emissive')
+  debugOptTexture(folder, material, 'emissiveMap')
+  debugInput(folder, material, 'emissiveIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'envMap')
+  debugInput(folder, material, 'envMapIntensity', { min: 0, max: 1 })
+  debugInput(folder, material, 'fog')
+  debugOptTexture(folder, material, 'lightMap')
+  debugInput(folder, material, 'lightMapIntensity', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'map')
+  debugInput(folder, material, 'metalness', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'metalnessMap')
+  debugOptTexture(folder, material, 'normalMap')
+  debugInput(folder, material, 'normalScale')
+  debugInput(folder, material, 'roughness', { min: 0, max: 1 })
+  debugOptTexture(folder, material, 'roughnessMap')
+}
+
+const debugShaderMaterial = (parentFolder: any, material: ShaderMaterial | RawShaderMaterial) => {
+  const folder = debugFolder('Uniforms', parentFolder)
+  for (const i in material.uniforms) {
+    const uniform = material.uniforms[i].value
+    if (typeof uniform === 'number') {
+      debugInput(folder, material.uniforms[i], 'value', { label: i })
+    } else if (uniform instanceof Vector2 || uniform instanceof Vector3) {
+      debugInput(folder, material.uniforms[i], 'value', { label: i })
+    } else if (uniform instanceof Color) {
+      debugColor(folder, material.uniforms[i], 'value', { label: i })
+    } else if (uniform === null || uniform instanceof Texture) {
+      debugImage(folder, i, {
+        texture: true,
+        onChange: (value: Texture) => {
           // @ts-ignore
-          if (material[intensity] !== undefined) {
-            debugInput(textureFolder, material, intensity, { min: 0, label: 'Intensity' })
-          }
-          debugButton(textureFolder, 'Clear', () => {
-            // @ts-ignore
-            imgPane.controller_.valueController.updateImage(emptyImg)
-            // @ts-ignore
-            material[i] = null
-            // @ts-ignore
-            material.needsUpdate = true
-          })
-        }
-      }
+          material.uniforms[i]['value'] = value
+        },
+      })
     }
   }
+}
 
-  if (material instanceof RawShaderMaterial || material instanceof ShaderMaterial) {
-    const uniformsFolder = debugFolder('Uniforms', folder)
-    const shader = material as ShaderMaterial
-    for (const i in shader.uniforms) {
-      const uniform = shader.uniforms[i].value
-      if (typeof uniform === 'number') {
-        debugInput(uniformsFolder, shader.uniforms[i], 'value', { label: i })
-      } else if (uniform instanceof Vector2 || uniform instanceof Vector3) {
-        debugInput(uniformsFolder, shader.uniforms[i], 'value', { label: i })
-      } else if (uniform instanceof Color) {
-        debugColor(uniformsFolder, shader.uniforms[i], 'value', { label: i })
-      } else if (uniform === null || uniform instanceof Texture) {
-        debugImage(uniformsFolder, i, {
-          texture: true,
-          onChange: (value: Texture) => {
-            // @ts-ignore
-            shader.uniforms[i]['value'] = value
-          },
-        })
-      }
-    }
+export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any): any => {
+  const pane = parentFolder !== undefined ? parentFolder : scenesTab
+  const folder = debugFolder('Material', pane)
+  const material = mesh.material as Material
+  debugMaterialCore(folder, material)
+  if (material instanceof MeshBasicMaterial) {
+    debugMeshBasicMaterial(folder, material)
+  } else if (material instanceof MeshLambertMaterial) {
+    debugMeshLambertMaterial(folder, material)
+  } else if (material instanceof MeshMatcapMaterial) {
+    debugMeshMatcapMaterial(folder, material)
+  } else if (material instanceof MeshPhongMaterial) {
+    debugMeshPhongMaterial(folder, material)
+  } else if (material instanceof MeshPhysicalMaterial) {
+    debugMeshPhysicalMaterial(folder, material)
+  } else if (material instanceof MeshStandardMaterial) {
+    debugMeshStandardMaterial(folder, material)
+  } else if (material instanceof ShaderMaterial || material instanceof RawShaderMaterial) {
+    debugShaderMaterial(folder, material)
   }
 
   const debugMaterialFolder: any = debugFolder('Debug Material', folder)

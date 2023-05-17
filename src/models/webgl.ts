@@ -1,4 +1,4 @@
-import { WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetOptions } from 'three'
+import { PCFShadowMap, WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetOptions } from 'three'
 import { IS_DEV } from './constants'
 import { settings } from './settings'
 import { debugSettings } from '@/utils/debug'
@@ -17,6 +17,8 @@ class WebGLSingleton {
     this.renderer.info.autoReset = !IS_DEV // debug performance
     this.renderer.setClearColor(0x0d0d0d)
     this.renderer.setPixelRatio(settings.quality === 'low' ? 1 : devicePixelRatio)
+    this.renderer.shadowMap.enabled = true
+    this.renderer.shadowMap.type = PCFShadowMap
 
     this.addRT('previousScene')
     this.addRT('currentScene')

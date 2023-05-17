@@ -489,14 +489,13 @@ export const debugColor = (parentFolder: any, obj: any, value: string, props?: a
   let key = value
   const threeColor = obj[value]['isColor'] === true
   if (threeColor) {
-    const settings = {
+    object = {
       color: {
         r: clampColor(obj[value]['r'] * 255),
         g: clampColor(obj[value]['g'] * 255),
         b: clampColor(obj[value]['b'] * 255),
       },
     }
-    object = settings
     key = 'color'
   }
   const label = props !== undefined && props['label'] ? props['label'] : value
@@ -1233,7 +1232,7 @@ export const debugMaterial = (parentFolder: any, mesh: Mesh | Line, props?: any)
 // Utils
 
 function clampColor(value: number): number {
-  return clamp(Math.round(value), 0, 255)
+  return clamp(0, 255, Math.round(value))
 }
 
 export function acceptedMaterialTypes(value: any): boolean {

@@ -1,5 +1,5 @@
 // Libs
-import { Mesh, MeshPhysicalMaterial, PerspectiveCamera, PlaneGeometry, RectAreaLight } from 'three'
+import { Mesh, MeshBasicMaterial, MeshPhysicalMaterial, PerspectiveCamera, PlaneGeometry, RectAreaLight } from 'three'
 import gsap from 'gsap'
 import { FXAAEffect, NoiseEffect, VignetteEffect } from 'postprocessing'
 // Models
@@ -34,11 +34,25 @@ export default class IntroScene extends BaseScene {
 
   protected override initMesh(): Promise<void> {
     return new Promise((resolve) => {
-      const floor = new Mesh(new PlaneGeometry(), new MeshPhysicalMaterial({ color: 0xffffff }))
+      const floor = new Mesh(
+        new PlaneGeometry(),
+        new MeshPhysicalMaterial({
+          color: 0xffffff,
+          emissive: 0x414141,
+        }),
+      )
       floor.name = 'floor'
       floor.rotateX(-Math.PI / 2)
       floor.scale.setScalar(2000)
       this.world.add(floor)
+      console.log(floor.material)
+
+      const portal = new Mesh(new PlaneGeometry(100, 100), new MeshBasicMaterial())
+      portal.name = 'portal'
+      portal.position.y = 50
+      portal.rotateX(Math.PI)
+      this.world.add(portal)
+
       resolve()
     })
   }

@@ -83,6 +83,30 @@ export const settings = {
         this.quality = 'high'
         break
     }
+
+    // Safari's slow
+    const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    if (safari) this.quality = 'low'
+
+    // URL-override
+    const hashArr = window.location.hash.split('#')
+    hashArr.shift()
+    const hashLen = hashArr.length
+    if (hashLen > 0) {
+      for (let i = 0; i < hashLen; i++) {
+        const hash = hashArr[i]
+        if (hash === 'high') {
+          this.quality = 'high'
+          return
+        } else if (hash === 'medium') {
+          this.quality = 'medium'
+          return
+        } else if (hash === 'low') {
+          this.quality = 'low'
+          return
+        }
+      }
+    }
   },
   checkGPU: function (renderer: WebGLRenderer) {
     const classRef = window['WebGL2RenderingContext']

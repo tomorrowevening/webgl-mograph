@@ -1,5 +1,6 @@
 import {
   AddEquation,
+  AlwaysStencilFunc,
   Bone,
   BufferGeometry,
   Camera,
@@ -21,8 +22,10 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   PositionalAudio,
+  ReplaceStencilOp,
   SrcAlphaFactor,
   Texture,
+  Vector3,
   WebGLRenderTarget,
   WebGLRenderTargetOptions,
 } from 'three'
@@ -157,17 +160,40 @@ export function anchorGeometryTL(geometry: BufferGeometry) {
 //////////////////////////////////////////////////
 // Materials
 
+export function createMask(mesh: Mesh, id: number, colorWrite = true, depthWrite = false) {
+  mesh.renderOrder = -id
+  const material = mesh.material
+  if (Array.isArray(material)) {
+    material.forEach((mat: Material) => {
+      mat.colorWrite = colorWrite
+      mat.depthWrite = depthWrite
+      mat.stencilWrite = true
+      mat.stencilRef = id
+      mat.stencilFunc = AlwaysStencilFunc
+      mat.stencilFail = ReplaceStencilOp
+      mat.stencilZFail = ReplaceStencilOp
+      mat.stencilZPass = ReplaceStencilOp
+    })
+  } else {
+    material.colorWrite = colorWrite
+    material.depthWrite = depthWrite
+    material.stencilWrite = true
+    material.stencilRef = id
+    material.stencilFunc = AlwaysStencilFunc
+    material.stencilFail = ReplaceStencilOp
+    material.stencilZFail = ReplaceStencilOp
+    material.stencilZPass = ReplaceStencilOp
+  }
+}
+
 /**
  * Based on:
  * https://github.com/pmndrs/drei/blob/master/src/core/Mask.tsx
  */
 export function useMask(mesh: Mesh, id: number, inverse = false) {
-  mesh.renderOrder = -id
   const material = mesh.material
   if (Array.isArray(material)) {
     material.forEach((mat: Material) => {
-      mat.colorWrite = false
-      mat.depthWrite = false
       mat.stencilWrite = true
       mat.stencilRef = id
       mat.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc
@@ -176,8 +202,6 @@ export function useMask(mesh: Mesh, id: number, inverse = false) {
       mat.stencilZPass = KeepStencilOp
     })
   } else {
-    material.colorWrite = false
-    material.depthWrite = false
     material.stencilWrite = true
     material.stencilRef = id
     material.stencilFunc = inverse ? NotEqualStencilFunc : EqualStencilFunc
@@ -314,6 +338,7 @@ export function getBoneList(object: any): Array<Bone> {
   return boneList
 }
 
+//////////////////////////////////////////////////
 // Utils
 
 let outputCanvas: HTMLCanvasElement | null = null
@@ -350,4 +375,15 @@ export function saveCanvasToPNG() {
     outputLink.setAttribute('href', canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream'))
     outputLink.click()
   }
+}
+
+export function worldToScreen(worldCoordinates: Vector3, camera: PerspectiveCamera): Vector3 {
+  const screenCoordinates = worldCoordinates.clone()
+  screenCoordinates.project(camera)
+  const width = webgl.width
+  const height = webgl.height
+  screenCoordinates.x = ((screenCoordinates.x + 1) * width) / 2
+  screenCoordinates.y = ((-screenCoordinates.y + 1) * height) / 2
+  screenCoordinates.z = 0
+  return screenCoordinates
 }

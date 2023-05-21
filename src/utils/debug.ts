@@ -2,18 +2,30 @@
 import {
   ACESFilmicToneMapping,
   AddEquation,
+  AlwaysStencilFunc,
   BackSide,
   Camera,
   CineonToneMapping,
   ClampToEdgeWrapping,
   Color,
   CustomBlending,
+  DecrementStencilOp,
+  DecrementWrapStencilOp,
   DirectionalLight,
   DirectionalLightHelper,
   DoubleSide,
   DstColorFactor,
+  EqualStencilFunc,
   FrontSide,
+  GreaterEqualStencilFunc,
+  GreaterStencilFunc,
   HemisphereLight,
+  IncrementStencilOp,
+  IncrementWrapStencilOp,
+  InvertStencilOp,
+  KeepStencilOp,
+  LessEqualStencilFunc,
+  LessStencilFunc,
   Light,
   Line,
   LinearToneMapping,
@@ -26,7 +38,9 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   MirroredRepeatWrapping,
+  NeverStencilFunc,
   NormalBlending,
+  NotEqualStencilFunc,
   NoToneMapping,
   OneFactor,
   OneMinusDstColorFactor,
@@ -39,6 +53,7 @@ import {
   RectAreaLight,
   ReinhardToneMapping,
   RepeatWrapping,
+  ReplaceStencilOp,
   ShaderMaterial,
   SpotLight,
   SpotLightHelper,
@@ -46,6 +61,7 @@ import {
   Texture,
   Vector2,
   Vector3,
+  ZeroStencilOp,
 } from 'three'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib'
@@ -953,16 +969,89 @@ const debugOptTexture = (parentFolder: any, material: Material, label: string) =
   })
 }
 
+const stencilFunc = [
+  {
+    text: 'NeverStencilFunc',
+    value: NeverStencilFunc,
+  },
+  {
+    text: 'LessStencilFunc',
+    value: LessStencilFunc,
+  },
+  {
+    text: 'EqualStencilFunc',
+    value: EqualStencilFunc,
+  },
+  {
+    text: 'LessEqualStencilFunc',
+    value: LessEqualStencilFunc,
+  },
+  {
+    text: 'GreaterStencilFunc',
+    value: GreaterStencilFunc,
+  },
+  {
+    text: 'NotEqualStencilFunc',
+    value: NotEqualStencilFunc,
+  },
+  {
+    text: 'GreaterEqualStencilFunc',
+    value: GreaterEqualStencilFunc,
+  },
+  {
+    text: 'AlwaysStencilFunc',
+    value: AlwaysStencilFunc,
+  },
+]
+
+const stencilOp = [
+  {
+    text: 'ZeroStencilOp',
+    value: ZeroStencilOp,
+  },
+  {
+    text: 'KeepStencilOp',
+    value: KeepStencilOp,
+  },
+  {
+    text: 'ReplaceStencilOp',
+    value: ReplaceStencilOp,
+  },
+  {
+    text: 'IncrementStencilOp',
+    value: IncrementStencilOp,
+  },
+  {
+    text: 'DecrementStencilOp',
+    value: DecrementStencilOp,
+  },
+  {
+    text: 'IncrementWrapStencilOp',
+    value: IncrementWrapStencilOp,
+  },
+  {
+    text: 'DecrementWrapStencilOp',
+    value: DecrementWrapStencilOp,
+  },
+  {
+    text: 'InvertStencilOp',
+    value: InvertStencilOp,
+  },
+]
+
 const debugMaterialCore = (parentFolder: any, material: Material) => {
   const folder = debugFolder('Core', parentFolder)
   const extra = {
-    defines: JSON.stringify(material.defines),
+    defines: '',
   }
   debugButton(folder, 'Update', () => {
     material.needsUpdate = true
   })
   debugInput(folder, material, 'type', { label: 'Material', disabled: true })
-  debugInput(folder, extra, 'defines', { label: 'Defines', disabled: true })
+  if (material.defines !== undefined) {
+    extra.defines = JSON.stringify(material.defines)
+    debugInput(folder, extra, 'defines', { label: 'Defines', disabled: true })
+  }
   debugOptions(
     folder,
     'Blend Mode',
@@ -1023,11 +1112,25 @@ const debugMaterialCore = (parentFolder: any, material: Material) => {
     },
   )
   debugInput(folder, material, 'alphaTest', { min: 0, max: 1 })
-  debugInput(folder, material, 'opacity', { min: 0, max: 1 })
-  debugInput(folder, material, 'dithering')
+  debugInput(folder, material, 'colorWrite')
   debugInput(folder, material, 'depthTest')
   debugInput(folder, material, 'depthWrite')
+  debugInput(folder, material, 'dithering')
+  debugInput(folder, material, 'opacity', { min: 0, max: 1 })
+  debugOptions(folder, 'stencilFail', stencilOp, (value: any) => {
+    material.stencilFail = value
+  })
+  debugOptions(folder, 'stencilFunc', stencilFunc, (value: any) => {
+    material.stencilFunc = value
+  })
+  debugInput(folder, material, 'stencilRef')
   debugInput(folder, material, 'stencilWrite')
+  debugOptions(folder, 'stencilZFail', stencilOp, (value: any) => {
+    material.stencilZFail = value
+  })
+  debugOptions(folder, 'stencilZPass', stencilOp, (value: any) => {
+    material.stencilZPass = value
+  })
   debugInput(folder, material, 'transparent')
   // @ts-ignore
   if (material['wireframe'] !== undefined) debugInput(folder, material, 'wireframe')

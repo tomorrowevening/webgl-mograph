@@ -1,7 +1,14 @@
 import { Component, ReactNode } from 'react'
 import { SVGProps } from './types'
 import { roundTo } from '@/utils/math'
-import { arrayToSVGPath, bezierPathDistance, getPathBetween, getPointInPath, lerpArray, pathToPoints } from './utils'
+import {
+  arrayToSVGPath,
+  bezierPathDistance,
+  getPathBetween,
+  getPointInPath,
+  lerpArray,
+  pathToPoints,
+} from '@/utils/svg'
 
 export interface SVGPathProps extends SVGProps {
   d?: string

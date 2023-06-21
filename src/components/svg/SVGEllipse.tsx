@@ -13,12 +13,7 @@ export default class SVGEllipse extends Component<SVGEllipseProps> {
     super(props)
     this.state = {
       ...this.state,
-      ...{
-        x: props.x,
-        y: props.y,
-        width: props.width,
-        height: props.height,
-      },
+      ...props,
     }
   }
 

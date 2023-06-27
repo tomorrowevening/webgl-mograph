@@ -137,14 +137,7 @@ export function bezierPointAt(t: number, p0: number[], p1: number[], p2: number[
   return [x, y]
 }
 
-export function getPathBetween(
-  start: number,
-  end: number,
-  path: number[][],
-  segments: number[],
-  info: any,
-  forceMiddle?: number,
-) {
+export function getPathBetween(start: number, end: number, path: number[][], segments: number[], forceMiddle?: number) {
   const nPath = path.slice()
   const nSegs = segments
 
@@ -157,12 +150,6 @@ export function getPathBetween(
   const startIndex = lastIndexOfValue(start, nSegs)
   const endIndex = firstIndexOfValue(end, nSegs)
   const finalPath = []
-
-  if (info) {
-    info.startIndex = Math.max(0, startIndex)
-    info.endIndex = endIndex
-  }
-
   for (let i = startIndex * 3; i <= endIndex * 3; i++) {
     finalPath.push(nPath[i])
   }
@@ -316,24 +303,34 @@ export function addCurveForLine(array: number[][], oldPoint: number[], newPoint:
 }
 
 export function arrayToSVGString(array: number[][], straightPath: boolean) {
-  let string = `M${(Math.floor(array[0][0] * 10) / 10).toString()},${(Math.floor(array[0][1] * 10) / 10).toString()}`
+  let string = ''
 
-  if (straightPath) {
-    for (let i = 1, length = array.length; i < length; i++) {
-      string += `L${Math.floor(array[i][0] * 10) / 10}`
-      if (array[i][1] >= 0) string += ','
-      string += (Math.floor(array[i][1] * 10) / 10).toString()
-    }
-  } else {
-    for (let i = 1; i < array.length; i += 3) {
-      string += `C${(Math.floor(array[i][0] * 10) / 10).toString()},${(Math.floor(array[i][1] * 10) / 10).toString()}`
-
-      for (let j = i + 1; j < i + 3; j++) {
-        string += `,${(Math.floor(array[j][0] * 10) / 10).toString()},${(
-          Math.floor(array[j][1] * 10.0) / 10.0
-        ).toString()}`
+  try {
+    string = 'M' + Math.floor(array[0][0] * 10.0) / 10.0 + ',' + (Math.floor(array[0][1] * 10.0) / 10.0).toString()
+    if (straightPath) {
+      for (let i = 1, length = array.length; i < length; i++) {
+        string += 'L' + Math.floor(array[i][0] * 10.0) / 10.0
+        if (array[i][1] >= 0) {
+          string += ','
+        }
+        string += (Math.floor(array[i][1] * 10.0) / 10.0).toString()
+      }
+    } else {
+      for (let i = 1, length = array.length; i < length; i += 3) {
+        string += 'C' + Math.floor(array[i][0] * 10.0) / 10.0 + ',' + Math.floor(array[i][1] * 10.0) / 10.0
+        for (let j = i + 1; j < i + 3; j++) {
+          string +=
+            ',' +
+            (Math.floor(array[j][0] * 10.0) / 10.0).toString() +
+            ',' +
+            (Math.floor(array[j][1] * 10.0) / 10.0).toString()
+        }
       }
     }
+  } catch (err: any) {
+    console.log("arrayToSVGString: Couldn't update path")
+    console.log(err)
+    console.log(array)
   }
 
   return string
@@ -345,90 +342,4 @@ export function arrayToSVGPath(array: number[][][], straightPath: boolean) {
     returnString += arrayToSVGString(array[i], straightPath)
   }
   return returnString
-}
-
-export function arrayToSVGPoints(array: number[][]) {
-  let string = ''
-  for (let i = 0; i < array.length; i++) {
-    string += `${array[i][0].toString()},${array[i][1].toString()} `
-  }
-  return string
-}
-
-export function bezierToPath(path: any, closed: boolean, offX?: number, offY?: number) {
-  const vertices = path.vertices
-  const inTangents = path.inTangents
-  const outTangents = path.outTangents
-  const ox = offX !== undefined ? offX : 0
-  const oy = offY !== undefined ? offY : 0
-
-  let svg = 'M'
-  svg += `${roundTo(vertices[0][0] + ox, 1).toString()},${roundTo(vertices[0][1] + oy, 1).toString()}`
-  let n, k, VN, IN, ON, VK, IK, OK, x, y, XN, YN, XK, YK, XB, YB, noCurve
-  const total = vertices.length - 1
-  const iTotal = total - 1
-
-  for (n = 0; n < total; ++n) {
-    k = n + 1
-
-    VN = vertices[n]
-    IN = inTangents[n]
-    ON = outTangents[n]
-    VK = vertices[k]
-    IK = inTangents[k]
-    OK = outTangents[k]
-
-    XN = roundTo(VN[0] + ON[0] + ox, 1)
-    YN = roundTo(VN[1] + ON[1] + oy, 1)
-
-    XB = roundTo(VK[0] + ox, 1)
-    YB = roundTo(VK[1] + oy, 1)
-
-    XK = roundTo(XB + IK[0], 1)
-    YK = roundTo(YB + IK[1], 1)
-
-    noCurve = IN[0] === 0 && IN[1] === 0 && ON[0] === 0 && ON[1] === 0
-    noCurve = noCurve || (XB === XK && YB === YK)
-
-    if (noCurve) {
-      // Line
-      svg += 'L'
-      svg += XK.toString() + ',' + YK.toString()
-      if (n < iTotal) svg += ','
-    } else {
-      // Curve
-      svg += 'C'
-      svg += XN.toString() + ',' + YN.toString() + ','
-      svg += XK.toString() + ',' + YK.toString() + ','
-      svg += XB.toString() + ',' + YB.toString()
-    }
-  }
-
-  if (path.closed === true || closed === true) {
-    n = total
-    k = 0
-
-    VN = vertices[n]
-    IN = inTangents[n]
-    ON = outTangents[n]
-    VK = vertices[k]
-    IK = inTangents[k]
-    OK = outTangents[k]
-
-    if (IN[0] === 0 && IN[1] === 0 && ON[0] === 0 && ON[1] === 0) {
-      // Line
-      svg += 'L'
-      svg += roundTo(VN[0] + ox, 1).toString() + ',' + roundTo(VN[1] + oy, 1).toString() + ','
-      svg += 'Z'
-    } else {
-      // Curve
-      svg += 'C'
-      svg += roundTo(VN[0] + ON[0] + ox, 1).toString() + ',' + roundTo(VN[1] + ON[1] + oy, 1).toString() + ','
-
-      svg += roundTo(VK[0] + IK[0] + ox, 1).toString() + ',' + roundTo(VK[1] + IK[1] + oy, 1).toString() + ','
-      svg += roundTo(VK[0] + ox).toString() + ',' + roundTo(VK[1] + oy).toString()
-    }
-  }
-
-  return svg
 }

@@ -11,7 +11,7 @@ import {
 } from '@/utils/svg'
 
 export interface SVGPathProps extends SVGProps {
-  d?: string
+  d: string
   startPercent?: number
   endPercent?: number
   offsetPercent?: number
@@ -21,10 +21,11 @@ export default class SVGPath extends Component<SVGPathProps> {
   private points: number[][][] = []
   private originals: number[][][] = []
   private segments: number[] = []
+  private refPath: number[][]
 
   private straightPath = false
   private _startPercent = 0
-  private _endPercent = 0
+  private _endPercent = 1
   private _offsetPercent = 0
 
   constructor(props: SVGPathProps) {
@@ -46,10 +47,8 @@ export default class SVGPath extends Component<SVGPathProps> {
       ...this.state,
       ...props,
     }
-  }
 
-  componentDidMount(): void {
-    this.updatePath()
+    this.refPath = this.firstPath
   }
 
   pointAt(percentage: number): number[] {
@@ -58,9 +57,8 @@ export default class SVGPath extends Component<SVGPathProps> {
 
   updatePath() {
     let pathToUse = this.originals
-    const offP = this._offsetPercent
-    let startP = this._startPercent + offP
-    let endP = this._endPercent + offP
+    let startP = this._startPercent + this._offsetPercent
+    let endP = this._endPercent + this._offsetPercent
 
     if (startP > 1 || startP < 0) startP %= 1
     if (endP > 1 || endP < 0) endP %= 1
@@ -79,16 +77,22 @@ export default class SVGPath extends Component<SVGPathProps> {
         pathToUse = this.updatePathBetween(0, endP)
         const string2 = arrayToSVGPath(pathToUse, this.straightPath)
         this.setState({ d: string + string2 })
+        return
       } else {
         pathToUse = this.updatePathBetween(startP, endP)
         this.setState({ d: arrayToSVGPath(pathToUse, this.straightPath) })
+        return
       }
+    } else {
+      this.points = this.originals.slice()
+      this.setState({ d: this.props.d })
+      return
     }
   }
 
   updatePathBetween(start: number, end: number): number[][][] {
-    const refPath = this.firstPath
-    this.firstPath = refPath.slice()
+    this.refPath = this.refPath || this.firstPath
+    this.firstPath = this.refPath.slice()
 
     if (!this.segments) {
       this.segments = bezierPathDistance(this.points[0])
@@ -96,7 +100,6 @@ export default class SVGPath extends Component<SVGPathProps> {
 
     const precision = 3
     const seg = this.segments.slice()
-    const info = {}
     let forceMiddle = null
     const normalStart = roundTo(start, precision)
     const normalEnd = roundTo(end, precision)
@@ -108,7 +111,7 @@ export default class SVGPath extends Component<SVGPathProps> {
     }
 
     if (this._startPercent > 0 || this._endPercent < 1) {
-      this.firstPath = getPathBetween(start, end, this.firstPath, seg, info, forceMiddle)
+      this.firstPath = getPathBetween(start, end, this.firstPath, seg, forceMiddle)
     }
 
     return [this.firstPath]
@@ -117,7 +120,6 @@ export default class SVGPath extends Component<SVGPathProps> {
   render(): ReactNode {
     const {
       d,
-      //
       fill,
       fillOpacity,
       stroke,

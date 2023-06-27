@@ -89,7 +89,7 @@ export default class LobbyScene extends BaseScene {
     this.disable()
 
     gsap.to(this, {
-      duration: 1,
+      duration: 2,
       ease: 'expo.inOut',
       transitionProgress: 1,
       onComplete: () => this.onHidden(),

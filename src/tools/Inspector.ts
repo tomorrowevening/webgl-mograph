@@ -269,7 +269,7 @@ export default class Inspector extends Object3D {
 
           // Add to sheet
           animation
-            .animateObject(value, this.currentObject!.name, { material: animate })!
+            .sheetObject(value, this.currentObject!.name, { material: animate })!
             .onValuesChange((values: any) => {
               const { material } = values
               for (const key in material) {
@@ -358,7 +358,7 @@ export default class Inspector extends Object3D {
       this.sclPane = debugInput(transformFolder, this.currentObject, 'scale')
       debugOptions(transformFolder, 'Animate', animation.sheetOptions, (value: any) => {
         animation
-          .animateObject(value, this.currentObject!.name, {
+          .sheetObject(value, this.currentObject!.name, {
             transform: {
               position: {
                 x: this.currentObject!.position.x,

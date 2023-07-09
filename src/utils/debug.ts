@@ -369,8 +369,10 @@ export const debugCamera = (parentFolder: any, cam: Camera, helper?: any): any =
     })
     // Animation
     debugOptions(cameraFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, camera.name, {
+      animation.sheetObject(
+        value,
+        camera.name,
+        {
           camera: {
             near: camera.near,
             far: camera.far,
@@ -379,8 +381,8 @@ export const debugCamera = (parentFolder: any, cam: Camera, helper?: any): any =
             fov: camera.fov,
             zoom: camera.zoom,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           camera.near = values.camera.near
           camera.far = values.camera.far
           camera.filmOffset = values.camera.filmOffset
@@ -388,7 +390,8 @@ export const debugCamera = (parentFolder: any, cam: Camera, helper?: any): any =
           camera.fov = values.camera.fov
           camera.zoom = values.camera.zoom
           camera.updateProjectionMatrix()
-        })
+        },
+      )
     })
   } else if (cam instanceof OrthographicCamera) {
     const camera = cam as OrthographicCamera
@@ -464,17 +467,20 @@ export const debugCamera = (parentFolder: any, cam: Camera, helper?: any): any =
     })
     // Animation
     debugOptions(cameraFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, camera.name, {
+      animation.sheetObject(
+        value,
+        camera.name,
+        {
           camera: {
             near: camera.near,
             far: camera.far,
             zoom: camera.zoom,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           console.log(values)
-        })
+        },
+      )
     })
   }
   const posInput = debugInput(cameraFolder, cam, 'position')
@@ -708,8 +714,10 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
 
     // Animation
     debugOptions(lightFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, light.name, {
+      animation.sheetObject(
+        value,
+        light.name,
+        {
           light: {
             color: types.rgba({
               r: light.color.r * 255,
@@ -719,11 +727,12 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
             }),
             intensity: light.intensity,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           light.color.copy(values.light.color)
           light.intensity = values.light.intensity
-        })
+        },
+      )
     })
 
     // Helper
@@ -747,8 +756,10 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
 
     // Animation
     debugOptions(lightFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, light.name, {
+      animation.sheetObject(
+        value,
+        light.name,
+        {
           light: {
             color: types.rgba({
               r: light.color.r * 255,
@@ -764,12 +775,13 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
             }),
             intensity: light.intensity,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           light.color.copy(values.light.color)
           light.groundColor.copy(values.light.groundColor)
           light.intensity = values.light.intensity
-        })
+        },
+      )
     })
   } else if (light instanceof PointLight) {
     const pointLight = light as PointLight
@@ -784,8 +796,10 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
 
     // Animation
     debugOptions(lightFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, light.name, {
+      animation.sheetObject(
+        value,
+        light.name,
+        {
           light: {
             color: types.rgba({
               r: light.color.r * 255,
@@ -797,13 +811,14 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
             decay: light.decay,
             distance: light.distance,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           light.color.copy(values.light.color)
           light.intensity = values.light.intensity
           light.decay = values.light.decay
           light.distance = values.light.distance
-        })
+        },
+      )
     })
 
     // Helper
@@ -840,8 +855,10 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
 
     // Animation
     debugOptions(lightFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, light.name, {
+      animation.sheetObject(
+        value,
+        light.name,
+        {
           light: {
             color: types.rgba({
               r: light.color.r * 255,
@@ -853,13 +870,14 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
             width: light.width,
             height: light.height,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           light.color.copy(values.light.color)
           light.intensity = values.light.intensity
           light.width = values.light.width
           light.height = values.light.height
-        })
+        },
+      )
     })
 
     // Helper
@@ -894,8 +912,10 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
 
     // Animation
     debugOptions(lightFolder, 'Animate', animation.sheetOptions, (value: any) => {
-      animation
-        .animateObject(value, light.name, {
+      animation.sheetObject(
+        value,
+        light.name,
+        {
           light: {
             color: types.rgba({
               r: light.color.r * 255,
@@ -909,15 +929,16 @@ export const debugLight = (parentFolder: any, light: Light, props?: any): any =>
             distance: spotLight.distance,
             pernumbra: spotLight.penumbra,
           },
-        })!
-        .onValuesChange((values: any) => {
+        },
+        (values: any) => {
           light.color.copy(values.light.color)
           light.intensity = values.light.intensity
           spotLight.angle = values.light.angle
           spotLight.decay = values.light.decay
           spotLight.distance = values.light.distance
           spotLight.penumbra = values.light.pernumbra
-        })
+        },
+      )
     })
 
     // Helper

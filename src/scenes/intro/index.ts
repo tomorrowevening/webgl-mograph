@@ -67,7 +67,7 @@ export default class IntroScene extends BaseScene {
 
   protected override initAnimation(): Promise<void> {
     return new Promise((resolve) => {
-      animation.createSheet(this.name)
+      animation.sheet(this.name)
       resolve()
     })
   }

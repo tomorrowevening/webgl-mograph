@@ -6,11 +6,20 @@ import { Events, IS_DEV, threeDispatcher } from './constants'
 // Utils
 import { debugButton, debugFolder, debugInput, debugOptions, scenesTab } from '@/utils/debug'
 
+export type TheatreUpdateCallback = (values: any) => void
+
+// Default SheetObject.onValuesChange callback
+const noop: TheatreUpdateCallback = (values: any) => {
+  //
+}
+
 class AnimationSingleton {
   project!: IProject
-  // Create sheets once so they can be globally accessible
   sheets: Map<string, ISheet> = new Map()
   sheetObjects: Map<string, ISheetObject> = new Map()
+  sheetObjectCBs: Map<string, TheatreUpdateCallback> = new Map()
+  sheetObjectUnsubscribe: Map<string, any> = new Map()
+
   private debugFolder: any
 
   init(): void {
@@ -27,8 +36,8 @@ class AnimationSingleton {
         value: '',
       },
     }
-    this.createSheet('app')
-    this.animateObject('app', 'App', {
+    this.sheet('app')
+    this.sheetObject('app', 'App', {
       scene: '',
       marker: '',
       event: {
@@ -103,7 +112,7 @@ class AnimationSingleton {
     debugButton(this.debugFolder, 'Create Sheet', () => {
       const name = prompt('Name', '')
       if (name === null || name === '') return
-      this.createSheet(name)
+      this.sheet(name)
     })
     const params = {
       sheet: '',
@@ -127,7 +136,7 @@ class AnimationSingleton {
       const objParams = params.objParams.replace(/(\r\n|\n|\r)/gm, '')
       try {
         const data = JSON.parse(objParams)
-        this.animateObject(params.sheet, params.objName, data)
+        this.sheetObject(params.sheet, params.objName, data)
       } catch (error: any) {
         console.log("Couldn't parse json:")
         console.log(error)
@@ -143,19 +152,21 @@ class AnimationSingleton {
     }
   }
 
-  createSheet(name: string): ISheet | undefined {
-    if (this.sheets.get(name) !== undefined) return undefined
-    const sheet = this.project.sheet(name)
+  sheet(name: string): ISheet {
+    let sheet = this.sheets.get(name)
+    if (sheet !== undefined) return sheet
+
+    sheet = this.project.sheet(name)
     this.sheets.set(name, sheet)
     this.refresh()
     return sheet
   }
 
-  animateObject(sheetName: string, key: string, props: any): ISheetObject | undefined {
-    const sheet = this.sheets.get(sheetName)
-    if (sheet === undefined) return undefined
-
+  sheetObject(sheetName: string, key: string, props: any, onUpdate?: TheatreUpdateCallback): ISheetObject {
+    const sheet = this.sheet(sheetName)
     const objName = `${sheetName}_${key}`
+
+    // Sheet Object already exist?
     let obj = this.sheetObjects.get(objName)
     if (obj !== undefined) {
       obj = sheet.object(key, { ...props, ...obj.value }, { reconfigure: true })
@@ -164,7 +175,23 @@ class AnimationSingleton {
 
     obj = sheet.object(key, props)
     this.sheetObjects.set(objName, obj)
+    this.sheetObjectCBs.set(objName, onUpdate !== undefined ? onUpdate : noop)
+
+    const unsubscribe = obj.onValuesChange((values: any) => {
+      const callback = this.sheetObjectCBs.get(objName)
+      if (callback !== undefined) callback(values)
+    })
+    this.sheetObjectUnsubscribe.set(objName, unsubscribe)
+
     return obj
+  }
+
+  unsubscribe(sheet: ISheetObject) {
+    const id = `${sheet.address.sheetId}_${sheet.address.objectKey}`
+    const unsubscribe = this.sheetObjectUnsubscribe.get(id)
+    if (unsubscribe !== undefined) {
+      unsubscribe()
+    }
   }
 }
 

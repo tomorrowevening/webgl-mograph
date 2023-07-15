@@ -22,7 +22,7 @@ export default class Transition extends ShaderMaterial {
         },
       },
       // @ts-ignore
-      type: `transition/${name}`,
+      name: `transition/${name}`,
     })
   }
 

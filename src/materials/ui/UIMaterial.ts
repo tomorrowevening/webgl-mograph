@@ -27,7 +27,7 @@ export default class UIMaterial extends ShaderMaterial {
       vertexShader: vertex,
       fragmentShader: fragment,
       transparent: true,
-      type: 'ui/UIMaterial',
+      name: 'ui/UIMaterial',
     }
     super(props)
     if (parameters !== undefined) {

@@ -49,7 +49,7 @@ export default class TPMeshPhysicalMaterial extends ShaderMaterial {
       vertexShader: TPMeshPhysicalVertex,
       fragmentShader: TPMeshPhysicalFragment,
       // @ts-ignore
-      type: 'textureProjection/MeshPhysicalMaterial',
+      name: 'textureProjection/MeshPhysicalMaterial',
     })
     // @ts-ignore
     this.setValues(params)

@@ -46,7 +46,7 @@ export default class TPMeshBasicMaterial extends ShaderMaterial {
       vertexShader: TPMeshBasicVertex,
       fragmentShader: TPMeshBasicFragment,
       // @ts-ignore
-      type: 'textureProjection/TPMeshBasicMaterial',
+      name: 'textureProjection/TPMeshBasicMaterial',
     })
     // @ts-ignore
     this.setValues(params)

@@ -29,7 +29,7 @@ export default class DebugMaterial extends ShaderMaterial {
       vertexShader: vertex,
       fragmentShader: fragment,
       // @ts-ignore
-      type: 'utils/DebugMaterial',
+      name: 'utils/DebugMaterial',
     })
   }
 

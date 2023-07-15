@@ -14,7 +14,6 @@ export default class TextMaterial extends ShaderMaterial {
       defines: {},
       uniforms: {
         map: {
-          type: 't',
           value: parameters?.map,
         },
         color: {
@@ -27,7 +26,7 @@ export default class TextMaterial extends ShaderMaterial {
       vertexShader: vertex,
       fragmentShader: fragment,
       transparent: true,
-      type: 'ui/TextMaterial',
+      name: 'ui/TextMaterial',
     }
     super(props)
     if (parameters !== undefined) {

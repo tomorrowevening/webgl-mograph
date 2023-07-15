@@ -26,7 +26,6 @@ export default class LogoMaterial extends ShaderMaterial {
       defines: {},
       uniforms: {
         map: {
-          type: 't',
           value: parameters?.map,
         },
         color: {
@@ -48,7 +47,7 @@ export default class LogoMaterial extends ShaderMaterial {
       vertexShader: vertex,
       fragmentShader: fragment,
       transparent: true,
-      type: 'ui/LogoMaterial',
+      name: 'ui/LogoMaterial',
       blending: CustomBlending,
       blendEquation: AddEquation,
       blendSrc: OneMinusDstColorFactor,

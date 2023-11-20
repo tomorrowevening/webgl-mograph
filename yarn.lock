@@ -3666,6 +3666,11 @@ standardized-audio-context@^25.1.8:
     automation-events "^5.0.2"
     tslib "^2.5.0"
 
+stats-gl@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/stats-gl/-/stats-gl-1.0.7.tgz#b7fa2e0d464c8b7f4c57aa6a9bae33ed09762abe"
+  integrity sha512-vZI82CjefSxLC1bjw36z28v0+QE9rJKymGlXtfWu+ipW70ZEAwa4EbO4LxluAfLfpqiaAS04NzpYBRLDeAwYWQ==
+
 stop-iteration-iterator@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/stop-iteration-iterator/-/stop-iteration-iterator-1.0.0.tgz#6a60be0b4ee757d1ed5254858ec66b10c49285e4"

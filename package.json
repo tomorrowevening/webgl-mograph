@@ -30,6 +30,7 @@
     "quad-indices": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stats-gl": "^1.0.7",
     "three": "^0.152.2",
     "tone": "^14.7.77",
     "tweakpane": "^3.1.6",

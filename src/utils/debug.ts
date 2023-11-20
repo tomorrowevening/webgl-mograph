@@ -71,6 +71,7 @@ import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 // @ts-ignore
 import * as TweakpaneImagePlugin from 'tweakpane-image-plugin'
 import * as TextareaPlugin from '@pangenerator/tweakpane-textarea-plugin'
+import Stats from 'stats-gl'
 // Models
 import { Events, threeDispatcher } from '@/models/constants'
 import { settings } from '@/models/settings'
@@ -123,10 +124,6 @@ export function initDebug() {
   systemTab = tabs.pages[2]
   toolsTab = tabs.pages[3]
 
-  stats = systemTab.addBlade({
-    view: 'fpsgraph',
-  })
-
   // Required to draw images (ImageBitmap, etc)
   canvas = document.createElement('canvas')
   context = canvas.getContext('2d')!
@@ -164,6 +161,11 @@ export function debugWebGL() {
     interval: speed,
     label: 'Programs',
   })
+
+  stats = new Stats()
+  stats.container.style.position = 'relative'
+  systemTab.rackApi_.element.appendChild(stats.container)
+  stats.init(webgl.renderer.domElement)
 
   // Renderer
   const folder = debugFolder('Renderer', systemTab)

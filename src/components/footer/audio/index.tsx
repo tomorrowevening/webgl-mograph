@@ -5,6 +5,7 @@ import { Events, threeDispatcher } from '@/models/constants'
 // Components
 import './audio.scss'
 import Spritesheet, { SpritesheetRef } from '@/components/animation/Spritesheet'
+import useDevicePixelRatio from '@/hooks/useDPR'
 
 let playing = false
 export default function AudioBtn() {
@@ -38,7 +39,7 @@ export default function AudioBtn() {
   return (
     <button className={'audio hideText'} ref={btnRef} onClick={onToggle}>
       <Spritesheet
-        image={'/images/audio.png'}
+        image={`/images/audio@${useDevicePixelRatio()}x.png`}
         width={20}
         height={20}
         steps={30}
